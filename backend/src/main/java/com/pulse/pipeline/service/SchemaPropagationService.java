@@ -438,7 +438,12 @@ public class SchemaPropagationService {
         }
 
         if (missingUpstream) {
-            clearDerivedOutputSchemas(inst, bp);
+            // Keep prior derived output rows for non-ingestion nodes (stale-reference contract),
+            // but clear them for read-source-rooted ingestion nodes with required upstream input.
+            // This avoids leaving stale bronze output when a required source_input is missing.
+            if (shouldClearOutputsOnMissingUpstream(inst, bp)) {
+                clearDerivedOutputSchemas(inst, bp);
+            }
             inst.setOutputSchema(wrapColumns(List.of()));
             inst.setSchemaStatus("conflict");
             instanceRepo.save(inst);
@@ -503,8 +508,22 @@ public class SchemaPropagationService {
         List<String> declaredInputPorts = listDeclaredInputPorts(bp);
         List<PortResolution> result = new ArrayList<>();
 
+        if (isReadSourceRootedIngestion(inst, bp)
+            && hasOnlyOptionalIngestionUpstreamPort(declaredInputPorts)) {
+            // Read-source-rooted ingestion node (e.g. FileIngestion). Its output schema is
+            // derived solely from its source dataset (via sourceRootSchema during derivation)
+            // plus audit columns; it does NOT consume an upstream input port for schema. Post
+            // V156 (LCT-030) such a blueprint may declare an OPTIONAL upstream input port purely
+            // as a wiring affordance — that port is not consumed for schema and must not raise
+            // MISSING_UPSTREAM when unwired. Expose no consumable input so the bronze output
+            // keeps its audit columns (which are otherwise omitted when a primary input is
+            // present, see shouldOmitFileIngestionAuditForUpstream).
+            return result;
+        }
+
         if (declaredInputPorts.isEmpty()) {
-            // Ingestion node — resolve schema from params.dataset_ids if available.
+            // Non-ingestion node with no declared input ports — resolve schema from
+            // params.dataset_ids if available.
             Map<String, Object> ds = tryResolveDatasetSchema(inst);
             if (ds != null && !ds.isEmpty()) {
                 result.add(new PortResolution("data", ds, null));
@@ -548,6 +567,33 @@ public class SchemaPropagationService {
         }
         if (row.isPresent()) return row.get().getSchemaJson();
         return upstream.getOutputSchema();
+    }
+
+    /**
+     * True iff this node is a source/ingestion node whose output schema is dataset-derived
+     * rather than consumed from an upstream port. Read-source-rooted blueprints (e.g.
+     * {@code FileIngestion}) may, post-V156 (LCT-030), declare an OPTIONAL upstream input port
+     * purely as a wiring affordance; the bronze output schema stays source/dataset-derived and
+     * that port is not consumed for schema. Such nodes must resolve from {@code params.dataset_ids}
+     * and must NOT raise MISSING_UPSTREAM when the optional port is unwired. This mirrors the
+     * source-rooting decision in {@link #deriveBaseOutputSchema} (op-list begins with read-source,
+     * or — pre-op-list — a key ending in {@code Ingestion}).
+     */
+    private boolean isReadSourceRootedIngestion(SubPipelineInstance inst, Blueprint bp) {
+        if (bp != null && schemaBehaviorReader.hasOpList(bp)) {
+            return beginsWithReadSource(schemaBehaviorReader.read(bp).opList());
+        }
+        String key = inst.getBlueprintKey();
+        return key != null && key.endsWith("Ingestion");
+    }
+
+    private boolean hasOnlyOptionalIngestionUpstreamPort(List<String> declaredInputPorts) {
+        return declaredInputPorts.size() == 1 && "upstream".equals(declaredInputPorts.get(0));
+    }
+
+    private boolean shouldClearOutputsOnMissingUpstream(SubPipelineInstance inst, Blueprint bp) {
+        return isReadSourceRootedIngestion(inst, bp)
+                && !hasOnlyOptionalIngestionUpstreamPort(listDeclaredInputPorts(bp));
     }
 
     @SuppressWarnings("unchecked")

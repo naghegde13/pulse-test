@@ -113,9 +113,9 @@ public class RepresentativePipelineFixtureFactory {
 
         ConnectorDefinition destDef = new ConnectorDefinition();
         destDef.setId("conn-def-dest");
-        destDef.setName("Delta Lake");
+        destDef.setName("Parquet Lake");
         destDef.setConnectorType(ConnectorType.DESTINATION);
-        destDef.setDockerRepository("pulse/destination-delta-lake");
+        destDef.setDockerRepository("pulse/destination-parquet-lake");
         destDef.setDockerImageTag("1.0.0");
         destDef.setConnectionSpec(Map.of());
         destDef.setSupportedModes(List.of());
@@ -140,9 +140,9 @@ public class RepresentativePipelineFixtureFactory {
         destination.setId("conn-inst-dest");
         destination.setSorId(sor.getId());
         destination.setConnectorDefinitionId(destDef.getId());
-        destination.setName("Delta Lakehouse");
+        destination.setName("Parquet Lakehouse");
         destination.setConfigTemplate(Map.of(
-                "lake_format", "delta",
+                "lake_format", "parquet",
                 "write_mode", "overwrite"
         ));
         connectorInstanceRepository.save(destination);
@@ -189,10 +189,10 @@ public class RepresentativePipelineFixtureFactory {
                         "connector_name", destination.getName(),
                         // ARCH-010: lake_layer + lake_format must be set together
                         // when either is present. The legacy fixture used
-                        // params-only lake_format=delta with no layer; that was
+                        // params-only lake_format with no layer; that was
                         // tolerated only because no canonical validator ran.
                         "lake_layer", "silver",
-                        "lake_format", "delta",
+                        "lake_format", "parquet",
                         "write_mode", "overwrite"
                 )
         );
@@ -253,7 +253,7 @@ public class RepresentativePipelineFixtureFactory {
         bp.setCategory(BlueprintCategory.DESTINATION);
         bp.setStatus("active");
         bp.setDeferred(false);
-        bp.setDescription("Write rows into a local Delta lake target");
+        bp.setDescription("Write rows into a local Parquet lake target");
         bp.setVersion("1.0.0");
         bp.setParamsSchema(List.of());
         bp.setInputPorts(List.of(Map.of("name", "data_input")));

@@ -130,6 +130,11 @@ class ActiveBlueprintCoverageCatalogIT {
             Files.writeString(snapshot, actual);
         }
         assertTrue(Files.exists(snapshot), () -> "Missing snapshot file: " + snapshot);
-        assertEquals(Files.readString(snapshot), actual, () -> "Snapshot mismatch for " + fileName);
+                assertEquals(normalizeNewlines(Files.readString(snapshot)), normalizeNewlines(actual),
+                                () -> "Snapshot mismatch for " + fileName);
     }
+
+        private static String normalizeNewlines(String value) {
+                return value.replace("\r\n", "\n");
+        }
 }

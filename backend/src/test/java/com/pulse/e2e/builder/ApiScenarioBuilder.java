@@ -214,7 +214,7 @@ public class ApiScenarioBuilder {
                         "infer_schema", "true",
                         "storage_backend", "DPC",
                         "lake_layer", "bronze",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "BulkBackfill" -> Map.of(
                         "source_query", "select * from loan_master where loan_status = 'Delinquent'",
                         "date_range_start", "2025-01-01",
@@ -224,14 +224,14 @@ public class ApiScenarioBuilder {
                         "parallelism", 2,
                         "storage_backend", "DPC",
                         "lake_layer", "bronze",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "SnapshotIngestion" -> Map.of(
                         "source_table", "public.loan_master",
                         "snapshot_frequency", "daily",
                         "compare_key", "loan_id",
                         "storage_backend", "DPC",
                         "lake_layer", "bronze",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "FileArrivalSensor" -> Map.of(
                         "storage_kind", "s3",
                         "bucket", "pulse-dpc-home-lending-dev-files",
@@ -250,11 +250,11 @@ public class ApiScenarioBuilder {
                         "raw_sql", "loan_status = 'Current'",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "BronzeToSilverCleaning" -> Map.of(
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "GenericAggregate" -> Map.of(
                         "group_by_columns", List.of("property_state", "loan_status"),
                         "aggregations", List.of(Map.of(
@@ -264,7 +264,7 @@ public class ApiScenarioBuilder {
                         )),
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "GenericJoin" -> Map.of(
                         "join_type", "left",
                         "join_keys", List.of(Map.of(
@@ -278,7 +278,7 @@ public class ApiScenarioBuilder {
                         "alias_right", "loan_attrs",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "GenericRouter" -> Map.of(
                         "routes", List.of(Map.of(
                                 "name", "current_loans",
@@ -288,7 +288,7 @@ public class ApiScenarioBuilder {
                         "include_default", true,
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "JsonFlatten" -> Map.of(
                         "source_columns", List.of("servicing_payload"),
                         "separator", "_",
@@ -298,7 +298,7 @@ public class ApiScenarioBuilder {
                         "prefix", "servicing",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "JsonStruct" -> Map.of(
                         "output_format", "struct",
                         "mappings", Map.of(
@@ -309,7 +309,7 @@ public class ApiScenarioBuilder {
                         "passthrough_columns", List.of("loan_id", "loan_number"),
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "PIIMasking" -> Map.of(
                         "columns_to_mask", List.of("borrower_first_name", "borrower_last_name", "borrower_email"),
                         "masking_strategy", "hash",
@@ -317,7 +317,7 @@ public class ApiScenarioBuilder {
                         "hash_algorithm", "sha256",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "DedupeAndMerge" -> Map.of(
                         "match_keys", List.of("loan_id"),
                         "order_by_columns", List.of(
@@ -329,14 +329,14 @@ public class ApiScenarioBuilder {
                         "dedup_method", "row_number",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "SchemaNormalization" -> Map.of(
                         "target_schema", "loan_master_canonical",
                         "mapping_rules", Map.of("loan_id", "loan_id", "loan_number", "loan_number"),
                         "strict_mode", false,
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "SnapshotModel" -> Map.of(
                         "snapshot_frequency", "daily",
                         "retention_days", 30,
@@ -344,7 +344,7 @@ public class ApiScenarioBuilder {
                         "strategy", "timestamp",
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "FactBuild" -> Map.of(
                         "grain", List.of("loan_id"),
                         "measures", List.of("current_upb", "interest_rate"),
@@ -353,7 +353,7 @@ public class ApiScenarioBuilder {
                         "time_column", "as_of_date",
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "AggregateMaterialization" -> Map.of(
                         "group_by", List.of("property_state", "loan_status"),
                         "aggregations", List.of(Map.of(
@@ -364,7 +364,7 @@ public class ApiScenarioBuilder {
                         "refresh_strategy", "full_refresh",
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "FeatureTablePublish" -> Map.of(
                         "entity_key", "loan_id",
                         "features", List.of("current_upb", "interest_rate", "borrower_credit_score"),
@@ -372,7 +372,7 @@ public class ApiScenarioBuilder {
                         "output_format", "delta",
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "IncrementalMerge" -> Map.of(
                         "merge_keys", List.of("loan_id"),
                         "merge_strategy", "upsert",
@@ -381,21 +381,21 @@ public class ApiScenarioBuilder {
                         "late_threshold_hours", 48,
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "ReferenceDataPublish" -> Map.of(
                         "reference_type", "property_state",
                         "publish_frequency", "daily",
                         "versioned", true,
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "SCD2Dimension" -> Map.of(
                         "business_key", List.of("loan_id"),
                         "tracked_columns", List.of("loan_status", "current_upb", "interest_rate"),
                         "effective_date_column", "as_of_date",
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "WideDenormalizedMart" -> Map.of(
                         "fact_source", "loan_master",
                         "dimension_joins", List.of(Map.of(
@@ -405,7 +405,7 @@ public class ApiScenarioBuilder {
                         "pre_aggregations", List.of("state_balance"),
                         "storage_backend", "DPC",
                         "lake_layer", "gold",
-                        "lake_format", "delta");
+                        "lake_format", "parquet");
                 case "DQValidator" -> Map.of(
                         "expectations", List.of(Map.of(
                                 "type", "ExpectColumnValuesToNotBeNull",
@@ -440,7 +440,7 @@ public class ApiScenarioBuilder {
                         "target_id", "loan-master-target",
                         "storage_backend", "DPC",
                         "lake_layer", "silver",
-                        "lake_format", "delta",
+                        "lake_format", "parquet",
                         "output_path", "s3a://pulse-dpc-home-lending-dev-lake/servicing/loan_master",
                         "write_mode", "overwrite");
                 case "DatabaseWriter" -> Map.of(
