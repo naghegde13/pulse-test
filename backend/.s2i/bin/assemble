@@ -4,5 +4,8 @@ set -euo pipefail
 export HOME="${HOME:-/tmp}"
 export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/tmp/gradle}"
 
+# Custom S2I scripts are not guaranteed to start in the source tree.
+cd "${S2I_SOURCE_DIR:-/tmp/src}"
+
 chmod +x ./gradlew
 ./gradlew --no-daemon bootJar -x test
