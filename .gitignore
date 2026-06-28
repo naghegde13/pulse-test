@@ -29,6 +29,7 @@ backend/out/
 *.class
 *.jar
 *.war
+!backend/gradle/wrapper/gradle-wrapper.jar
 
 # Docker
 docker-data/
