@@ -4,20 +4,5 @@ set -euo pipefail
 export HOME="${HOME:-/tmp}"
 export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/tmp/gradle}"
 
-# Resolve the project root that contains gradlew. In OpenShift Git builds,
-# source context can place application files under a subdirectory.
-if [[ -f "./gradlew" ]]; then
-	APP_DIR="."
-elif [[ -f "./backend/gradlew" ]]; then
-	APP_DIR="./backend"
-else
-	APP_DIR="$(find . -maxdepth 3 -type f -name gradlew -printf '%h\n' | head -n 1 || true)"
-fi
-
-if [[ -z "${APP_DIR}" || ! -f "${APP_DIR}/gradlew" ]]; then
-	echo "ERROR: Could not locate gradlew in S2I source workspace." >&2
-	exit 1
-fi
-
-chmod +x "${APP_DIR}/gradlew"
-"${APP_DIR}/gradlew" --no-daemon bootJar -x test
+chmod +x ./gradlew
+./gradlew --no-daemon bootJar -x test
