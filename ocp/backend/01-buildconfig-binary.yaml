@@ -11,8 +11,10 @@ spec:
     type: Source
     sourceStrategy:
       from:
-        kind: DockerImage
-        name: registry.access.redhat.com/ubi9/openjdk-21:latest
+        kind: ImageStreamTag
+        name: ubi8-openjdk-21:1.18
+        namespace: openshift
+      incremental: true
   output:
     to:
       kind: ImageStreamTag
