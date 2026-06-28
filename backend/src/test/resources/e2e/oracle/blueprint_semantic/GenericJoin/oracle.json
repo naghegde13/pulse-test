@@ -1,0 +1,32 @@
+{
+  "blueprintKey": "GenericJoin",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "generic-join-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft GenericJoin semantic pack enriches retail orders with customer tiers while preserving unmatched left-side orders for later semantic hardening.",
+  "joinConfigPath": "input/expectations/join-config.json",
+  "expectedOutputPath": "expected/expected-output.csv",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedMatchedOrderIds": [
+    "O100",
+    "O101"
+  ],
+  "expectedUnmatchedOrderIds": [
+    "O102"
+  ],
+  "negativeAssertion": {
+    "configPath": "input/negative/invalid-join-config.json",
+    "expectedFailureCode": "MISSING_JOIN_KEY"
+  },
+  "checksums": {
+    "manifestSha256": "3c9e1b49f5fa76c32d8e1882519a81c4c8d10de9cc1c0f746c6bdd45a1e5d4bc",
+    "comparatorConfigSha256": "09507835c566cb9578459c0f588121574cb96e715eec2db75b224a0389f9f122",
+    "input_expectations_join-config_json_sha256": "5f3e88fb19f7a2c0d514b5d64a5c268672f5f310026233c74a494abf2615d2bd",
+    "input_negative_invalid-join-config_json_sha256": "0889275a445d5ef52ae5120a477593bb2489ff1199efa1a95b33b0e452b85e8b",
+    "input_positive_customer_tiers_csv_sha256": "4203d710d53ed3e42d4fb0f30e7d28e533399c3ecae76f8658a3c4f2e2770ced",
+    "input_positive_orders_csv_sha256": "7128bf1fc1f797d087545abc37124fcad4c669348cab3b87be1b9b5123d7933f",
+    "expected_expected-output_csv_sha256": "5cd29eb4076bcfdece01e8061c778dcc599cd5e72be1e55a6be9723efb2ba75b",
+    "expected_join-report_json_sha256": "52032b46742e6ee5ea96a8d5c0a68663c26685da221edc2b5924655f2003f88d",
+    "expected_expected-metrics_json_sha256": "9576b6c6b67ac48a6e7d7259d208706ff4f753c243565f4232a41355a7c813b6"
+  }
+}

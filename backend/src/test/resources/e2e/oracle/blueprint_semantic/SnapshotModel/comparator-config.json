@@ -1,0 +1,14 @@
+{
+  "type": "snapshot_history",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedOutputPath": "history/expected-history.json",
+  "fixtureRootRelativeActualOutputPath": "history/actual-history.json",
+  "fixtureRootRelativeKeyRejectionVerdictPath": "history/snapshot-key-rejection-verdict.json",
+  "businessKey": "subscription_id",
+  "validFromColumn": "valid_from",
+  "validToColumn": "valid_to",
+  "sourceEffectiveTsColumn": "business_effective_ts",
+  "currentRule": "current_flag_and_open_end",
+  "sortKeys": [ "subscription_id", "valid_from" ],
+  "tolerance": 0
+}

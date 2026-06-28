@@ -1,0 +1,8 @@
+{
+  "businessKey": "",
+  "trackedColumns": [
+    "tier"
+  ],
+  "expectedFailureCode": "MISSING_BUSINESS_KEY",
+  "expectedFailureMessage": "SCD2Dimension requires a non-empty businessKey before runtime hardening can proceed."
+}

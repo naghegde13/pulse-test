@@ -1,0 +1,7 @@
+customer_id,name,email,phone,state,signup_date
+C100,Ada Lovelace,ada@example.com,2125550100,NY,2024-05-01
+C101,Grace Hopper,grace@example.com,2125550101,CA,2024-05-02
+C102,Katherine Johnson,katherine@example.com,2125550102,VA,2024-05-03
+C103,Dorothy Vaughan,dorothy@example.com,12125550103,VA,2024-05-04
+C104,Blank Phone,blank.phone@example.com,"",TX,2024-05-05
+C105,Case State,case.state@example.com,2125550105,WA,2024-05-06

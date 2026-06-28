@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export PORT="${PORT:-3000}"
+export NEXT_TELEMETRY_DISABLED=1
+
+exec npm start

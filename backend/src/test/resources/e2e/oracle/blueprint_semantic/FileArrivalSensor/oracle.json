@@ -1,0 +1,11 @@
+{
+  "blueprintKey": "FileArrivalSensor",
+  "scenarioId": "file-arrival-sensor-gcp-golden",
+  "requiredEvidence": [
+    "runtime/composer-dag-runs-final.raw.txt",
+    "runtime/composer-task-states-final.raw.txt",
+    "runtime/gcs-object-listing.json",
+    "data/sensor-oracle-comparison.json"
+  ],
+  "promotionAllowed": true
+}

@@ -1,0 +1,5062 @@
+[
+  {
+    "artifactTypes": [
+      "gx_checkpoint"
+    ],
+    "blueprintKey": "AnomalyDetection",
+    "category": "DATA_QUALITY",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "data_quality",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Uses statistical methods to spot unusual patterns in your data -- a sudden spike in transactions, an unexpected drop in records, or values way outside normal ranges. Can also monitor data volumes to catch unexpected spikes or drops that signal upstream problems.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DQ0ANOMALY00000001",
+    "inputPorts": [
+      {
+        "description": "Data to scan for anomalies",
+        "name": "data_to_monitor"
+      }
+    ],
+    "name": "Anomaly Detection",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Detected anomalies with scores",
+        "name": "anomaly_report"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "monitored_columns",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": 2.0,
+        "name": "sensitivity_percent",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "default": "z_score",
+        "name": "detection_method",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 10,
+        "name": "lookback_runs",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "name": "volume_monitoring",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "anomaly",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Statistical anomaly detection on column values and volumes"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "gx_checkpoint"
+    ],
+    "blueprintKey": "DQValidator",
+    "category": "DATA_QUALITY",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "data_quality",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Runs a set of quality checks on your data: are required fields filled in? Are values in the expected range? Are there unexpected nulls? Catches data problems before they reach reports and dashboards.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DQ0VALIDATOR0000001",
+    "inputPorts": [
+      {
+        "description": "Data to run quality checks against",
+        "name": "data_to_validate"
+      }
+    ],
+    "name": "Data Quality Validator",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Records that passed validation",
+        "name": "validated_output"
+      },
+      {
+        "description": "Records that failed validation",
+        "name": "quarantine_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Array of GX expectation configs: {type, kwargs, severity}. Example type: ExpectColumnValuesToNotBeNull",
+        "name": "expectations",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "default": "quarantine",
+        "description": "Behavior on validation failure",
+        "name": "on_failure",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "type": "enum"
+      },
+      {
+        "default": 99.0,
+        "description": "Minimum success percentage to pass",
+        "name": "threshold_percent",
+        "type": "number"
+      },
+      {
+        "default": 1.0,
+        "description": "Default GX mostly parameter (0.0-1.0) for all expectations",
+        "name": "mostly",
+        "type": "number"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "validation",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "dq_policy",
+      "supports_thresholds": true
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Validate data quality with per-rule thresholds, quarantine support"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "gx_checkpoint"
+    ],
+    "blueprintKey": "FreshnessChecks",
+    "category": "DATA_QUALITY",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "data_quality",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Monitors whether your data is arriving on time. If the daily sales data usually shows up by 6am and it is 8am with nothing new, this alerts your team so they can investigate before it affects downstream reports.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DQ0FRESHNESS000001",
+    "inputPorts": [
+      {
+        "description": "Dataset to check for freshness",
+        "name": "monitored_dataset"
+      }
+    ],
+    "name": "Freshness Checks",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Freshness check results and alerts",
+        "name": "freshness_result"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Column on the dataset that records ingestion or update time.",
+        "name": "timestamp_column",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Hard ceiling in calendar minutes. Use for sub-hour SLAs.",
+        "name": "max_age_minutes",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 24,
+        "description": "Hard ceiling in calendar hours. Use for daily SLAs that don't care about weekends.",
+        "name": "max_age_hours",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Hard ceiling in business days (skips weekends + holidays in the configured calendar). Use for batch SLAs that span the weekend.",
+        "name": "max_age_business_days",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "US-FED",
+        "description": "Calendar for max_age_business_days computation.",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "description": "Fiscal offset (unused for FreshnessChecks; included for resolver compatibility).",
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "freshness",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Check source data freshness by timestamp column age"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "gx_checkpoint"
+    ],
+    "blueprintKey": "SchemaDriftDetection",
+    "category": "DATA_QUALITY",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "data_quality",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Watches for unexpected changes in your data structure -- like a column being renamed, removed, or having its type changed upstream. Catches these surprises before they silently break your pipelines.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DQ0SCHEMADRIFT0001",
+    "inputPorts": [
+      {
+        "description": "New data to check for schema changes",
+        "name": "incoming_data"
+      }
+    ],
+    "name": "Schema Drift Detection",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Schema drift detection results",
+        "name": "drift_report"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "[{name, type}]",
+        "name": "expected_columns",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "default": false,
+        "name": "strict_order",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": true,
+        "name": "allow_extra_columns",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": "warn",
+        "name": "drift_policy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "drift",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Detect schema changes between runs"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "DatabaseWriter",
+    "category": "DESTINATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "destination",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.215664Z",
+    "deferred": false,
+    "description": "Writes data to a relational database like PostgreSQL or Databricks via JDBC. Supports batch inserts, upserts, and configurable connection pooling for reliable delivery.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DEST0DATABASE000001",
+    "inputPorts": [
+      {
+        "description": "Data to write to the database",
+        "name": "data_input"
+      }
+    ],
+    "name": "Database Writer",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "description": "Sink target SoR id. Reference to SystemOfRecord with metadata.registry_type='TARGET', listed at /api/v1/tenants/{tenantId}/targets.",
+        "name": "target_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "ConnectorInstance attached to the chosen target. Listed at /api/v1/sors/{target_id}/connectors. Drives the __DEST_NAME__ credential prefix at codegen time.",
+        "name": "connector_instance_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Display name of the chosen connector instance. Auto-populated by the sink-add wizard; agent path may leave blank.",
+        "name": "connector_name",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Optional gcp-sm:// reference to override the connector instance's default credential binding. Resolved at runtime by the secret manager.",
+        "name": "target_credential_ref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Fully-qualified destination table, e.g. analytics.fct_orders.",
+        "name": "target_table",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "append",
+        "description": "overwrite_partition deletes today's partition then inserts (idempotent on re-run). merge_on_pk uses INSERT ... ON CONFLICT keyed on upsert_keys.",
+        "name": "write_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Required when write_mode=merge_on_pk.",
+        "name": "upsert_keys",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": 5000,
+        "description": "JDBC batchsize. 5000 is the practical lower bound for Postgres; smaller and round-trip overhead dominates.",
+        "name": "batch_size",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 5,
+        "name": "connection_pool_size",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Destination partition columns (must already exist on the destination table).",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "database",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.036617Z",
+    "usageGuidance": {
+      "when_to_use": "Write to PostgreSQL or Databricks"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "LakeWriter",
+    "category": "DESTINATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "destination",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.215664Z",
+    "deferred": false,
+    "description": "Writes data to a data lake in formats like Delta Lake, Apache Iceberg, or Parquet on S3 and other object stores. Supports partitioning, schema evolution, and compaction options.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DEST0LAKE0000000001",
+    "inputPorts": [
+      {
+        "description": "Data to write to the data lake",
+        "name": "data_input"
+      }
+    ],
+    "name": "Lake Writer",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "description": "Sink target SoR id (the consuming bucket / lake registry).",
+        "name": "target_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "ConnectorInstance attached to the chosen target. Drives __DEST_NAME__ credential prefix and S3/GCS/Iceberg-catalog wiring.",
+        "name": "connector_instance_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Display name of the chosen connector instance.",
+        "name": "connector_name",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Optional gcp-sm:// override for the connector instance's default credentials.",
+        "name": "target_credential_ref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "delta",
+        "description": "Selects which codegen variant emits \u2014 sinks/lake_delta.py vs sinks/lake_iceberg.py.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "description": "Destination path (s3a://... for Delta, catalog.namespace.table for Iceberg).",
+        "name": "output_path",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "merge_on_pk",
+        "description": "merge_on_pk uses DeltaTable.merge / Iceberg MERGE INTO. append_partition uses replaceWhere on ds (idempotent).",
+        "name": "write_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Required when write_mode=merge_on_pk.",
+        "name": "merge_keys",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": false,
+        "description": "Run OPTIMIZE + Z-ORDER after the write. Adds 30s-2m runtime; bounds query latency as files accumulate.",
+        "name": "optimize_after_write",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "High-cardinality filter columns for Delta z-ordering. Required when optimize_after_write=true.",
+        "name": "z_order_columns",
+        "required": false,
+        "type": "string[]"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "lake",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.036617Z",
+    "usageGuidance": {
+      "when_to_use": "Write to object storage in Delta, Iceberg, or Parquet format"
+    },
+    "validLayers": [
+      "bronze",
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "StreamWriter",
+    "category": "DESTINATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "destination",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.215664Z",
+    "deferred": false,
+    "description": "Publishes data to a streaming platform like Apache Kafka. Supports configurable serialization, partitioning, and delivery guarantees for real-time data pipelines.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DEST0STREAM00000001",
+    "inputPorts": [
+      {
+        "description": "Data to publish to the stream",
+        "name": "data_input"
+      }
+    ],
+    "name": "Stream Writer",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "description": "Sink target SoR id (the Kafka cluster registry entry).",
+        "name": "target_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "ConnectorInstance attached to the chosen target. Drives __DEST_NAME__ credential prefix (BOOTSTRAP_SERVERS, SCHEMA_REGISTRY_URL, KAFKA_USERNAME, KAFKA_PASSWORD).",
+        "name": "connector_instance_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Display name of the chosen connector instance.",
+        "name": "connector_name",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Optional gcp-sm:// override for the connector instance's default credentials.",
+        "name": "target_credential_ref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Destination Kafka topic. Topic ACLs must be configured at the target connector level.",
+        "name": "topic",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "batch_publish",
+        "description": "batch_publish reads today's gold partition once. streaming_publish reads Delta CDF and forwards continuously.",
+        "name": "publish_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "json_envelope",
+        "description": "Wire format. avro_schema_registry requires SCHEMA_REGISTRY_URL on the connector instance.",
+        "name": "schema_strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Business-key columns hashed (SHA256) into the Kafka key, guaranteeing same-key rows land on same partition for ordering.",
+        "name": "key_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": "at_least_once",
+        "description": "exactly_once requires producer transactions + idempotent downstream consumer.",
+        "name": "delivery_guarantee",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Required for streaming_publish. s3a://... path; MUST be unique per pipeline (sharing checkpoints silently corrupts state).",
+        "name": "checkpoint_location",
+        "required": false,
+        "type": "string"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "stream",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.036617Z",
+    "usageGuidance": {
+      "when_to_use": "Publish to Kafka topic"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "WarehouseWriter",
+    "category": "DESTINATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "destination",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.215664Z",
+    "deferred": false,
+    "description": "Writes data to a cloud data warehouse like Snowflake, BigQuery, or Redshift. Supports full-load and incremental write modes with options for merge keys and write disposition.",
+    "emitStrategy": "generate",
+    "id": "01JBP0DEST0WAREHOUSE00001",
+    "inputPorts": [
+      {
+        "description": "Data to write to the warehouse",
+        "name": "data_input"
+      }
+    ],
+    "name": "Warehouse Writer",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "description": "Sink target SoR id (the warehouse registry entry).",
+        "name": "target_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "ConnectorInstance attached to the chosen target. Drives __DEST_NAME__ credential prefix and warehouse-specific options (TEMP_GCS_BUCKET for BigQuery, etc.).",
+        "name": "connector_instance_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Display name of the chosen connector instance.",
+        "name": "connector_name",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Optional gcp-sm:// override (e.g. service-account JSON). Required when connector instance does not have a workload-identity binding.",
+        "name": "target_credential_ref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Fully-qualified destination, e.g. project.dataset.table for BigQuery, database.schema.table for Snowflake.",
+        "name": "target_table",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "overwrite_partition",
+        "description": "overwrite_partition replaces the matched partition (datePartition for BQ). merge_on_pk stages then issues MERGE.",
+        "name": "write_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Required when write_mode=merge_on_pk.",
+        "name": "merge_keys",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": 10000,
+        "description": "Avro batch size for the indirect write method.",
+        "name": "batch_size",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Destination clustering columns (must already exist on the destination table). Critical for merge_on_pk runtime.",
+        "name": "clustering_columns",
+        "required": false,
+        "type": "string[]"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "warehouse",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.036617Z",
+    "usageGuidance": {
+      "when_to_use": "Write to BigQuery, Snowflake, or Redshift"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "ApiIngestion",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Connects to a REST API (like Salesforce, Stripe, or any web service), pulls data page by page, and loads it into your data lake. Respects rate limits so you do not get blocked by the source system.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0API000001",
+    "inputPorts": [],
+    "name": "API Ingestion",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "API response data landed in the data lake",
+        "name": "api_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "REST endpoint. May contain Airflow-style {{ ds }} templating for date-driven endpoints.",
+        "name": "api_url",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "bearer",
+        "description": "Authentication scheme.",
+        "name": "auth_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "description": "gcp-sm:// reference to the credential. Resolved at runtime by the secret manager. Required for any auth_type other than none.",
+        "name": "auth_credential_ref",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "offset_limit",
+        "name": "pagination_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 60,
+        "description": "Max requests per minute. Client throttles to stay under this.",
+        "name": "rate_limit_rpm",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Column / response field that drives incremental ingestion (the watermark column). Empty = full pull each run.",
+        "name": "incremental_field",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "$.data",
+        "description": "JSONPath to the rows array within the response payload.",
+        "name": "response_json_path",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 3,
+        "description": "Bounded retries on 5xx / network error before failing the task.",
+        "name": "retry_count",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 60,
+        "description": "Per-request timeout.",
+        "name": "timeout_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "api_ingest",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Pull data from REST APIs with pagination and auth"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "BulkBackfill",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Loads a large volume of historical data in one go -- for example, importing three years of transactions when setting up a new pipeline. Runs in parallel chunks so it finishes in hours instead of days.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0BULK00001",
+    "inputPorts": [],
+    "name": "Bulk Backfill",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Backfilled historical data",
+        "name": "backfill_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "JDBC SELECT to source rows. Should reference the date column for predicate pushdown.",
+        "name": "source_query",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "description": "First date of the backfill window. Accepts ISO date or PULSE mnemonic (e.g., BOM-12, BOY-1, 2024-01-01).",
+        "name": "date_range_start",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "description": "Last date of the backfill window. Accepts ISO date or PULSE mnemonic (e.g., EOM-1, T-1, EOQ).",
+        "name": "date_range_end",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": 100000,
+        "description": "Rows per JDBC fetch chunk. Tune to source row size.",
+        "name": "chunk_size",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 31,
+        "description": "Calendar days per processing chunk. Smaller = finer-grained idempotency, more roundtrips. Default ~1 month is balanced.",
+        "name": "chunk_days",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 4,
+        "description": "JDBC partition count for parallel reads.",
+        "name": "parallelism",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "US-FED",
+        "description": "Holiday calendar for business-day mnemonic resolution.",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "description": "Months between fiscal year start and calendar year start.",
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "bulk_backfill",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Historical backfill over a date range"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "CDCIngestion",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Watches a database for changes (new rows, updates, deletes) and streams only the changes into your data lake. Like having a live feed of everything happening in the source system without copying the whole database every time.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0CDC000001",
+    "inputPorts": [],
+    "name": "Change Data Capture Ingestion",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Change events with before/after values",
+        "name": "cdc_stream"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "source_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "name": "tables",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "name": "primary_key",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": "debezium",
+        "name": "cdc_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Required when cdc_mode=incremental_poll",
+        "name": "incremental_column",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "watermark_column",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": true,
+        "name": "initial_snapshot",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": "soft_delete",
+        "name": "delete_handling",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "name": "ordering_field",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "cdc_ingest",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "True CDC via Debezium or incremental polling fallback"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "FileIngestion",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Picks up data files (CSV, JSON, Parquet, Excel) from a folder or cloud storage bucket and loads them into your data lake. Handles large files in batches and organizes them by date so nothing gets lost.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0FILE00001",
+    "inputPorts": [],
+    "name": "File Ingestion",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Raw ingested data in the data lake",
+        "name": "raw_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Fields inherited from the linked connector instance. Read-only at this surface; configure on the connector. Typically: bucket, path_prefix, auth, region.",
+        "name": "_inherited_from_connector",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Filename pattern at the connector path. With pattern_kind=template, use {date} placeholder (e.g., loan_master_{date}.csv). With glob, shell wildcards. With regex, Java regex.",
+        "name": "filename_pattern",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "template",
+        "name": "pattern_kind",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "yyyyMMdd",
+        "description": "Java date format for {date} substitution when pattern_kind=template.",
+        "name": "date_format",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "default": "RUN_DATE",
+        "description": "Date for {date} substitution. PULSE mnemonic (PBD = previous business day, RUN_DATE = today, T-1 = yesterday) or ISO date.",
+        "name": "date_value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": ",",
+        "description": "CSV delimiter; ignored for non-CSV formats.",
+        "name": "delimiter",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": true,
+        "description": "Skip the header row from the file.",
+        "name": "has_header",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Bronze partition columns (typically [\"ds\"]).",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": 0,
+        "description": "Minimum file size in bytes to accept; 0 disables. Guards against partial uploads.",
+        "name": "expected_size_min",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "US-FED",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "file_ingest",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Ingest files from S3, GCS, SFTP, or local filesystem"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "SnapshotIngestion",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Takes a complete picture of a data source at a point in time -- like a photograph of the entire table. Useful for systems that do not track changes, so you compare snapshots to figure out what changed.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0SNAP00001",
+    "inputPorts": [],
+    "name": "Snapshot Ingestion",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Full point-in-time snapshot of source",
+        "name": "snapshot_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Inherited from connector",
+        "name": "source_table",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "daily",
+        "name": "snapshot_frequency",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "name": "compare_key",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "snapshot_ingest",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Full-table snapshot from JDBC sources without CDC"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "pyspark_job"
+    ],
+    "blueprintKey": "StreamIngestion",
+    "category": "INGESTION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "ingestion",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Listens to a real-time event stream (like Kafka or a message queue) and continuously captures events as they happen. Perfect for systems that push data rather than wait to be asked.",
+    "emitStrategy": "generate",
+    "id": "01JBP0INGESTION0STREAM001",
+    "inputPorts": [],
+    "name": "Stream Ingestion",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Micro-batched stream events",
+        "name": "stream_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Inherited from connector",
+        "name": "stream_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Inherited from connector",
+        "name": "topic",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Inherited from connector",
+        "name": "consumer_group",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 60,
+        "name": "batch_window_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "json",
+        "name": "deserialization_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "name": "starting_offsets",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "bronze",
+        "description": "Medallion layer of the table this blueprint produces. Ingestion blueprints typically land at bronze; agent should not change without explicit user direction.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. Legal options depend on (storage_backend, lake_layer): DPC supports delta|iceberg_external|parquet; GCP non-gold supports delta|iceberg_external|iceberg_bq_managed; GCP gold MUST be bq_native (locked rule, DB-enforced).",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "stream_ingest",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Consume from Kafka, Kinesis, or PubSub streams"
+    },
+    "validLayers": [
+      "bronze"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "AggregateMaterialization",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Pre-computes summary tables (totals, averages, counts by group) so dashboards load instantly instead of crunching millions of rows every time someone opens a report.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0AGGMT00001",
+    "inputPorts": [
+      {
+        "description": "Detailed source data to aggregate",
+        "name": "detail_data"
+      }
+    ],
+    "name": "Aggregate Materialization",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Pre-computed summary table",
+        "name": "aggregate_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "group_by",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "description": "[{measure, aggregation_function}]",
+        "name": "aggregations",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "default": "incremental",
+        "name": "refresh_strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "aggregate",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "Pre-aggregated summary table for dashboards"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "FactBuild",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Builds a fact table -- the core of your analytics. Combines transaction data with dimension keys to create a table optimized for answering business questions like \"how much did we sell by region last quarter?\"",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0FACT000001",
+    "inputPorts": [
+      {
+        "description": "Source transaction/event data",
+        "name": "transaction_data"
+      },
+      {
+        "description": "Dimension tables for key lookups",
+        "name": "dimension_refs"
+      }
+    ],
+    "name": "Fact Table Build",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Analytical fact table",
+        "name": "fact_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "What one row represents",
+        "name": "grain",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "measures",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "name": "dimension_keys",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": true,
+        "name": "incremental",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "time_column",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "fact",
+    "supportsReuse": true,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "Build a fact table with measures and dimension keys"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "FeatureTablePublish",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Prepares and publishes a feature table for machine learning models. Computes features from raw data, handles point-in-time correctness (no data leakage), and outputs in a format ML frameworks can consume directly.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0FEAT000001",
+    "inputPorts": [
+      {
+        "description": "Raw data for feature computation",
+        "name": "source_data"
+      }
+    ],
+    "name": "Feature Table Publish (ML-Ready)",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "ML-ready feature table",
+        "name": "feature_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "entity_key",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Feature definitions",
+        "name": "features",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "name": "point_in_time_column",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "delta",
+        "name": "output_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "feature",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "ML feature table with entity key and point-in-time features"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "IncrementalMerge",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Updates an existing table with only the new and changed records -- instead of rebuilding the whole thing every time. Like updating a phone book with just the new listings rather than reprinting the entire book.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0INCMG00001",
+    "inputPorts": [
+      {
+        "description": "New/changed records to merge",
+        "name": "incremental_data"
+      }
+    ],
+    "name": "Incremental Merge",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Updated target table",
+        "name": "merged_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "merge_key",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": "upsert",
+        "name": "merge_strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": false,
+        "name": "soft_delete",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "late_data_policy",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "late_threshold_hours",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "incremental",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "Process only new/changed records since last run"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "ReferenceDataPublish",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Takes curated reference data (country codes, product catalogs, exchange rates) and publishes it as a shared, versioned dataset that other pipelines can depend on. Like maintaining a company-wide dictionary.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0REFDP00001",
+    "inputPorts": [
+      {
+        "description": "Curated reference data",
+        "name": "reference_source"
+      }
+    ],
+    "name": "Reference Data Publish",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Published, versioned reference dataset",
+        "name": "published_reference"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "reference_type",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "on_change",
+        "name": "publish_frequency",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": true,
+        "name": "versioned",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "reference",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "Publish versioned reference/lookup data"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_snapshot"
+    ],
+    "blueprintKey": "SCD2Dimension",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Builds a dimension table that keeps the full history of changes -- so you can see what a customer's address was last year, not just today. Every change creates a new version of the record with date ranges.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0SCD200001",
+    "inputPorts": [
+      {
+        "description": "Current state of dimension data",
+        "name": "source_data"
+      }
+    ],
+    "name": "SCD2 Dimension",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Slowly changing dimension with full history",
+        "name": "scd2_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "business_key",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns that trigger a new version when changed",
+        "name": "tracked_columns",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": "effective_from",
+        "name": "effective_date_column",
+        "type": "string"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "history_emitter"
+    },
+    "status": "active",
+    "subcategory": "history",
+    "supportsReuse": true,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "snapshots",
+      "when_to_use": "Track full history for mutable master data (employees, customers) via SCD2 snapshot. NO data quality rules \u2014 for DQ use DQValidator (GX)."
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_snapshot"
+    ],
+    "blueprintKey": "SnapshotModel",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Captures the complete state of a table at regular intervals (daily, weekly) and stores each snapshot. Lets you answer \"what did the data look like on any given date?\" -- essential for auditing and trend analysis.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0SNAPM00001",
+    "inputPorts": [
+      {
+        "description": "Current state data to snapshot",
+        "name": "source_data"
+      }
+    ],
+    "name": "Snapshot Model",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Point-in-time snapshots",
+        "name": "snapshot_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": "daily",
+        "name": "snapshot_frequency",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 365,
+        "name": "retention_days",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "name": "unique_key",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": "timestamp",
+        "name": "strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "snapshot",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "snapshots",
+      "when_to_use": "Point-in-time snapshot for periodic state capture"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "WideDenormalizedMart",
+    "category": "MODELING",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "modeling",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Builds a wide, flat table that combines data from many sources into one easy-to-query table. Optimized for dashboards and BI tools -- analysts can get answers without writing complex joins.",
+    "emitStrategy": "generate",
+    "id": "01JBP0MODELING0WDMART0001",
+    "inputPorts": [
+      {
+        "description": "Core fact table",
+        "name": "fact_data"
+      },
+      {
+        "description": "Dimension tables to denormalize",
+        "name": "dimension_data"
+      }
+    ],
+    "name": "Wide Denormalized Mart",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Wide denormalized mart for BI consumption",
+        "name": "mart_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "fact_source",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "dimension_joins",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "description": "Optional pre-computed aggregations",
+        "name": "pre_aggregations",
+        "type": "object[]"
+      },
+      {
+        "description": "Columns to partition by",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to cluster by (BigQuery)",
+        "name": "cluster_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "gold",
+        "description": "Medallion layer of the table this blueprint produces. Modeling blueprints typically land at gold.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. GCP gold MUST be bq_native (locked rule, DB-enforced); DPC gold supports delta|iceberg_external|parquet.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "warn",
+      "effect_type": "gold_publish"
+    },
+    "status": "active",
+    "subcategory": "serving_mart",
+    "supportsReuse": true,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "marts",
+      "when_to_use": "Wide denormalized table joining facts with dimensions for BI"
+    },
+    "validLayers": [
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_policy"
+    ],
+    "blueprintKey": "AdvanceTimeDimension",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_policy",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.314716Z",
+    "deferred": false,
+    "description": "Advances the business as-of date/time of a dataset to the next interval based on its configured time grain. Place this at the end of a pipeline to automatically move the dataset forward after successful processing. Can also advance the domain-level business date.",
+    "emitStrategy": "config_only",
+    "id": "01JBPADVANCETIME00000001",
+    "inputPorts": [
+      {
+        "description": "Connect to the last processing step so advance happens after data is ready",
+        "name": "trigger",
+        "type": "any"
+      }
+    ],
+    "name": "Advance Time Dimension",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Advance result with previous and new as-of values",
+        "name": "status",
+        "type": "status"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "dataset_name",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": false,
+        "name": "advance_domain",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "notes",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "policy",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Advance dataset or domain business date after successful run"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_policy"
+    ],
+    "blueprintKey": "BackfillAndReplay",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_policy",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Re-runs your pipeline for a specific date range in the past. Useful when you fix a bug and need to reprocess last month's data, or when you add a new pipeline and need to catch up on historical data.",
+    "emitStrategy": "config_only",
+    "id": "01JBP0ORCH0BACKFILL000001",
+    "inputPorts": [],
+    "name": "Backfill & Replay",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "accepts_mnemonic": true,
+        "description": "First date of the replay window. Accepts ISO date (YYYY-MM-DD) or PULSE mnemonic (e.g., BOM-12, BOY, T-365). Resolved at runtime against PULSE_BUSINESS_DATE.",
+        "name": "start_date",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "description": "Last date of the replay window. Accepts ISO date or PULSE mnemonic (e.g., EOM-1, T-1, EOQ).",
+        "name": "end_date",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": 1,
+        "description": "Concurrent chunks. Higher values speed replay but increase load on the source.",
+        "name": "parallelism",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "description": "If true, delete existing rows in the window before re-ingesting. If false (default), use replaceWhere idempotency.",
+        "name": "clear_existing",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": "US-FED",
+        "description": "Holiday calendar for business-day mnemonic resolution. Inherited from domain.business_date_config when not set.",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "description": "Months between fiscal year start and calendar year start (0 = aligned, 9 = US fiscal Oct 1 start). Inherited from domain.business_date_config when not set.",
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": true,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "policy",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Configure historical backfill with date range and parallelism"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_policy"
+    ],
+    "blueprintKey": "CostMonitoringHook",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_policy",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Tracks how much compute and storage each pipeline run costs. Alerts your team when spending exceeds budgets or when a pipeline suddenly gets much more expensive -- prevents surprise cloud bills.",
+    "emitStrategy": "config_only",
+    "id": "01JBP0ORCH0COSTMON000001",
+    "inputPorts": [],
+    "name": "Cost Monitoring Hook",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "name": "budget_limit_daily",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "default": 80,
+        "name": "alert_threshold_percent",
+        "required": false,
+        "type": "number"
+      },
+      {
+        "default": true,
+        "name": "track_compute",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": true,
+        "name": "track_storage",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": true,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "policy",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Set daily budget limits and compute/storage tracking"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_sensor"
+    ],
+    "blueprintKey": "DatabaseReadinessSensor",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_sensor",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.389368Z",
+    "deferred": false,
+    "description": "Runs a polling SQL check until the source or dependency is ready.",
+    "emitStrategy": "runtime_only",
+    "id": "01JBP0ORCH0DBSENSOR00001",
+    "inputPorts": [],
+    "name": "Database Readiness Sensor",
+    "optionalParamsSchema": {
+      "connection_id": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "mode": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "poke_interval_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "timeout_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "outputPorts": [
+      {
+        "description": "Proceed when database readiness check passes",
+        "name": "ready_signal"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Probe SQL. May contain {date} placeholder (substituted via date_value+date_format) for date-relative readiness checks. Example: SELECT COUNT(*) FROM landing WHERE ds = '{date}'.",
+        "name": "sql",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "pulse_sql_default",
+        "description": "Airflow connection_id pointing at the source DB.",
+        "name": "connection_id",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "yyyy-MM-dd",
+        "description": "Java date format for {date} substitution in sql.",
+        "name": "date_format",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "default": "RUN_DATE",
+        "description": "Date for {date} substitution. PULSE mnemonic or ISO date.",
+        "name": "date_value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 1,
+        "description": "Minimum row count to consider source ready. Default 1 (any rows).",
+        "name": "expected_count_min",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Optional ceiling. Use to detect runaway loads (e.g., 10x normal volume signals upstream defect).",
+        "name": "expected_count_max",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 300,
+        "name": "poke_interval_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 14400,
+        "name": "timeout_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "reschedule",
+        "name": "mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "US-FED",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {
+      "sql": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "readiness_gate"
+    },
+    "status": "active",
+    "subcategory": "sensing",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "sql_sensor"
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "phase": "gate4",
+      "purpose": "explicit_sensing"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_sensor"
+    ],
+    "blueprintKey": "DatasetDependencySensor",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_sensor",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.389368Z",
+    "deferred": false,
+    "description": "Waits for another DAG or task dependency before continuing.",
+    "emitStrategy": "runtime_only",
+    "id": "01JBP0ORCH0DAGSENSOR0001",
+    "inputPorts": [],
+    "name": "Dataset Dependency Sensor",
+    "optionalParamsSchema": {
+      "allowed_states": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "poke_interval_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "timeout_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "upstream_task_id": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "outputPorts": [
+      {
+        "description": "Proceed when upstream dependency is satisfied",
+        "name": "ready_signal"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "upstream_dag_id",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "name": "upstream_task_id",
+        "type": "string"
+      },
+      {
+        "default": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "name": "allowed_states",
+        "type": "string[]"
+      },
+      {
+        "default": 300,
+        "name": "poke_interval_seconds",
+        "type": "integer"
+      },
+      {
+        "default": 3600,
+        "name": "timeout_seconds",
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {
+      "upstream_dag_id": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "dependency_gate"
+    },
+    "status": "active",
+    "subcategory": "sensing",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "dependency_sensor"
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "phase": "gate4",
+      "purpose": "explicit_sensing"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_sensor"
+    ],
+    "blueprintKey": "ExternalEventSensor",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_sensor",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.389368Z",
+    "deferred": false,
+    "description": "Polls an HTTP endpoint or event source until an external trigger is observed.",
+    "emitStrategy": "runtime_only",
+    "id": "01JBP0ORCH0EVENTSENSOR01",
+    "inputPorts": [],
+    "name": "External Event Sensor",
+    "optionalParamsSchema": {
+      "poke_interval_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "success_status_code": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "timeout_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "outputPorts": [
+      {
+        "description": "Proceed when external event is observed",
+        "name": "ready_signal"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "event_url",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": 200,
+        "name": "success_status_code",
+        "type": "integer"
+      },
+      {
+        "default": 300,
+        "name": "poke_interval_seconds",
+        "type": "integer"
+      },
+      {
+        "default": 3600,
+        "name": "timeout_seconds",
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {
+      "event_url": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "event_gate"
+    },
+    "status": "active",
+    "subcategory": "sensing",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "event_sensor"
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "phase": "gate4",
+      "purpose": "explicit_sensing"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_sensor"
+    ],
+    "blueprintKey": "FileArrivalSensor",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_sensor",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.389368Z",
+    "deferred": false,
+    "description": "Waits for a file path or prefix to become available before continuing the pipeline.",
+    "emitStrategy": "runtime_only",
+    "id": "01JBP0ORCH0FILESENSOR001",
+    "inputPorts": [],
+    "name": "File Arrival Sensor",
+    "optionalParamsSchema": {
+      "mode": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "poke_interval_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "timeout_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "outputPorts": [
+      {
+        "description": "Proceed when file arrival is confirmed",
+        "name": "ready_signal"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Object-storage backend hosting the file. s3 covers MinIO and AWS S3. gcs covers Google Cloud Storage. sftp covers SFTP servers (no bucket; the bucket field becomes the SFTP host).",
+        "name": "storage_kind",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "description": "Bucket name (S3/GCS) or SFTP host. PULSE convention: {tenant_slug}_{domain_slug} (e.g., home-lending_servicing). Derived from tenant + domain context if left blank.",
+        "name": "bucket",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Path prefix under the bucket (e.g., inbound/msp/). Trailing slash optional; PULSE normalizes.",
+        "name": "path_prefix",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Filename pattern. For pattern_kind=template, use {date} as the date placeholder (e.g., loan_master_{date}.csv). For glob, use shell-style wildcards (e.g., *.csv). For regex, a Java regex (e.g., ^loan_master_\\\\d{8}\\\\.csv$).",
+        "name": "filename_pattern",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "template",
+        "description": "How to interpret filename_pattern. template substitutes {date} via date_value+date_format. glob matches shell-style wildcards. regex matches a Java regular expression.",
+        "name": "pattern_kind",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "yyyyMMdd",
+        "description": "Java date format used to substitute {date} in filename_pattern when pattern_kind=template. Common values: yyyyMMdd, yyyy-MM-dd, MMddyyyy.",
+        "name": "date_format",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "default": "RUN_DATE",
+        "description": "Date used to substitute {date} in filename_pattern. PULSE mnemonic (PBD = previous business day; RUN_DATE = today; T-1 = yesterday; BOM = beginning of month) or ISO date. Resolved at task execution time against PULSE_BUSINESS_DATE.",
+        "name": "date_value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 0,
+        "description": "Minimum file size in bytes to count as arrived. 0 disables the check. Use to guard against partial uploads.",
+        "name": "expected_size_min",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Optional stale-file guard. If the matched file is older than this many hours, treat as not-arrived.",
+        "name": "expected_max_age_hours",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "description": "If true, accept any matching file (glob-like multi-file landing). If false (default), succeed when exactly one file matches.",
+        "name": "multiple_files_mode",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": false,
+        "description": "If true, sensor timeout marks the task SKIPPED (not FAILED), allowing the rest of the DAG to run. Almost always false for ingestion sensors.",
+        "name": "soft_fail",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": 300,
+        "description": "Seconds between checks. 60 for sub-minute landings, 300 for minute-scale, 3600 for hour-scale.",
+        "name": "poke_interval_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 14400,
+        "description": "Hard fail after this many seconds. Default 4h.",
+        "name": "timeout_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "reschedule",
+        "description": "reschedule frees the worker slot between checks (recommended for long waits). poke holds the slot (for fast polling).",
+        "name": "mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "US-FED",
+        "description": "Holiday calendar for resolving date_value mnemonics like PBD.",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "description": "Months between fiscal year and calendar year. Used by fiscal mnemonics (BOFY, EOFQ, etc.) in date_value.",
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {
+      "path": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "storage_kind": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "readiness_gate"
+    },
+    "status": "active",
+    "subcategory": "sensing",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "sensor"
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "phase": "gate4",
+      "purpose": "explicit_sensing"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_sensor"
+    ],
+    "blueprintKey": "ObjectStoreKeySensor",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_sensor",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.389368Z",
+    "deferred": false,
+    "description": "Waits for an object-store key or prefix to become available before continuing the pipeline.",
+    "emitStrategy": "runtime_only",
+    "id": "01JBP0ORCH0OBJSENSOR0001",
+    "inputPorts": [],
+    "name": "Object Store Key Sensor",
+    "optionalParamsSchema": {
+      "mode": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "poke_interval_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "timeout_seconds": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "wildcard_match": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "outputPorts": [
+      {
+        "description": "Proceed when object-store readiness is confirmed",
+        "name": "ready_signal"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": "s3",
+        "description": "Object-storage backend (s3 also covers MinIO).",
+        "name": "storage_kind",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Bucket name. PULSE convention: {tenant_slug}_{domain_slug}.",
+        "name": "bucket",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Path prefix under the bucket. Optional for top-level keys.",
+        "name": "key_prefix",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Object key pattern. With pattern_kind=template, use {date} for date substitution (e.g., daily_export_{date}/_SUCCESS). With glob, shell wildcards. With regex, Java regex.",
+        "name": "key_pattern",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "default": "template",
+        "description": "Interpretation of key_pattern.",
+        "name": "pattern_kind",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "yyyyMMdd",
+        "description": "Java date format for {date} substitution.",
+        "name": "date_format",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "accepts_mnemonic": true,
+        "default": "RUN_DATE",
+        "description": "Date for {date} substitution. PULSE mnemonic or ISO date.",
+        "name": "date_value",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 0,
+        "description": "Minimum object size in bytes.",
+        "name": "expected_size_min",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "description": "If true, succeed when ANY matching object exists. If false, succeed when exactly one matches.",
+        "name": "multiple_files_mode",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": false,
+        "description": "On timeout: SKIPPED (true) vs FAILED (false).",
+        "name": "soft_fail",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": 300,
+        "name": "poke_interval_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": 14400,
+        "name": "timeout_seconds",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": "reschedule",
+        "name": "mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": "US-FED",
+        "description": "Holiday calendar for date_value mnemonic resolution.",
+        "name": "holiday_calendar_id",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": 0,
+        "description": "Fiscal year offset for mnemonic resolution.",
+        "name": "fiscal_offset_months",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {
+      "bucket": {
+        "empty": false,
+        "traversableAgain": true
+      },
+      "object_key": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "runtimeRequirements": {},
+    "schemaBehavior": {
+      "conflict_policy": "block",
+      "effect_type": "readiness_gate"
+    },
+    "status": "active",
+    "subcategory": "sensing",
+    "supportsReuse": false,
+    "uiSchema": {
+      "editor": "sensor"
+    },
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "phase": "gate4",
+      "purpose": "explicit_sensing"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_policy"
+    ],
+    "blueprintKey": "RollbackOnFailure",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_policy",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Automatically reverts to the last working version if a deployment fails or causes errors. Like an undo button for deployments -- your pipeline keeps running on the known-good version while you fix the problem.",
+    "emitStrategy": "config_only",
+    "id": "01JBP0ORCH0ROLLBACK00001",
+    "inputPorts": [],
+    "name": "Rollback on Failure",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "default": "deploy_failure",
+        "name": "rollback_trigger",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "default": true,
+        "name": "keep_failed_artifacts",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": true,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "policy",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Define rollback behavior on deploy or health-check failure"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "airflow_policy"
+    ],
+    "blueprintKey": "ScheduleAndTriggers",
+    "category": "ORCHESTRATION",
+    "codegenHints": {
+      "example_keys": {
+        "empty": true,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "orchestration_policy",
+    "computeBackend": "airflow",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Defines when and how your pipeline runs -- on a schedule (every day at 6am), on a trigger (when new data arrives), or on demand. The control panel for your pipeline's timing.",
+    "emitStrategy": "config_only",
+    "id": "01JBP0ORCH0SCHEDULE000001",
+    "inputPorts": [],
+    "name": "Schedule & Triggers",
+    "optionalParamsSchema": {},
+    "outputPorts": [],
+    "paramsSchema": [
+      {
+        "name": "schedule_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "description": "Standard 5-field cron (e.g., 0 6 * * 1-5 = 6am Mon-Fri). Required when schedule_type=cron.",
+        "name": "cron_expression",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Dataset whose update triggers this pipeline. Required when schedule_type=event.",
+        "name": "trigger_dataset",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": "UTC",
+        "description": "IANA timezone for the cron expression (e.g., America/New_York).",
+        "name": "timezone",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 1,
+        "description": "Max concurrent DAG runs. 1 prevents overlap (recommended for SCD2 / ordering-sensitive pipelines).",
+        "name": "max_active_runs",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "description": "If true, on first deploy Airflow schedules a run for every interval from start_date to today. DEFAULT FALSE \u2014 only enable when historical backfill is explicitly desired (per #28 locked rule).",
+        "name": "catchup_enabled",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": false,
+        "description": "If true, today's run waits for yesterday's run to succeed. Use for incremental pipelines where today's output depends on yesterday's state.",
+        "name": "depends_on_past",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": 3,
+        "description": "Per-task retries before the DAG fails.",
+        "name": "retry_count",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": true,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "policy",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "when_to_use": "Define pipeline schedule: cron, event-triggered, or manual"
+    },
+    "validLayers": [
+      "control_plane"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "GenericAggregate",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.219257Z",
+    "deferred": false,
+    "description": "Group data by specified columns and compute aggregate functions (sum, count, avg, min, max, count_distinct).",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0GENERICAG0001",
+    "inputPorts": [
+      {
+        "description": "Input dataset to aggregate",
+        "name": "data_input"
+      }
+    ],
+    "name": "Aggregate",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Aggregated dataset result",
+        "name": "aggregated_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "name": "group_by_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "[{column, function, alias}] where function is COUNT/SUM/AVG/MAX/MIN",
+        "name": "aggregations",
+        "required": false,
+        "type": "object[]"
+      },
+      {
+        "name": "having_clause",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Window function definitions",
+        "name": "window_functions",
+        "required": false,
+        "schema": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "type": "object[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "aggregate",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "intermediate",
+      "when_to_use": "Aggregate data with GROUP BY, aggregations, and optional window functions"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "BronzeToSilverCleaning",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Takes raw, messy data and cleans it up: fixes data types, removes junk rows, standardizes formats (like dates and phone numbers), and produces a reliable, query-ready version of the data.",
+    "emitStrategy": "generate",
+    "id": "01JBP0TRANSFORM0B2S000001",
+    "inputPorts": [
+      {
+        "description": "Raw data from ingestion",
+        "name": "raw_input"
+      }
+    ],
+    "name": "Bronze-to-Silver Cleaning",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Cleaned, typed, deduplicated data",
+        "name": "cleaned_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Map of {column: target_type} casts. Example: {\"created_at\": \"timestamp\", \"amount\": \"decimal(18,2)\"}.",
+        "name": "type_coercions",
+        "required": false,
+        "type": "object"
+      },
+      {
+        "description": "String columns to trim leading/trailing whitespace.",
+        "name": "columns_to_trim",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Map of {old_column_name: new_column_name}. Renames must be reflected in downstream contracts.",
+        "name": "rename_map",
+        "required": false,
+        "type": "object"
+      },
+      {
+        "description": "Map of {column: action} where action is \"keep\" / \"coerce_to:<value>\" / \"drop_row\". Default: keep.",
+        "name": "null_handling",
+        "required": false,
+        "type": "object"
+      },
+      {
+        "description": "Optional dedup-on-key (uses ROW_NUMBER over the key, keeps latest). For full-fledged dedup use the DedupeAndMerge blueprint.",
+        "name": "dedup_key",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Columns to omit from silver output.",
+        "name": "drop_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "description": "Silver partition columns. Default partitions by ds (the bronze ingest date).",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "cleaning",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "staging",
+      "when_to_use": "Transform raw data: type casts, trims, null coercion, dedup. NO data quality rules \u2014 for DQ use DQValidator (GX)."
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "JsonStruct",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.230861Z",
+    "deferred": false,
+    "description": "Combine flat columns into nested JSON or struct columns. Group related columns into named structs or build JSON strings for downstream consumption.",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0JSONSTRUCT001",
+    "inputPorts": [
+      {
+        "description": "Input dataset with flat columns",
+        "name": "data_input"
+      }
+    ],
+    "name": "Build JSON/Struct",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Dataset with nested struct/JSON columns",
+        "name": "struct_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": "struct",
+        "name": "output_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "[{struct_name, fields: [{source_column, as}]}]",
+        "name": "mappings",
+        "required": false,
+        "type": "object[]"
+      },
+      {
+        "default": false,
+        "name": "drop_source_columns",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "name": "passthrough_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "struct",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "intermediate",
+      "when_to_use": "Build nested struct or JSON output from flat columns"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "DedupeAndMerge",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Finds and removes duplicate records -- like when the same customer appears three times with slightly different spellings. Merges the best information from each duplicate into one golden record.",
+    "emitStrategy": "generate",
+    "id": "01JBP0TRANSFORM0DEDUP0001",
+    "inputPorts": [
+      {
+        "description": "Data potentially containing duplicates",
+        "name": "input_data"
+      }
+    ],
+    "name": "Dedupe & Merge",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Deduplicated and merged records",
+        "name": "deduped_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Business-key columns that define the dedup partition. ROW_NUMBER partitions by these.",
+        "name": "match_keys",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "description": "Ordered ranking columns: [{column, direction}]. Direction = \"asc\" | \"desc\". REQUIRED to be deterministic \u2014 include a tiebreaker (typically the surrogate key) at the end so re-runs produce identical output.",
+        "name": "order_by_columns",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "default": "exact",
+        "description": "exact = string equality. fuzzy = soundex / Levenshtein (for name dedup). composite = AND across multiple match_keys.",
+        "name": "match_strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Optional explicit priority column when ordering ties. If unset, the last column of order_by_columns acts as the tiebreaker.",
+        "name": "merge_priority",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "description": "Silver partition columns.",
+        "name": "partition_by",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": "row_number",
+        "description": "row_number = portable Spark idiom. qualify = compact dialect-specific (Snowflake/Spark). distinct_on = Postgres-only.",
+        "name": "dedup_method",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "dedup",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "staging",
+      "when_to_use": "Deduplicate records by match key with survivorship rules"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "GenericFilter",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.219257Z",
+    "deferred": false,
+    "description": "Filter rows using SQL WHERE conditions. Supports the built-in SQL expression builder or raw SQL.",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0GENERICFL0001",
+    "inputPorts": [
+      {
+        "description": "Input dataset to filter",
+        "name": "data_input"
+      }
+    ],
+    "name": "Filter",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Filtered dataset result",
+        "name": "filtered_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": "visual",
+        "name": "filter_mode",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Visual filter conditions: [{column, operator, value}]",
+        "name": "conditions",
+        "required": false,
+        "type": "object[]"
+      },
+      {
+        "default": "1 = 1",
+        "description": "Raw SQL WHERE clause when filter_mode=sql",
+        "name": "raw_sql",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "filter",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "intermediate",
+      "when_to_use": "Filter rows with visual conditions or raw SQL WHERE clause"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "JsonFlatten",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.230861Z",
+    "deferred": false,
+    "description": "Flatten nested JSON/struct columns into a flat tabular schema. Nested fields become dot-separated column names (e.g., address.city). Supports configurable depth, array explosion, and prefix options.",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0JSONFLAT00001",
+    "inputPorts": [
+      {
+        "description": "Input dataset with nested JSON/struct columns",
+        "name": "data_input"
+      }
+    ],
+    "name": "JSON Flatten",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Flattened tabular dataset",
+        "name": "flat_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "name": "source_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "default": "_",
+        "name": "separator",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "default": 3,
+        "name": "max_depth",
+        "required": false,
+        "type": "integer"
+      },
+      {
+        "default": false,
+        "name": "explode_arrays",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": false,
+        "name": "keep_original",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": "",
+        "name": "prefix",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "flatten",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "staging",
+      "when_to_use": "Flatten nested JSON/struct fields into tabular columns"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "GenericJoin",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.219257Z",
+    "deferred": false,
+    "description": "Join two or more datasets on specified keys. Supports inner, left, right, full outer, and cross joins.",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0GENERICJN0001",
+    "inputPorts": [
+      {
+        "description": "Left dataset for the join",
+        "name": "left_input"
+      },
+      {
+        "description": "Right dataset for the join",
+        "name": "right_input"
+      }
+    ],
+    "name": "Join",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Joined dataset result",
+        "name": "joined_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "default": "left",
+        "name": "join_type",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "description": "[{left_column, right_column}]",
+        "name": "join_keys",
+        "required": true,
+        "type": "object[]"
+      },
+      {
+        "name": "select_columns",
+        "required": false,
+        "type": "string[]"
+      },
+      {
+        "name": "alias_left",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "name": "alias_right",
+        "required": false,
+        "type": "string"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "join",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "intermediate",
+      "when_to_use": "Join two or more datasets on specified keys"
+    },
+    "validLayers": [
+      "silver",
+      "gold"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "PIIMasking",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Protects personal information (names, SSNs, email addresses) by masking or replacing it with tokens. The data remains useful for analytics but cannot be traced back to real people without special access.",
+    "emitStrategy": "generate",
+    "id": "01JBP0TRANSFORM0PII000001",
+    "inputPorts": [
+      {
+        "description": "Data containing PII",
+        "name": "sensitive_data"
+      }
+    ],
+    "name": "PII Masking & Tokenization",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Data with PII protected",
+        "name": "masked_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Columns containing PII",
+        "name": "columns_to_mask",
+        "required": true,
+        "type": "string[]"
+      },
+      {
+        "default": "hash",
+        "name": "masking_strategy",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": false,
+        "name": "preserve_format",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "default": "sha256",
+        "name": "hash_algorithm",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": false,
+        "type": "enum"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "masking",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "staging",
+      "when_to_use": "Mask PII columns via hash, redact, tokenize, or encrypt. NO data quality rules \u2014 for DQ use DQValidator (GX)."
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "GenericRouter",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.227282Z",
+    "deferred": false,
+    "description": "Route rows to different output ports based on SQL conditions. Each route defines a condition and a named output. Rows matching no condition go to the default output.",
+    "emitStrategy": "generate",
+    "id": "01JBP0XFRM0GENERICROUT01",
+    "inputPorts": [
+      {
+        "description": "Input dataset to route",
+        "name": "data_input"
+      }
+    ],
+    "name": "Router",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Rows that match no routing condition",
+        "name": "default_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "[{name, condition, description}]",
+        "name": "routes",
+        "required": false,
+        "type": "object[]"
+      },
+      {
+        "default": true,
+        "name": "include_default",
+        "required": false,
+        "type": "boolean"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "router",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "intermediate",
+      "when_to_use": "Route data to multiple outputs based on conditions"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  },
+  {
+    "artifactTypes": [
+      "dbt_model"
+    ],
+    "blueprintKey": "SchemaNormalization",
+    "category": "TRANSFORM",
+    "codegenHints": {
+      "example_keys": {
+        "empty": false,
+        "traversableAgain": true
+      }
+    },
+    "compositionRole": "transform",
+    "computeBackend": "spark",
+    "createdAt": "2026-04-26T02:53:24.125382Z",
+    "deferred": false,
+    "description": "Converts data from one format or structure to a standard one your organization uses. Like translating different languages into one common language so all your data speaks the same way.",
+    "emitStrategy": "generate",
+    "id": "01JBP0TRANSFORM0NORM00001",
+    "inputPorts": [
+      {
+        "description": "Data in its original format",
+        "name": "source_data"
+      }
+    ],
+    "name": "Schema Normalization",
+    "optionalParamsSchema": {},
+    "outputPorts": [
+      {
+        "description": "Data conforming to the target schema",
+        "name": "normalized_output"
+      }
+    ],
+    "paramsSchema": [
+      {
+        "description": "Reference to the target standard schema",
+        "name": "target_schema",
+        "required": true,
+        "type": "string"
+      },
+      {
+        "description": "Source-to-target field mapping",
+        "name": "mapping_rules",
+        "type": "object"
+      },
+      {
+        "default": false,
+        "name": "strict_mode",
+        "type": "boolean"
+      },
+      {
+        "description": "Pipeline-working-storage backend. Resolved at codegen and deploy time via storage_backends (tenant_id, environment, backend) lookup. Default inherits from pipeline.default_storage_backend when set.",
+        "name": "storage_backend",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "silver",
+        "description": "Medallion layer of the table this blueprint produces. Transform blueprints typically land at silver.",
+        "name": "lake_layer",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      },
+      {
+        "default": "delta",
+        "description": "Physical table format. See storage compatibility matrix; GCP gold MUST be bq_native.",
+        "name": "lake_format",
+        "options": {
+          "empty": false,
+          "traversableAgain": true
+        },
+        "required": true,
+        "type": "enum"
+      }
+    ],
+    "pipelineConfig": false,
+    "replacementBlueprintKey": null,
+    "requiredParamsSchema": {},
+    "runtimeRequirements": {},
+    "schemaBehavior": {},
+    "status": "active",
+    "subcategory": "conformance",
+    "supportsReuse": false,
+    "uiSchema": {},
+    "updatedAt": "2026-04-26T02:53:26.054261Z",
+    "usageGuidance": {
+      "dbt_layer": "staging",
+      "when_to_use": "Conform data to a target enterprise schema with mapping rules"
+    },
+    "validLayers": [
+      "silver"
+    ],
+    "version": "1.0.0"
+  }
+]

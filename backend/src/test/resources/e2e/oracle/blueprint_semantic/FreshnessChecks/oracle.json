@@ -1,0 +1,26 @@
+{
+  "blueprintKey": "FreshnessChecks",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "freshness-checks-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft FreshnessChecks semantic pack distinguishes recent, boundary, and stale POS loads so SLA-proof artifacts can be expanded without reopening pack ownership later.",
+  "recentInputPath": "input/positive/recent_batches.csv",
+  "boundaryInputPath": "input/edge/boundary_batches.csv",
+  "staleInputPath": "input/negative/stale_batches.csv",
+  "configPath": "input/expectations/freshness-config.json",
+  "expectedReportPath": "expected/expected-freshness-report.json",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedStaleBatchIds": [
+    "B200"
+  ],
+  "checksums": {
+    "manifestSha256": "f7afb091c38238b111fe8833433c6313ee6e3184550082351819218f99196545",
+    "comparatorConfigSha256": "ea03d803aec7e8215c6e76b5171711f5ea873456f2f66fb238cfc5bfdd020af9",
+    "input_edge_boundary_batches_csv_sha256": "d11ca539e8303e203e60a8eab66a2da3c98756418ca2a5d80147db59bc9191ec",
+    "input_expectations_freshness-config_json_sha256": "fbfcba0664cb7da3a7f8484e41292c3857e3561c03a1578b27afadbe0ce346ce",
+    "input_negative_stale_batches_csv_sha256": "1c4f42e783ff54843ccbdf080ab510b2a68b818fc21a5fb0dc20b9efd32c78de",
+    "input_positive_recent_batches_csv_sha256": "0a4b66306df0ea86b11d74ff219a7a9b2ea073e16bff2fa15740d5969fe76dd7",
+    "expected_expected-freshness-report_json_sha256": "32e7a37e58a2d2037a9c6056b2b8bc845e830e6024dfb1b68d1af416f8fb4e16",
+    "expected_expected-metrics_json_sha256": "a3311b01a02501d58a07894acdae63db74cc4c21ef16dd9dbbfacad1bb90b6bf"
+  }
+}

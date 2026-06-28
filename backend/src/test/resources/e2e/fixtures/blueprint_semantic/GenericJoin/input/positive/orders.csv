@@ -1,0 +1,4 @@
+order_id,customer_id,order_total,currency
+O100,C001,120.50,USD
+O101,C002,75.00,USD
+O102,C999,20.00,USD

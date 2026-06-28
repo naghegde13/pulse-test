@@ -1,0 +1,3 @@
+event_id,device_id,event_ts,temperature_c,vibration,battery_pct,site_id
+T200,D1,2024-04-02T00:00:00Z,42.0,0.20,90,S1
+T201,D1,2024-04-02T01:00:00Z,95.0,0.95,89,S1

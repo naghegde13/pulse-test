@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "DedupeAndMerge",
+  "finalRowCount": 3,
+  "quarantineIds": ["", "P300"],
+  "duplicateInputCount": 3,
+  "verdict": "draft-pass"
+}

@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "AggregateMaterialization",
+  "scenarioId": "aggregate-materialization-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "seller KPI rows are materialized at seller_id + business_date grain",
+    "gross revenue, refunds, net revenue, units, and order count are exact",
+    "late refund correction recomputes net revenue",
+    "zero-sales day is preserved",
+    "invalid negative gross amount is rejected"
+  ],
+  "expectedArtifacts": ["seller-kpis", "aggregate-rejects", "aggregate-report", "aggregate-metrics", "materialization-proof"]
+}

@@ -1,0 +1,9 @@
+{
+  "type": "aggregate_exact",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/anomaly-events.csv",
+  "sortKeys": [
+    "event_id"
+  ]
+}

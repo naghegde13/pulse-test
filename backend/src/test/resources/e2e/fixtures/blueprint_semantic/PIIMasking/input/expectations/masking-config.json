@@ -1,0 +1,9 @@
+{
+  "strategy": "deterministic_sha256_prefix",
+  "piiColumns": ["ssn", "email", "phone"],
+  "rejectRules": [
+    "raw email must contain @",
+    "raw phone must normalize to 10 digits"
+  ],
+  "leakScanTerms": ["123-45-6789", "ada@example.com", "212-555-0100", "987-65-4321", "grace@example.com", "5558675309"]
+}

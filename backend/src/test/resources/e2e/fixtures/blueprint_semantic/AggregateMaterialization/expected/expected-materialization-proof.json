@@ -1,0 +1,6 @@
+{
+  "materialization": "table",
+  "grain": ["seller_id", "business_date"],
+  "lateRefundApplied": true,
+  "zeroSalesDayPreserved": true
+}

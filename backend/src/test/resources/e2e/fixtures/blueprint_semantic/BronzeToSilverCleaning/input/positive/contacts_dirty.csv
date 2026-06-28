@@ -1,0 +1,5 @@
+customer_id,name,email,phone,state,signup_date
+C100,  Ada Lovelace  ,ADA@EXAMPLE.COM,(212) 555-0100,ny,2024-05-01
+C101,Grace Hopper, grace@example.com ,212.555.0101,ca,2024-05-02
+C102, Katherine Johnson,katherine@example.com,212-555-0102,va,2024-05-03
+C103,Dorothy Vaughan,dorothy@example.com,+1 212 555 0103,va,2024-05-04

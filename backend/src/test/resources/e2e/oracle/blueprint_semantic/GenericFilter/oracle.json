@@ -1,0 +1,38 @@
+{
+  "blueprintKey": "GenericFilter",
+  "semanticPackVersion": "1.0.0",
+  "scenarioId": "generic-filter-gcp-golden",
+  "proofShape": "gcp-golden",
+  "businessScenario": "Verify the golden GCP GenericFilter proof keeps only active full-time employees hired on or before the cutoff date and not terminated before the run date.",
+  "inputPath": "input/positive/employees.csv",
+  "filterConfigPath": "input/expectations/filter-config.json",
+  "expectedOutputPath": "expected/expected-output.csv",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedIncludedEmployeeIds": [
+    "E100",
+    "E105",
+    "E107"
+  ],
+  "expectedExcludedEmployeeIds": [
+    "E101",
+    "E102",
+    "E103",
+    "E104",
+    "E106"
+  ],
+  "edgeAssertions": {
+    "boundaryHireDateIncluded": "E105",
+    "nullStatusExcluded": "E104"
+  },
+  "negativeAssertion": {
+    "configPath": "input/expectations/invalid-filter-params.json",
+    "expectedFailureCode": "INVALID_FILTER_OPERATOR"
+  },
+  "checksums": {
+    "inputSha256": "402aaed4970c7d60e7315d92945de28fea100208947f8bff72b70ae043f93b8e",
+    "filterConfigSha256": "c348d58131c70ee2ca4ab1c40e5e200e1ccd7c46cc375acf31ff72287608f3f9",
+    "expectedOutputSha256": "04c442c51b343f2e7c497172a9e61f6b79e0a820061e7da950ac5ab266054d59",
+    "expectedMetricsSha256": "c71d940e62abd5da87d160944bbe07ec4497b07b6b28bddf546f997c803059e5",
+    "comparatorConfigSha256": "a1e78e8f975723e4e99b87064db51ade4a7f21ce1608103452513bb51f62d1a3"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "freshBatchIds": [
+    "B100",
+    "B101"
+  ],
+  "staleBatchIds": [
+    "B200"
+  ],
+  "boundaryBatchId": "B101",
+  "verdict": "draft-pass"
+}

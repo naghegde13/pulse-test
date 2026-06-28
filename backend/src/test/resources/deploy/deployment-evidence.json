@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "deployment-evidence.v1",
+  "artifactId": "preflight-01JRUN000FIXTURE000000001",
+  "deploymentId": "01JDEPLOY0FIXTURE0000001",
+  "deploymentRunId": "01JRUN000FIXTURE000000001",
+  "packageId": "pkg-fixture",
+  "type": "PREFLIGHT_RESULT",
+  "path": "validation/preflight-result.json",
+  "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "producedBy": "DeploymentPreflightService",
+  "correlationId": "corr-fixture-1",
+  "createdAt": "2026-05-04T00:00:00Z",
+  "summary": {
+    "status": "FAIL",
+    "blockerCount": 2
+  }
+}

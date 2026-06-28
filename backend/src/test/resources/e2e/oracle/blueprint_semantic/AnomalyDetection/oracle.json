@@ -1,0 +1,31 @@
+{
+  "blueprintKey": "AnomalyDetection",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "anomaly-detection-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft AnomalyDetection semantic pack separates a stable telemetry baseline from a deterministic spike so future runtime hardening can anchor on blueprint-specific evidence.",
+  "baselineInputPath": "input/run1/telemetry_baseline.csv",
+  "spikeInputPath": "input/run2/telemetry_spike.csv",
+  "configPath": "input/expectations/anomaly-config.json",
+  "expectedAnomalyPath": "expected/anomaly-events.csv",
+  "expectedReportPath": "expected/expected-anomaly-report.json",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedAnomalyEventIds": [
+    "T201"
+  ],
+  "negativeAssertion": {
+    "configPath": "input/negative/invalid-anomaly-config.json",
+    "expectedFailureCode": "MISSING_PRIMARY_METRIC"
+  },
+  "checksums": {
+    "manifestSha256": "d30ab2d0ebb6f7f4ca056f494496240e663d8a8e760becec21ea5db4ff4cc52f",
+    "comparatorConfigSha256": "843491f3923627890ba0a9d0f8f5bbeaa58b9394086b3ec5170db3bf3493d5ea",
+    "input_expectations_anomaly-config_json_sha256": "f2edfb99c416d00342ee0dee3b1c6415db75c8ef63550ae1e0051bbf7d4f8266",
+    "input_negative_invalid-anomaly-config_json_sha256": "1082124fab21ad5260ba7635676b560b5cc5532ec1d94eb7ddd7dd0df571c1f8",
+    "input_run1_telemetry_baseline_csv_sha256": "0f830f4243686f452201a9036070991116065dac14d1aa8454ee96f899450331",
+    "input_run2_telemetry_spike_csv_sha256": "ec25f613d5b3d1ec291d25f30f9dfd7918c8458e72dabb1be4f195b9c0f840e8",
+    "expected_anomaly-events_csv_sha256": "e61e58519339f4a51ad003690913ed15fd1b5fc35ed9bd93ededde5f1cd3c947",
+    "expected_expected-anomaly-report_json_sha256": "8ff8734cb41fd3b3cdcd304b467e4f2e6cbfe66f07dad32b552534026139f208",
+    "expected_expected-metrics_json_sha256": "22e190e77d24c09379a0c507eab4e76a6a164ec84234c62910721d37ff29227c"
+  }
+}

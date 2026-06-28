@@ -1,0 +1,20 @@
+{
+  "requiredColumns": [
+    "claim_id",
+    "member_id",
+    "provider_id",
+    "service_date",
+    "charge_amount",
+    "status"
+  ],
+  "allowedStatusValues": [
+    "APPROVED",
+    "PENDING",
+    "REJECTED"
+  ],
+  "minimumChargeAmount": 0,
+  "semantics": {
+    "quarantineOnRuleFailure": true,
+    "acceptedRowSource": "claims_clean.csv"
+  }
+}

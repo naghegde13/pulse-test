@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "FeatureTablePublish",
+  "featureRowCount": 2,
+  "postCutoffTransactionsExcluded": ["T102"],
+  "leakageColumnCount": 0,
+  "verdict": "draft-pass"
+}

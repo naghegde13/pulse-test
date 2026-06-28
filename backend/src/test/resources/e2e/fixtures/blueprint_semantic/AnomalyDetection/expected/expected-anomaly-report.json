@@ -1,0 +1,8 @@
+{
+  "baselineAccepted": true,
+  "anomalyEventIds": [
+    "T201"
+  ],
+  "maxTemperatureC": 95.0,
+  "verdict": "draft-pass"
+}

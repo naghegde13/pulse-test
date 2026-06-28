@@ -1,0 +1,6 @@
+{
+  "type": "control_plane_audit",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/expected-drift-report.json"
+}

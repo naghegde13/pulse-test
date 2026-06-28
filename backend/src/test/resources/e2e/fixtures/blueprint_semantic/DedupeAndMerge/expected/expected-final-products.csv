@@ -1,0 +1,4 @@
+product_id,version_ts,name,price,status,source_priority
+P100,2026-05-02T10:00:00Z,Widget Pro,12.5,active,1
+P200,2026-05-01T09:00:00Z,Gadget,5.0,active,1
+P400,2026-05-03T08:00:00Z,Legacy,2.0,inactive,1

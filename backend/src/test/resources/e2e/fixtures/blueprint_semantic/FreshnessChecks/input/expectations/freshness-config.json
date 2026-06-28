@@ -1,0 +1,10 @@
+{
+  "asOfTimestamp": "2024-03-01T05:00:00Z",
+  "maxLagMinutes": 120,
+  "semantics": {
+    "boundaryInclusive": true,
+    "expectedStaleBatchIds": [
+      "B200"
+    ]
+  }
+}

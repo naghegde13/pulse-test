@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pulse-backend
+  labels:
+    app: pulse-backend
+spec:
+  selector:
+    app: pulse-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+  type: ClusterIP

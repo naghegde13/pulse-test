@@ -1,0 +1,6 @@
+{
+  "grain": ["order_id", "order_line_id"],
+  "duplicateRows": 0,
+  "checkedRows": 4,
+  "verdict": "PASS"
+}

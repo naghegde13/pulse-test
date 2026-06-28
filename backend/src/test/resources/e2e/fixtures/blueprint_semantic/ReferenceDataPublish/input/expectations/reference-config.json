@@ -1,0 +1,7 @@
+{
+  "keyColumn": "code",
+  "validityColumns": ["effective_start", "effective_end"],
+  "duplicatePolicy": "reject",
+  "overlapPolicy": "reject",
+  "publishFutureRows": true
+}

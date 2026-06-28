@@ -1,0 +1,14 @@
+{
+  "columns": [
+    "account_id",
+    "feature_as_of_ts",
+    "transaction_count_7d",
+    "spend_7d",
+    "transaction_count_30d",
+    "spend_30d",
+    "max_amount_30d",
+    "cross_border_count_30d",
+    "chargeback_count_30d"
+  ],
+  "excludedColumnsPresent": []
+}

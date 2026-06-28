@@ -1,0 +1,21 @@
+{
+  "blueprintKey": "SnapshotIngestion",
+  "snapshotIds": [
+    "2024-05-01T00:00:00Z",
+    "2024-05-02T00:00:00Z"
+  ],
+  "rowCount": 8,
+  "sameAsOfRerunDuplicateRows": 0,
+  "missingAsOfRejected": true,
+  "missingSkuIds": [
+    "SKU-103"
+  ],
+  "newSkuIds": [
+    "SKU-104"
+  ],
+  "changedSkuIds": [
+    "SKU-100",
+    "SKU-102"
+  ],
+  "verdict": "draft-pass"
+}

@@ -1,0 +1,20 @@
+{
+  "rows": [
+    {
+      "invoice_id": "INV1",
+      "account_id": "ACC1",
+      "invoice_date": "2026-05-03",
+      "amount": 125.0,
+      "status": "paid",
+      "updated_at": "2026-05-03T12:00:00Z"
+    },
+    {
+      "invoice_id": "INV2",
+      "account_id": "ACC2",
+      "invoice_date": "2026-05-02",
+      "amount": 80.0,
+      "status": "open",
+      "updated_at": "2026-05-02T11:00:00Z"
+    }
+  ]
+}

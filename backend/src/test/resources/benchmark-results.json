@@ -1,0 +1,92 @@
+[
+  {
+    "model": "google/gemini-2.0-flash-001",
+    "accuracy": 0.9801324503311258,
+    "accuracy_pct": "98.0%",
+    "avg_latency_s": 1.444,
+    "total_prompt_tokens": 329058,
+    "total_completion_tokens": 14381,
+    "pass_count": 148,
+    "fail_count": 3,
+    "total_count": 151,
+    "accuracy_by_blueprint": {
+      "GenericFilter": {
+        "pass": 29,
+        "total": 29
+      },
+      "GenericAggregate": {
+        "pass": 24,
+        "total": 24
+      },
+      "GenericJoin": {
+        "pass": 23,
+        "total": 25
+      },
+      "EnrichmentJoin": {
+        "pass": 6,
+        "total": 6
+      },
+      "GenericRouter": {
+        "pass": 10,
+        "total": 11
+      },
+      "JsonFlatten": {
+        "pass": 20,
+        "total": 20
+      },
+      "JsonStruct": {
+        "pass": 15,
+        "total": 15
+      },
+      "Deduplication": {
+        "pass": 3,
+        "total": 3
+      },
+      "PIIMasking": {
+        "pass": 5,
+        "total": 5
+      },
+      "BronzeCleaning": {
+        "pass": 3,
+        "total": 3
+      },
+      "SchemaNormalization": {
+        "pass": 3,
+        "total": 3
+      },
+      "SCD2": {
+        "pass": 4,
+        "total": 4
+      },
+      "UnknownTransform": {
+        "pass": 1,
+        "total": 1
+      },
+      "XYZCustomStep": {
+        "pass": 1,
+        "total": 1
+      },
+      "SomeCustomTransform": {
+        "pass": 1,
+        "total": 1
+      }
+    },
+    "failures": [
+      {
+        "id": "join-011",
+        "blueprint": "GenericJoin",
+        "detail": "missing: [('right_manager_id', 'long')]; extra: [('right_employee_id', 'long')]"
+      },
+      {
+        "id": "join-021",
+        "blueprint": "GenericJoin",
+        "detail": "col_count: got 37 expected 38"
+      },
+      {
+        "id": "router-001",
+        "blueprint": "GenericRouter",
+        "detail": "parse_error"
+      }
+    ]
+  }
+]

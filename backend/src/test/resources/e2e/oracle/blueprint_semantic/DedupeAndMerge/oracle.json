@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "DedupeAndMerge",
+  "scenarioId": "dedupe-and-merge-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "latest product update wins per product_id",
+    "same timestamp identical duplicates do not create duplicate output rows",
+    "null keys are quarantined",
+    "same timestamp conflicting values are quarantined",
+    "final output contains one row per accepted product_id"
+  ],
+  "expectedArtifacts": ["final-products", "dedupe-quarantine", "dedupe-report", "dedupe-metrics"]
+}

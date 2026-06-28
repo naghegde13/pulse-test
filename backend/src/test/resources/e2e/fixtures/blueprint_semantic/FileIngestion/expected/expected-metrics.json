@@ -1,0 +1,6 @@
+{
+  "validRowCount": 20,
+  "emptyFileRowCount": 0,
+  "badHeaderRejected": true,
+  "corruptRowCount": 1
+}

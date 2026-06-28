@@ -1,0 +1,2 @@
+{"loan_id":"LN-001","loan_status":"Current","payload":{"borrower_first_name":"Ada","borrower_last_name":"Lovelace","risk_band":"A"}}
+{"loan_id":"LN-002","loan_status":"Delinquent","payload":{"borrower_first_name":"Grace","borrower_last_name":"Hopper","risk_band":"B"}}

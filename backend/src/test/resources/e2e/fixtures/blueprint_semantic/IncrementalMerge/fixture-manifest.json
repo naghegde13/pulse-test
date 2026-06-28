@@ -1,0 +1,308 @@
+{
+  "blueprintKey": "IncrementalMerge",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft IncrementalMerge semantic pack applies CDC upserts and deletes across two runs while preserving a stable final account snapshot for later idempotency hardening.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "input/expectations/merge-config.json",
+      "caseType": "expectation",
+      "schemaRef": "incremental_merge_config_v1",
+      "rowCount": 1,
+      "sha256": "09258e911537bd7c2bb4d95bf7104635f2ae15ec0fb6aae021a3c3645326f42a"
+    },
+    {
+      "path": "input/negative/invalid-merge-event.json",
+      "caseType": "negative",
+      "schemaRef": "incremental_merge_invalid_event_v1",
+      "rowCount": 1,
+      "sha256": "c74b457e23583cfda8676912ec3f60e752f6bede846ebb730ab8065ea0acb4ec"
+    },
+    {
+      "path": "input/run1/account_snapshot.csv",
+      "caseType": "run1",
+      "schemaRef": "incremental_merge_snapshot_csv_v1",
+      "rowCount": 3,
+      "sha256": "2629ee9c8b538a21ffcd51020e2776e2ebab8db357a245f7e3cb32e65cedc773"
+    },
+    {
+      "path": "input/run2/cdc_events.csv",
+      "caseType": "run2",
+      "schemaRef": "incremental_merge_cdc_csv_v1",
+      "rowCount": 3,
+      "sha256": "fc878bfa0a7554c09f9505c8688f28dee274323558a1cd0202823bb279ef7aed"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "incremental_merge_snapshot_csv_v1",
+      "columns": [
+        {
+          "name": "account_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "customer_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "balance",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "last_updated",
+          "type": "timestamp",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "incremental_merge_cdc_csv_v1",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "account_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "customer_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "op",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "balance",
+          "type": "decimal",
+          "nullable": true
+        },
+        {
+          "name": "last_updated",
+          "type": "timestamp",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "incremental_merge_config_v1",
+      "columns": [
+        {
+          "name": "mergeKey",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "operationColumn",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "deleteValue",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "updateValues",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    },
+    {
+      "schemaId": "incremental_merge_invalid_event_v1",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "account_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "op",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureMessage",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "cdc-applies-insert-update-delete",
+      "inputRefs": [
+        "input/run1/account_snapshot.csv",
+        "input/run2/cdc_events.csv",
+        "input/expectations/merge-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/final-state.csv",
+        "expected/merge-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "A2 updates balance to 275.00",
+        "A3 is deleted from the final snapshot",
+        "A4 is inserted into the final snapshot"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "unsupported-cdc-operation-rejected",
+      "inputRefs": [
+        "input/negative/invalid-merge-event.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "expectedFailureCode equals INVALID_MERGE_OPERATION"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "delete-removes-existing-row-on-second-run",
+      "inputRefs": [
+        "input/run1/account_snapshot.csv",
+        "input/run2/cdc_events.csv",
+        "input/expectations/merge-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/final-state.csv"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "A3 delete event removes the row without disturbing A1"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "draft-invalid-operation-placeholder",
+      "inputRefs": [
+        "input/negative/invalid-merge-event.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "unsupported merge operations remain reserved for future failure-path proofing"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "run1-seed-then-run2-cdc",
+      "runs": [
+        {
+          "runId": "run1-seed",
+          "inputRefs": [
+            "input/run1/account_snapshot.csv",
+            "input/expectations/merge-config.json"
+          ]
+        },
+        {
+          "runId": "run2-cdc",
+          "inputRefs": [
+            "input/run2/cdc_events.csv",
+            "input/expectations/merge-config.json"
+          ],
+          "expectedOutputRefs": [
+            "expected/final-state.csv"
+          ],
+          "expectedMetricRefs": [
+            "expected/expected-metrics.json"
+          ]
+        }
+      ],
+      "assertions": [
+        "final-state.csv reflects both seed and CDC inputs"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "expected/final-state.csv",
+      "format": "csv",
+      "comparatorType": "row_exact",
+      "sha256": "ce855adea37523d44434abe08226e05e2bbb52193deae9ef3eb363eebcf4ce05"
+    },
+    {
+      "path": "expected/merge-report.json",
+      "format": "json",
+      "comparatorType": "row_exact",
+      "sha256": "6babaeb5f1237d07599064a1cd9d608f5d715d00a9a3d86881ee4343fb4238b1"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "final_row_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 3,
+      "comparatorType": "aggregate_exact",
+      "sha256": "6c17945dc1e21f86f7dad1333d761a2368d7627d7863a3751fa3d7c1574ee82a"
+    }
+  ],
+  "comparator": {
+    "type": "row_exact",
+    "ownerClass": "com.pulse.e2e.semantic.IncrementalMergeSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

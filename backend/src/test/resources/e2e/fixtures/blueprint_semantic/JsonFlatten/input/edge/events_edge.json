@@ -1,0 +1,2 @@
+{"event_id":"E102","session":{"session_id":"S102","started_at":"2024-05-01T10:10:00Z"},"customer":{"customer_id":"C102","loyalty_tier":"bronze"},"items":[],"device":{"type":"tablet","os":"android"},"geo":{"country":"US","region":"WA"}}
+{"event_id":"E103","session":{"session_id":"S103","started_at":"2024-05-01T10:15:00Z"},"items":[{"sku":"SKU-4","quantity":1,"price":12.0}],"device":{"type":"mobile","os":"android"},"geo":{"country":"CA","region":"ON"}}

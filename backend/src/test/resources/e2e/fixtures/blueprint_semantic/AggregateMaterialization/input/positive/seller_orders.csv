@@ -1,0 +1,5 @@
+seller_id,order_id,order_ts,gross_amount,refund_amount,units,category
+S100,O100,2026-05-01T10:00:00Z,100.0,0.0,2,books
+S100,O101,2026-05-01T11:00:00Z,50.0,5.0,1,books
+S100,O102,2026-05-02T09:00:00Z,0.0,0.0,0,books
+S200,O200,2026-05-01T12:00:00Z,75.0,0.0,3,games

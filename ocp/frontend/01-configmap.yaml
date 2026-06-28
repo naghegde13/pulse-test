@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pulse-frontend-config
+  labels:
+    app: pulse-frontend
+data:
+  PORT: "3000"
+  NEXT_PUBLIC_API_URL: "https://pulse-backend.apps.cluster.example.com"

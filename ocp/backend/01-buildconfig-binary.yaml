@@ -1,0 +1,21 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: pulse-backend
+  labels:
+    app: pulse-backend
+spec:
+  source:
+    type: Binary
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/ubi9/openjdk-21:latest
+  output:
+    to:
+      kind: ImageStreamTag
+      name: pulse-backend:latest
+  triggers:
+    - type: ConfigChange

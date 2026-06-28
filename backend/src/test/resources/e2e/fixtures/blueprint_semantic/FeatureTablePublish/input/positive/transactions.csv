@@ -1,0 +1,4 @@
+transaction_id,account_id,merchant_id,transaction_ts,amount,currency,card_present,merchant_category,country
+T100,A100,M100,2026-05-02T10:00:00Z,100.0,USD,true,grocery,US
+T101,A100,M200,2026-05-08T12:00:00Z,50.0,USD,false,ecommerce,CA
+T102,A100,M300,2026-05-11T09:00:00Z,999.0,USD,false,ecommerce,US

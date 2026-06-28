@@ -1,0 +1,28 @@
+{
+  "blueprintKey": "AdvanceTimeDimension",
+  "comparator": "AdvanceTimeDimensionAuditComparator",
+  "supportedAdvanceTargetModes": [
+    "dataset_advance"
+  ],
+  "blockedAdvanceTargetModes": {
+    "domain_advance": "BLOCKED_PARAM_CONTRACT"
+  },
+  "requiredEvidence": [
+    "manifest.json",
+    "calendar_state_before.json",
+    "calendar_state_after_expected.json",
+    "calendar_state_after_actual.json",
+    "calendar_audit_log_expected.json",
+    "calendar_audit_log_actual.json",
+    "downstream_window_expected.json",
+    "downstream_window_actual.json",
+    "composer_task_state.json",
+    "advance-time-dimension-audit-comparison.json"
+  ],
+  "requiredAssertions": [
+    "before_after_control_state",
+    "invalid_backward_advance_rejection",
+    "month_year_dst_boundary_handling"
+  ],
+  "promotionAllowed": false
+}

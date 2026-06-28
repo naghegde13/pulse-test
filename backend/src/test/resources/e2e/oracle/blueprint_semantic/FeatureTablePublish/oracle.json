@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "FeatureTablePublish",
+  "scenarioId": "feature-table-publish-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "feature rows are keyed by account_id and feature_as_of_ts",
+    "7-day and 30-day rolling features are exact",
+    "cold-start accounts receive configured defaults",
+    "transactions after the cutoff do not contribute",
+    "label leakage columns and terms are absent from output"
+  ],
+  "expectedArtifacts": ["feature-table", "feature-report", "feature-metrics", "schema-snapshot", "no-leak-scan", "feature-definition-contract", "dbt-non-reuse-contract"]
+}

@@ -1,0 +1,2 @@
+visit_id,patient_id,patient_name,dob,provider_id,diagnosis_code,procedure_code,charge_amount
+V102,P102,Alan Turing,,PR200,Z99,,0.0

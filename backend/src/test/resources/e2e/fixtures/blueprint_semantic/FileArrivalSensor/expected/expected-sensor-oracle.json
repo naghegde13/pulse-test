@@ -1,0 +1,13 @@
+{
+  "blueprintKey": "FileArrivalSensor",
+  "expectedObject": "semantic/file-arrival-sensor/run-20260506-1110/expected/partner_daily_20260506.csv",
+  "wrongPrefixObject": "semantic/file-arrival-sensor/run-20260506-1110/wrong-prefix/partner_daily_20260506.csv",
+  "missingObject": "semantic/file-arrival-sensor/run-20260506-1110/missing/partner_daily_20260506.csv",
+  "sensorTaskId": "wait_for_partner_daily_file",
+  "downstreamTaskId": "mark_file_ready",
+  "expectedObjectPresent": true,
+  "wrongPrefixObjectPresent": true,
+  "missingObjectPresent": false,
+  "noPrematureDownstream": true,
+  "verdict": "PASS"
+}

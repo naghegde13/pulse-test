@@ -1,0 +1,5 @@
+seller_id,business_date,gross_revenue,refund_amount,net_revenue,units,order_count
+S100,2026-05-01,150.0,25.0,125.0,3,3
+S100,2026-05-02,0.0,0.0,0.0,0,1
+S200,2026-05-01,75.0,0.0,75.0,3,1
+S200,2026-05-02,20.0,0.0,20.0,1,1

@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "AggregateMaterialization",
+  "aggregateRowCount": 4,
+  "rejectOrderIds": ["O900"],
+  "materialization": "table",
+  "verdict": "draft-pass"
+}

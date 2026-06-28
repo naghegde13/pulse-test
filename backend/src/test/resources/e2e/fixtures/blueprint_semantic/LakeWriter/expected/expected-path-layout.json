@@ -1,0 +1,7 @@
+{
+  "basePrefix": "semantic/lake-writer/run-20260506-1130/sessions-lake",
+  "requiredPartitions": ["event_date=2026-05-01", "event_date=2026-05-02"],
+  "manifestPath": "semantic/lake-writer/run-20260506-1130/manifest",
+  "appendAuditPath": "semantic/lake-writer/run-20260506-1130/append-audit",
+  "verdict": "PASS"
+}

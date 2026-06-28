@@ -1,0 +1,63 @@
+[
+  {
+    "requestSignature": "chat:error_path:tool_throws_remove_missing_instance",
+    "match": {
+      "model": "test/fake-model",
+      "userPromptContains": "Remove the cleaning step"
+    },
+    "responses": [
+      {
+        "kind": "tool_call",
+        "toolName": "remove_step",
+        "arguments": {
+          "version_id": "{seeded_version_id}",
+          "instance_id": "this-instance-does-not-exist"
+        },
+        "events": [
+          { "event": "tool_call", "data": { "name": "remove_step" }, "afterMillis": 0 }
+        ]
+      },
+      {
+        "kind": "message",
+        "content": "I couldn't remove that step because it does not exist.",
+        "events": [
+          { "event": "chunk", "data": { "content": "I couldn't remove that step because it does not exist." }, "afterMillis": 0 },
+          { "event": "done",  "data": {}, "afterMillis": 0 }
+        ]
+      }
+    ]
+  },
+  {
+    "requestSignature": "chat:error_path:llm_upstream_5xx",
+    "match": {
+      "model": "test/fake-model",
+      "userPromptContains": "Hello, model"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "",
+        "events": [
+          { "event": "error", "data": { "httpStatus": 500 }, "afterMillis": 0 }
+        ]
+      }
+    ]
+  },
+  {
+    "requestSignature": "chat:error_path:no_remove_then_readd_acknowledged",
+    "match": {
+      "model": "test/fake-model",
+      "userPromptContains": "Hi."
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "Acknowledged.",
+        "events": [
+          { "event": "chunk", "data": { "content": "Acknowledged." }, "afterMillis": 0 },
+          { "event": "done",  "data": {}, "afterMillis": 0 }
+        ]
+      }
+    ]
+  }
+]

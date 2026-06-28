@@ -1,0 +1,3 @@
+transaction_id,chargeback_reported_at,chargeback_reason,is_fraud_label
+T100,2026-05-09T00:00:00Z,fraud,true
+T102,2026-05-12T00:00:00Z,fraud,true

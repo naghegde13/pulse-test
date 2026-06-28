@@ -1,0 +1,7 @@
+{
+  "event_id": "E9",
+  "account_id": "A9",
+  "op": "RETRACT",
+  "expectedFailureCode": "INVALID_MERGE_OPERATION",
+  "expectedFailureMessage": "IncrementalMerge draft pack reserves unsupported CDC operations for future runtime failure proofing."
+}

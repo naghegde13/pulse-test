@@ -1,0 +1,30 @@
+{
+  "blueprintKey": "SCD2Dimension",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "scd2-dimension-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft SCD2Dimension semantic pack records tier history windows across two customer snapshots while keeping later history-window hardening scoped and reviewable.",
+  "run1InputPath": "input/run1/customer_tier_day1.csv",
+  "run2InputPath": "input/run2/customer_tier_day2.csv",
+  "configPath": "input/expectations/scd2-config.json",
+  "expectedOutputPath": "expected/history-output.csv",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedChangedCustomerIds": [
+    "C1"
+  ],
+  "negativeAssertion": {
+    "configPath": "input/negative/invalid-scd2-config.json",
+    "expectedFailureCode": "MISSING_BUSINESS_KEY"
+  },
+  "checksums": {
+    "manifestSha256": "cd43188508ba5f89a78160b1802bf98d182ae0a7d2c734fc6f961469766ce1b3",
+    "comparatorConfigSha256": "4ee415e9bbff37614a72caca4492ebca1662ec4e03ce1f167d53147a48d21a72",
+    "input_expectations_scd2-config_json_sha256": "53767a8cfd790cd9b26fcfd02b9a61479f077e491f2106e373627a99b0408875",
+    "input_negative_invalid-scd2-config_json_sha256": "7de8bc8104d6f41dae683e5d350fbf49aaf66deb1e8ba50b6f6e2e494e4fdcc6",
+    "input_run1_customer_tier_day1_csv_sha256": "7bb68d2cc333f34ff663bd9422f3d74c7dcde0848213ca56b75b7d75ef6b0622",
+    "input_run2_customer_tier_day2_csv_sha256": "214c0a91104e4d36d361f42cf6f135efd7c943b671aae7756d55584275357d21",
+    "expected_history-output_csv_sha256": "5be4917e0a8a4a495854c5006526c78bd0ec1df644b006ce457a7b0db3e3de90",
+    "expected_history-report_json_sha256": "b26f2f31723fca973800a90c91634b8abf2d7f21b32b7424a58d6e80ecdbb638",
+    "expected_expected-metrics_json_sha256": "d7c885af0f6fa52092d0f4ba85af2e6c5791a9a73cca6834874ee31bc7834a34"
+  }
+}

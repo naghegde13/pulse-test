@@ -1,0 +1,11 @@
+{
+  "primaryMetric": "temperature_c",
+  "baselineWindowEvents": 3,
+  "spikeThreshold": 90.0,
+  "semantics": {
+    "expectedAnomalyEventIds": [
+      "T201"
+    ],
+    "minimumSeverity": "high"
+  }
+}

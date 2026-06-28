@@ -1,0 +1,10 @@
+{
+  "blueprintKey": "GenericAggregate",
+  "aggregateRowCount": 5,
+  "inputRowCount": 7,
+  "rejectRowCount": 1,
+  "rejectLineIds": [
+    "L900"
+  ],
+  "verdict": "draft-pass"
+}

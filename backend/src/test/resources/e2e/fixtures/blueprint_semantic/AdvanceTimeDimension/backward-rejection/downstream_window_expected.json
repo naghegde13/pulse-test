@@ -1,0 +1,8 @@
+{
+  "datasetName": "loan_master",
+  "selectedWindow": {
+    "startInclusive": "2026-04-30T00:00:00-04:00",
+    "endExclusive": "2026-05-01T00:00:00-04:00"
+  },
+  "selectedRows": []
+}

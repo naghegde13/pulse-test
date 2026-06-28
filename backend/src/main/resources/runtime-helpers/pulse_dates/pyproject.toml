@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pulse-dates"
+version = "0.1.0"
+description = "PULSE runtime mnemonic resolver — turns BOM/EOM/PBD/etc. into concrete dates"
+requires-python = ">=3.9"
+dependencies = [
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pulse_dates*"]

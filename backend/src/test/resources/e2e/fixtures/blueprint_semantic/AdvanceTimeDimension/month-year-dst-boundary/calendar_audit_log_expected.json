@@ -1,0 +1,13 @@
+{
+  "events": [
+    {
+      "datasetName": "loan_master",
+      "previousPeriod": "2026-03-07",
+      "newPeriod": "2026-03-08",
+      "actor": "airflow:pulse_semantic_gcp_advance_time_dimension",
+      "runId": "run-advance-20260308-dst",
+      "timestamp": "2026-03-08T07:01:00Z",
+      "status": "ACCEPTED"
+    }
+  ]
+}

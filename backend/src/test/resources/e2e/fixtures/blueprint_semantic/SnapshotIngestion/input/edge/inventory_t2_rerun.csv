@@ -1,0 +1,5 @@
+sku,warehouse_id,on_hand_qty,reserved_qty,snapshot_as_of
+SKU-100,W1,45,8,2024-05-02T00:00:00Z
+SKU-101,W1,20,2,2024-05-02T00:00:00Z
+SKU-102,W2,60,15,2024-05-02T00:00:00Z
+SKU-104,W3,30,1,2024-05-02T00:00:00Z

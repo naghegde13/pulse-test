@@ -1,0 +1,8 @@
+{
+  "scenarioId": "advance-time-dimension-dataset-golden",
+  "advanceTargetMode": "dataset_advance",
+  "advanceAttemptKind": "accepted_advance",
+  "datasetName": "loan_master",
+  "advance_domain": false,
+  "runId": "run-advance-20260506-001"
+}

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "deployment-event.v1",
+  "eventId": "01JEVENT0FIXTURE000000001",
+  "deploymentId": "01JDEPLOY0FIXTURE0000001",
+  "deploymentRunId": "01JRUN000FIXTURE000000001",
+  "eventType": "RUN_STATE_CHANGED",
+  "fromStatus": "PENDING",
+  "toStatus": "PREFLIGHT_PASSED",
+  "actorType": "UI",
+  "actorId": "01JUSER00000000000000000",
+  "surface": "UI",
+  "correlationId": "corr-fixture-1",
+  "requestBodySha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "details": {
+    "preflightStatus": "PASS"
+  },
+  "createdAt": "2026-05-04T00:00:00Z"
+}

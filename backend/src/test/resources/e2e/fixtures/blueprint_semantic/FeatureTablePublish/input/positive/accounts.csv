@@ -1,0 +1,3 @@
+account_id,opened_at,customer_segment,home_country,credit_limit,account_status
+A100,2026-01-01T00:00:00Z,prime,US,5000,active
+A200,2026-05-01T00:00:00Z,new,US,1000,active

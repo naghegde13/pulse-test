@@ -1,0 +1,6 @@
+{
+  "manifestSha256": "wide-denormalized-mart-gcp-golden-manifest",
+  "selectedNodes": ["model.pulse.mart_order_lines_wide"],
+  "dependencyEdges": ["source.orders->model.pulse.mart_order_lines_wide", "source.customers_dim->model.pulse.mart_order_lines_wide", "source.products_dim->model.pulse.mart_order_lines_wide"],
+  "verdict": "PASS"
+}

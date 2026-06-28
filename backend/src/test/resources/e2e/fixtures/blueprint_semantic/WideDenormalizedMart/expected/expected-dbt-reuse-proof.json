@@ -1,0 +1,6 @@
+{
+  "supportsReuse": true,
+  "reusedAssets": ["dim_customers", "dim_products"],
+  "martNode": "model.pulse.mart_order_lines_wide",
+  "verdict": "PASS"
+}

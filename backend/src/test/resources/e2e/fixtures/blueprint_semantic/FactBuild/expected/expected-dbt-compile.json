@@ -1,0 +1,6 @@
+{
+  "manifestSha256": "fact-build-gcp-golden-manifest",
+  "selectedNodes": ["model.pulse.fact_sales"],
+  "dependencyEdges": ["source.sales_lines->model.pulse.fact_sales"],
+  "verdict": "PASS"
+}

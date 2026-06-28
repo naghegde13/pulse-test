@@ -1,0 +1,2 @@
+promotion_id,product_id,store_id,start_date,end_date,discount_type
+PROMO1,PROD2,STORE1,2026-05-01,2026-05-31,seasonal

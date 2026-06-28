@@ -1,0 +1,4 @@
+payment_id,order_id,payment_method,authorized_amount,captured_amount
+PAY100,O100,card,55.0,55.0
+PAY101,O101,card,50.0,25.0
+PAY102,O102,ach,45.0,45.0

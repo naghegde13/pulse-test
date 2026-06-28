@@ -1,0 +1,16 @@
+package com.pulse.storage.repository;
+
+import com.pulse.storage.model.StorageScaffoldStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface StorageScaffoldStatusRepository extends JpaRepository<StorageScaffoldStatus, String> {
+
+    Optional<StorageScaffoldStatus> findByTenantIdAndDomainSlug(String tenantId, String domainSlug);
+
+    List<StorageScaffoldStatus> findByTenantId(String tenantId);
+}

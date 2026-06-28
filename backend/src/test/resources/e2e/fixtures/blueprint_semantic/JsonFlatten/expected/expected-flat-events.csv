@@ -1,0 +1,4 @@
+event_id,session_id,customer_id,device_type,country,region,item_index,sku,quantity,price
+E100,S100,C100,mobile,US,NY,0,SKU-1,2,10.0
+E100,S100,C100,mobile,US,NY,1,SKU-2,1,5.5
+E101,S101,C101,desktop,US,CA,0,SKU-3,3,7.0

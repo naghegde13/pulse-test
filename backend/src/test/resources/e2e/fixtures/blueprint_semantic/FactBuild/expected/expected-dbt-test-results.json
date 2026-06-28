@@ -1,0 +1,8 @@
+{
+  "tests": [
+    "unique_fact_grain",
+    "relationships_product_dim_unknown_member",
+    "relationships_store_dim_unknown_member"
+  ],
+  "status": "success"
+}

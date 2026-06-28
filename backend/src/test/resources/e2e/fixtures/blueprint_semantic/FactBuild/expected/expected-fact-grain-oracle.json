@@ -1,0 +1,10 @@
+{
+  "blueprintKey": "FactBuild",
+  "factRowCount": 4,
+  "grain": ["sale_id", "line_id"],
+  "duplicateNaturalKeys": ["SALE9:L1"],
+  "missingProductPolicy": "unknown_member",
+  "missingStorePolicy": "unknown_member",
+  "totalNetAmount": 47.9,
+  "verdict": "PASS"
+}

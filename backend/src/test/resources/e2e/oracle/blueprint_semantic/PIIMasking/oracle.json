@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "PIIMasking",
+  "scenarioId": "pii-masking-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "SSN, email, and phone values are deterministically masked",
+    "already masked values are preserved",
+    "null PII remains null",
+    "malformed raw PII is rejected without leaking raw values",
+    "cloud outputs contain no raw PII leak terms"
+  ],
+  "expectedArtifacts": ["masked-employees", "pii-rejects", "pii-report", "pii-metrics", "leak-scan"]
+}

@@ -1,0 +1,13 @@
+{
+  "filter_mode": "visual",
+  "conditions": [
+    {
+      "column": "employment_status",
+      "operator": "unsupported",
+      "value": "ACTIVE",
+      "logic": "AND"
+    }
+  ],
+  "expectedFailureCode": "INVALID_FILTER_OPERATOR",
+  "expectedFailureMessage": "Unsupported GenericFilter operator: unsupported"
+}

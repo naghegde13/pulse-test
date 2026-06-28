@@ -1,0 +1,72 @@
+# Spring profile: postgres-it
+#
+# Activate with: -Dspring.profiles.active=postgres-it
+#
+# This profile is the integration-PR lane's database configuration. It points
+# the test Spring context at a real Postgres 16 service (the docker-compose
+# postgres for local runs, the GitHub Actions services Postgres container in
+# CI) and turns Flyway back on so every checked-in V*.sql migration is
+# exercised against true Postgres syntax/index/sequence semantics — something
+# the H2-backed application-test profile cannot do (Flyway is disabled there).
+#
+# Boundary:
+#   - The fast PR lane keeps using application-test.yml (H2, Flyway off).
+#   - The integration PR lane and PostgresFlywayMigrationSmokeIT use this file.
+#   - Live-runtime/Docker tests (@Tag("runtime")) are nightly only and do not
+#     read this profile.
+#
+# Required environment (defaults match docker-compose.yml + ci.yml services):
+#   DB_HOST     localhost
+#   DB_PORT     5432
+#   DB_NAME     pulse
+#   DB_USER     pulse
+#   DB_PASSWORD pulse
+
+spring:
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pulse}
+    username: ${DB_USER:pulse}
+    password: ${DB_PASSWORD:pulse}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      # Flyway owns DDL. The integration smoke test uses ddl-auto=none so the
+      # migration smoke proves _migrations apply_ on a real Postgres without
+      # also gating on JPA-vs-schema parity. The parity check belongs to a
+      # follow-up lane (it is currently broken on at least
+      # deployment_events.updated_at — see docs/testing/backend-test-lanes.md).
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    out-of-order: true
+    # Tests sometimes restart the Spring context against a database that
+    # already has flyway_schema_history rows from a previous run. Repair
+    # keeps the smoke test idempotent.
+    repair-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cloud:
+    gcp:
+      sql:
+        enabled: false
+        jdbc:
+          enabled: false
+
+pulse:
+  auth:
+    enabled: false
+  gcp:
+    # Integration tests must not touch real GCP Secret Manager.
+    secret-manager-mode: local-stub

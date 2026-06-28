@@ -1,0 +1,4 @@
+customer_id,customer_tier,segment
+C001,PLATINUM,enterprise
+C002,GOLD,midmarket
+C003,SILVER,smallbiz

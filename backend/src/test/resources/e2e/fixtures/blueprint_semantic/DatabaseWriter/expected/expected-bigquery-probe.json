@@ -1,0 +1,12 @@
+{
+  "blueprintKey": "DatabaseWriter",
+  "canonicalGcpDestination": "bigquery",
+  "sourceRows": 5,
+  "acceptedRows": 4,
+  "finalRows": 2,
+  "nullRejectedRows": 1,
+  "duplicateInvoiceIds": ["INV1", "INV2"],
+  "upsertedInvoiceIds": ["INV1"],
+  "transactionBehavior": "atomic_create_or_replace",
+  "verdict": "PASS"
+}

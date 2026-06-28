@@ -1,0 +1,13 @@
+{
+  "entityKey": "account_id",
+  "cutoffColumn": "feature_as_of_ts",
+  "windows": ["7d", "30d"],
+  "defaultValues": {
+    "transaction_count": 0,
+    "spend": 0.0,
+    "max_amount": 0.0,
+    "cross_border_count": 0,
+    "chargeback_count": 0
+  },
+  "leakageExclusions": ["is_fraud_label", "chargeback_reason"]
+}

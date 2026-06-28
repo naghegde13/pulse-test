@@ -1,0 +1,14 @@
+{
+  "businessKey": "customer_id",
+  "trackedColumns": [
+    "tier"
+  ],
+  "effectiveDateColumn": "effective_date",
+  "closeOutOffsetDays": 1,
+  "semantics": {
+    "currentRowSentinel": null,
+    "expectedChangedCustomerIds": [
+      "C1"
+    ]
+  }
+}

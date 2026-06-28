@@ -1,0 +1,9 @@
+{
+  "type": "row_exact",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/final-state.csv",
+  "sortKeys": [
+    "account_id"
+  ]
+}

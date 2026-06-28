@@ -1,0 +1,15 @@
+# What qualifies as a blueprint: a DAG node (including unconnected behavior nodes), but not a cross-cutting platform concern
+
+Status: accepted
+
+A blueprint must be a node in a pipeline's DAG. Most blueprints move data and have ports. Some move no data and have no ports, yet are still blueprints because they sit on the DAG as an **unconnected node** that provisions a real, Builder-emittable pipeline behavior — e.g. `ScheduleAndTriggers` (the pipeline's schedule + the triggers/sensors that gate it) or `RollbackOnFailure` (track every data operation the run performs and undo them on failure, across both Spark and dbt). A catalog entry that provisions **no** pipeline behavior the Builder can emit — a pure FinOps/observability or deploy-lifecycle concern — is **not** a blueprint and is deprecated.
+
+This sharpens the line migration `V9` drew. V9 deleted deploy-lifecycle blueprints (`CIValidate`, `DeployToEnv`, `PromoteAcrossEnvs`, `BlueGreenDeployment`, `CanaryReleasePattern`) as "platform features, not data-flow steps" (`V9:16-22`) and kept four others (`ScheduleAndTriggers`, `BackfillAndReplay`, `RollbackOnFailure`, `CostMonitoringHook`) flagged `pipeline_config = TRUE` (`V9:76-77`). The better test is not "does it have ports?" but **"does it provision a real pipeline behavior the Builder must emit code/config for?"** — which is why a port-less rollback behavior stays while a port-less cost monitor goes.
+
+## Consequences
+
+- **`CostMonitoringHook` → deprecated.** A FinOps/observability concern; it provisions no emittable pipeline behavior (no codegen beyond `airflow_policy`). Replacement: none.
+- **`RollbackOnFailure` → kept** as a Pipeline Setting. Its intended behavior is a compensating undo of the run's data operations across Spark and dbt — a genuine Builder obligation that **is not implemented today** (no codegen emits it). Recorded as a known gap, not as working.
+- **`ScheduleAndTriggers` → kept** as a Pipeline Setting (schedule + the triggers/sensors that gate the pipeline). Its **trigger taxonomy must be audited for completeness** — today it leans on file-arrival; it must also cover upstream-DAG-completion (on success/failure) and the other sensor types.
+- **`BackfillAndReplay` → deprecated** (replacement → `BulkBackfill`). Its "backfill" half duplicates `BulkBackfill`; its "replay" half (rewind the domain business date, reprocess forward) is unsafe as a per-pipeline node because the domain business date is a single shared field (`TimeDimensionService.java:96-105`) every pipeline reads. The replay ambition is parked as a future **domain-level** operation (not a blueprint), to design once a replay-isolation mechanism (forked/shadow business-date context) exists.
+- These Pipeline Settings are configured in a dedicated **orchestration policy panel** (`frontend/src/components/pipeline/orchestration-panel.tsx`), and the system rejects adding them as ordinary data steps (`PlanAddStepPolicyRejectionTest`). Deprecating one (Cost) means removing its handling there too.

@@ -1,0 +1,3 @@
+product_id,sku,category,brand,is_active,effective_start,effective_end
+P2,SKU-2,games,BrandB,true,2025-01-01,9999-12-31
+P2,SKU-2-ALT,games,BrandB,true,2025-01-01,9999-12-31

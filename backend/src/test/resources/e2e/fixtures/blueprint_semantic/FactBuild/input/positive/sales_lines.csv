@@ -1,0 +1,5 @@
+sale_id,line_id,business_date,store_id,product_id,customer_id,quantity,unit_price,discount_amount,tax_amount,line_status
+SALE1,L1,2026-05-01,STORE1,PROD1,CUST1,2,10.0,1.0,1.5,sale
+SALE1,L2,2026-05-01,STORE1,PROD2,CUST1,1,20.0,0.0,2.0,sale
+SALE2,L1,2026-05-01,STORE2,PROD_MISSING,CUST2,1,15.0,0.0,1.2,sale
+SALE3,L1,2026-05-02,STORE_MISSING,PROD1,CUST3,-1,10.0,0.0,-0.8,return

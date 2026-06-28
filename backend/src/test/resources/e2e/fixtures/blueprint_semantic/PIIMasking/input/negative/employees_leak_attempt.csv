@@ -1,0 +1,2 @@
+employee_id,ssn,email,phone,salary,dob,department
+E900,111-22-3333,not-an-email,555,100000,1970-01-01,Legal

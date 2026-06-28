@@ -1,0 +1,12 @@
+{
+  "filter_mode": "sql",
+  "raw_sql": "employment_status = 'ACTIVE' AND worker_type = 'FULL_TIME' AND hire_date <= DATE '2024-01-15' AND (termination_date IS NULL OR termination_date > DATE '2024-01-15')",
+  "businessRule": "Eligible employees are active full-time workers hired on or before the cutoff date and not terminated before the run date.",
+  "cutoffDate": "2024-01-15",
+  "semantics": {
+    "employmentStatusEquals": "ACTIVE",
+    "workerTypeEquals": "FULL_TIME",
+    "hireDateOnOrBefore": "2024-01-15",
+    "terminationAfter": "2024-01-15"
+  }
+}

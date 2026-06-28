@@ -1,0 +1,5 @@
+sale_id,line_id,business_date,store_id,product_id,customer_id,sku,category,brand,store_region,promotion_id,quantity,gross_amount,discount_amount,tax_amount,net_amount,line_status
+SALE1,L1,2026-05-01,STORE1,PROD1,CUST1,SKU-1,books,BrandA,East,,2,20.0,1.0,1.5,20.5,sale
+SALE1,L2,2026-05-01,STORE1,PROD2,CUST1,SKU-2,games,BrandB,East,PROMO1,1,20.0,0.0,2.0,22.0,sale
+SALE2,L1,2026-05-01,STORE2,PROD_MISSING,CUST2,UNKNOWN,UNKNOWN,UNKNOWN,West,,1,15.0,0.0,1.2,16.2,sale
+SALE3,L1,2026-05-02,STORE_MISSING,PROD1,CUST3,SKU-1,books,BrandA,UNKNOWN,,-1,-10.0,0.0,-0.8,-10.8,return

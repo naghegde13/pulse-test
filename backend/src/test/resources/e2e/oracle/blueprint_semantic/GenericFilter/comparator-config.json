@@ -1,0 +1,19 @@
+{
+  "type": "row_exact",
+  "fixtureRootRelativePositiveInputPath": "input/positive/employees.csv",
+  "fixtureRootRelativeFilterConfigPath": "input/expectations/filter-config.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/expected-output.csv",
+  "fixtureRootRelativeExpectedMetricsPath": "expected/expected-metrics.json",
+  "sortKeys": [
+    "employee_id"
+  ],
+  "dateColumns": [
+    "hire_date",
+    "termination_date"
+  ],
+  "nullableColumns": [
+    "employment_status",
+    "termination_date"
+  ],
+  "strictRowOrder": false
+}

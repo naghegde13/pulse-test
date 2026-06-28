@@ -1,0 +1,12 @@
+{
+  "mergeKey": "account_id",
+  "operationColumn": "op",
+  "deleteValue": "DELETE",
+  "updateValues": [
+    "UPSERT"
+  ],
+  "semantics": {
+    "supportsDelete": true,
+    "snapshotMode": "final-state"
+  }
+}

@@ -1,0 +1,195 @@
+# PULSE CI workflow
+#
+# Lane structure (TASK_P0_ci_lane_separation_and_postgres_smoke):
+#   - frontend            : Next.js lint + build (untouched by wave0/ci-lanes;
+#                           owned by the wave0/frontend-test-runner branch).
+#   - frontend-test       : PLACEHOLDER. The sibling wave0/frontend-test-runner
+#                           task replaces this job verbatim. Do not flesh it
+#                           out here — keeping it as a stub avoids merge
+#                           conflicts when the sibling branch lands.
+#   - backend-fast        : Fast PR lane. Unit + slice tests (./gradlew
+#                           fastPrTest). H2, Flyway off, target < 8 min.
+#   - backend-integration : Integration PR lane. *IT.java + @Tag("integration")
+#                           against a Postgres 16 service container with
+#                           Flyway enabled (./gradlew backendIntegrationTest
+#                           -Dspring.profiles.active=postgres-it). Includes
+#                           PostgresFlywayMigrationSmokeIT.
+#   - backend-runtime-nightly : Nightly only. @Tag("runtime") tests
+#                           (CanonicalLoanMasterAirflowRuntimeIT,
+#                           JsonBlueprintLiveRuntimeProofIT,
+#                           AggregateBlueprintLiveRuntimeProofIT). Slow /
+#                           Docker-heavy.
+#
+# See docs/testing/backend-test-lanes.md for tag conventions and the rules
+# that decide which lane a new test belongs in.
+
+name: PULSE CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Nightly runtime/Docker lane. 07:00 UTC ≈ 03:00 ET / 00:00 PT.
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      run_runtime_nightly:
+        description: "Run the runtime nightly lane on demand"
+        required: false
+        default: "false"
+
+jobs:
+  frontend:
+    name: Frontend (Next.js)
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  frontend-test:
+    name: Frontend (Vitest)
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run test:unit
+
+  backend-fast:
+    name: Backend fast PR (unit + slice)
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+      - name: Run fast PR test lane
+        run: ./gradlew fastPrTest --no-daemon
+      - name: Upload fast lane reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-fast-reports
+          path: |
+            backend/build/reports/tests/fastPrTest/
+            backend/build/test-results/fastPrTest/
+
+  backend-integration:
+    name: Backend integration PR (Postgres + Flyway)
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: pulse
+          POSTGRES_USER: pulse
+          POSTGRES_PASSWORD: pulse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U pulse"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+      - name: Run backend integration lane (Postgres profile)
+        run: ./gradlew backendIntegrationTest -Dspring.profiles.active=postgres-it --no-daemon
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: pulse
+          DB_USER: pulse
+          DB_PASSWORD: pulse
+      - name: Upload integration lane reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-integration-reports
+          path: |
+            backend/build/reports/tests/backendIntegrationTest/
+            backend/build/test-results/backendIntegrationTest/
+
+  backend-runtime-nightly:
+    name: Backend runtime (nightly)
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.run_runtime_nightly == 'true')
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: pulse
+          POSTGRES_USER: pulse
+          POSTGRES_PASSWORD: pulse
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U pulse"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+      - name: Run runtime nightly lane
+        run: ./gradlew runtimeNightlyTest --no-daemon
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: pulse
+          DB_USER: pulse
+          DB_PASSWORD: pulse
+      - name: Upload runtime nightly reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-runtime-nightly-reports
+          path: |
+            backend/build/reports/tests/runtimeNightlyTest/
+            backend/build/test-results/runtimeNightlyTest/

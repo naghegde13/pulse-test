@@ -1,0 +1,9 @@
+{
+  "canonicalGcpDestination": "bigquery",
+  "dataset": "pulse_semantic_database_writer",
+  "table": "billing_invoices_run_20260506_1225",
+  "mergeKey": "invoice_id",
+  "writeMode": "upsert",
+  "nullKeyPolicy": "reject",
+  "duplicatePolicy": "latest_updated_at_wins"
+}

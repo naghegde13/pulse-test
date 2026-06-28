@@ -1,0 +1,12 @@
+{
+  "compatibleChangeFiles": [
+    "input/edge/invoices_extra_nullable.csv"
+  ],
+  "incompatibleChangeFiles": [
+    "input/negative/invoices_missing_amount.csv"
+  ],
+  "severityByFile": {
+    "input/edge/invoices_extra_nullable.csv": "WARN",
+    "input/negative/invoices_missing_amount.csv": "FAIL"
+  }
+}

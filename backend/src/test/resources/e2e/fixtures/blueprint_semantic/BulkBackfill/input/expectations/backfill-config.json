@@ -1,0 +1,21 @@
+{
+  "requiredColumns": [
+    "meter_id",
+    "account_id",
+    "read_date",
+    "kwh",
+    "read_type",
+    "batch_month"
+  ],
+  "expectedMonths": [
+    "2024-01",
+    "2024-02",
+    "2024-03"
+  ],
+  "semantics": {
+    "expectedPositiveRowCount": 12,
+    "duplicateMonthIsRejected": true,
+    "missingMonthIsDetected": true,
+    "partitionCompletenessRequired": true
+  }
+}

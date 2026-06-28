@@ -1,0 +1,5 @@
+{
+  "primaryMetric": "",
+  "expectedFailureCode": "MISSING_PRIMARY_METRIC",
+  "expectedFailureMessage": "AnomalyDetection requires a primaryMetric before runtime threshold evaluation can start."
+}

@@ -1,0 +1,224 @@
+{
+  "blueprintKey": "GenericJoin",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft GenericJoin semantic pack enriches retail orders with customer tiers while preserving unmatched left-side orders for later semantic hardening.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": false
+  },
+  "inputFiles": [
+    {
+      "path": "input/expectations/join-config.json",
+      "caseType": "expectation",
+      "schemaRef": "generic_join_config_v1",
+      "rowCount": 1,
+      "sha256": "5f3e88fb19f7a2c0d514b5d64a5c268672f5f310026233c74a494abf2615d2bd"
+    },
+    {
+      "path": "input/negative/invalid-join-config.json",
+      "caseType": "negative",
+      "schemaRef": "generic_join_config_v1",
+      "rowCount": 1,
+      "sha256": "0889275a445d5ef52ae5120a477593bb2489ff1199efa1a95b33b0e452b85e8b"
+    },
+    {
+      "path": "input/positive/customer_tiers.csv",
+      "caseType": "positive",
+      "schemaRef": "generic_join_customer_tiers_csv_v1",
+      "rowCount": 3,
+      "sha256": "4203d710d53ed3e42d4fb0f30e7d28e533399c3ecae76f8658a3c4f2e2770ced"
+    },
+    {
+      "path": "input/positive/orders.csv",
+      "caseType": "positive",
+      "schemaRef": "generic_join_orders_csv_v1",
+      "rowCount": 3,
+      "sha256": "7128bf1fc1f797d087545abc37124fcad4c669348cab3b87be1b9b5123d7933f"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "generic_join_orders_csv_v1",
+      "columns": [
+        {
+          "name": "order_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "customer_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "order_total",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "currency",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "generic_join_customer_tiers_csv_v1",
+      "columns": [
+        {
+          "name": "customer_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "customer_tier",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "segment",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "generic_join_config_v1",
+      "columns": [
+        {
+          "name": "joinType",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "leftKey",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "rightKey",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "selectedColumns",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "orders-enriched-with-customer-tier",
+      "inputRefs": [
+        "input/positive/orders.csv",
+        "input/positive/customer_tiers.csv",
+        "input/expectations/join-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv",
+        "expected/join-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "orders O100 and O101 gain customer_tier values",
+        "order O102 remains present with null enrichment columns"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "missing-right-key-config-rejected",
+      "inputRefs": [
+        "input/expectations/join-config.json",
+        "input/negative/invalid-join-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "expectedFailureCode equals MISSING_JOIN_KEY"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "unmatched-left-row-preserved",
+      "inputRefs": [
+        "input/positive/orders.csv",
+        "input/positive/customer_tiers.csv",
+        "input/expectations/join-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "left join preserves O102 despite missing right-side customer record"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "draft-failure-policy-placeholder",
+      "inputRefs": [
+        "input/negative/invalid-join-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "invalid join configuration is reserved for future failure-path runtime proof"
+      ]
+    }
+  ],
+  "multiRunCases": [],
+  "expectedOutputs": [
+    {
+      "path": "expected/expected-output.csv",
+      "format": "csv",
+      "comparatorType": "row_exact",
+      "sha256": "5cd29eb4076bcfdece01e8061c778dcc599cd5e72be1e55a6be9723efb2ba75b"
+    },
+    {
+      "path": "expected/join-report.json",
+      "format": "json",
+      "comparatorType": "row_exact",
+      "sha256": "52032b46742e6ee5ea96a8d5c0a68663c26685da221edc2b5924655f2003f88d"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "matched_row_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 2,
+      "comparatorType": "aggregate_exact",
+      "sha256": "9576b6c6b67ac48a6e7d7259d208706ff4f753c243565f4232a41355a7c813b6"
+    }
+  ],
+  "comparator": {
+    "type": "row_exact",
+    "ownerClass": "com.pulse.e2e.semantic.GenericJoinSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

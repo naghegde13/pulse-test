@@ -1,0 +1,7 @@
+{
+  "entityKey": "account_id",
+  "cutoffColumn": "feature_as_of_ts",
+  "windows": ["7d", "30d"],
+  "leakageExclusions": ["is_fraud_label", "chargeback_reason"],
+  "defaultValuesApplied": true
+}

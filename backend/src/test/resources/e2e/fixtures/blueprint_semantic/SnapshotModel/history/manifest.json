@@ -1,0 +1,11 @@
+{
+  "scenarioId": "snapshot-model-subscription-history",
+  "businessKey": "subscription_id",
+  "validFromColumn": "valid_from",
+  "validToColumn": "valid_to",
+  "sourceEffectiveTsColumn": "business_effective_ts",
+  "currentRule": "current_flag_and_open_end",
+  "sortKeys": [ "subscription_id", "valid_from" ],
+  "requiredFields": [ "row_hash", "version" ],
+  "runOrder": [ "run1-initial", "run2-change", "run3-no-change-new", "run4-late-correction" ]
+}

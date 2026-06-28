@@ -1,0 +1,16 @@
+{
+  "cases": [
+    {
+      "type": "missing_key",
+      "accepted": false,
+      "failureCode": "MISSING_BUSINESS_KEY",
+      "inputRows": 1
+    },
+    {
+      "type": "duplicate_key",
+      "accepted": false,
+      "failureCode": "DUPLICATE_BUSINESS_KEY_IN_RUN",
+      "inputRows": 2
+    }
+  ]
+}

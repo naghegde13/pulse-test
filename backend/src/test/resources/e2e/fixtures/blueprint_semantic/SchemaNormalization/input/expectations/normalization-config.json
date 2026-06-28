@@ -1,0 +1,24 @@
+{
+  "rawColumns": [
+    "Supplier ID",
+    " Supplier Name ",
+    "Country Code",
+    "Onboard Date",
+    "Payment Terms Days",
+    "Active Flag"
+  ],
+  "canonicalColumns": [
+    "supplier_id",
+    "supplier_name",
+    "country_code",
+    "onboard_date",
+    "payment_terms_days",
+    "is_active"
+  ],
+  "semantics": {
+    "trimStrings": true,
+    "uppercaseCountryCode": true,
+    "normalizeDateToIso": true,
+    "rejectBadCasts": true
+  }
+}

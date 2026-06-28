@@ -1,0 +1,180 @@
+{
+  "blueprintKey": "GenericRouter",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft GenericRouter semantic pack assigns loan applications to prime, manual-review, and high-risk routes before deeper multi-branch hardening.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": false
+  },
+  "inputFiles": [
+    {
+      "path": "input/expectations/router-config.json",
+      "caseType": "expectation",
+      "schemaRef": "generic_router_config_v1",
+      "rowCount": 1,
+      "sha256": "196585c90a003f3ca3397066e5e6c6f810d089c456107e5112cdbc0c9164f289"
+    },
+    {
+      "path": "input/negative/invalid-router-config.json",
+      "caseType": "negative",
+      "schemaRef": "generic_router_config_v1",
+      "rowCount": 1,
+      "sha256": "cd96ab8f8227ed65a2c1c7bffbe468bbc4d31a0117dfd6fd121842c5c357548e"
+    },
+    {
+      "path": "input/positive/applications.csv",
+      "caseType": "positive",
+      "schemaRef": "generic_router_applications_csv_v1",
+      "rowCount": 4,
+      "sha256": "f8f272f3d47c888b2e5b9a6579d2db173289eed0d4f4763daaf485352bb02ea7"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "generic_router_applications_csv_v1",
+      "columns": [
+        {
+          "name": "application_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "risk_score",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "loan_amount",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "manual_review_flag",
+          "type": "boolean",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "generic_router_config_v1",
+      "columns": [
+        {
+          "name": "routes",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "applications-routed-to-exclusive-branches",
+      "inputRefs": [
+        "input/positive/applications.csv",
+        "input/expectations/router-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv",
+        "expected/router-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "A100 routes to prime",
+        "A101 and A103 route to manual_review",
+        "A102 routes to high_risk"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "multiple-default-routes-rejected",
+      "inputRefs": [
+        "input/negative/invalid-router-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "expectedFailureCode equals ROUTE_CONFIG_INVALID"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "manual-review-precedence-over-standard",
+      "inputRefs": [
+        "input/positive/applications.csv",
+        "input/expectations/router-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "manual_review_flag takes precedence when risk_score alone would not create a route"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "draft-route-config-failure-placeholder",
+      "inputRefs": [
+        "input/negative/invalid-router-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "invalid route configuration is reserved for future runtime failure hardening"
+      ]
+    }
+  ],
+  "multiRunCases": [],
+  "expectedOutputs": [
+    {
+      "path": "expected/expected-output.csv",
+      "format": "csv",
+      "comparatorType": "row_exact",
+      "sha256": "2533f53ac48a0b7025c798be8a3c1735a548bc941f366cbd4bedc91f9a2b53c3"
+    },
+    {
+      "path": "expected/router-report.json",
+      "format": "json",
+      "comparatorType": "row_exact",
+      "sha256": "846ca6dcb2970cb06b8194019140179fe65446cbf083ef8f6f72c53924edf07f"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "routed_application_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 4,
+      "comparatorType": "aggregate_exact",
+      "sha256": "f109b97ac4e6df1f3c3819e2dc0b699688ff15821500df9595ff1d7578a626d6"
+    }
+  ],
+  "comparator": {
+    "type": "row_exact",
+    "ownerClass": "com.pulse.e2e.semantic.GenericRouterSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

@@ -1,0 +1,23 @@
+{
+  "_comment": "Reference data for NonBlueprintCompositionFixture. Two-instance composition (one source, one transform) plus one port wiring. Blueprint keys are pinned in NonBlueprintCompositionFixture.SOURCE_BLUEPRINT_KEY / TRANSFORM_BLUEPRINT_KEY.",
+  "source": {
+    "blueprintKey": "FileIngestion",
+    "name": "Source: File Drops",
+    "outputPort": "raw_output",
+    "params": {
+      "file_format": "csv",
+      "header": "true",
+      "infer_schema": "true"
+    }
+  },
+  "transform": {
+    "blueprintKey": "GenericFilter",
+    "name": "Transform: Filter Active",
+    "inputPort": "data_input",
+    "outputPort": "filtered_output",
+    "params": {
+      "filter_mode": "sql",
+      "raw_sql": "status = 'ACTIVE'"
+    }
+  }
+}

@@ -1,0 +1,2 @@
+order_id,order_ts,store_id,customer_id,sku,quantity,unit_price,currency,source_file_date
+O999,not-a-timestamp,S011,C999,SKU-999,not-a-number,12.00,USD,2024-05-01

@@ -1,0 +1,45 @@
+{
+  "blueprintKey": "GenericFilter",
+  "scenarioId": "generic-filter-gcp-golden",
+  "selectedEmployeeIds": [
+    "E100",
+    "E105",
+    "E107"
+  ],
+  "excludedEmployeeIds": [
+    "E101",
+    "E102",
+    "E103",
+    "E104",
+    "E106"
+  ],
+  "expectedRows": [
+    {
+      "employee_id": "E100",
+      "employment_status": "ACTIVE",
+      "worker_type": "FULL_TIME",
+      "hire_date": "2021-03-10",
+      "termination_date": "",
+      "country": "US",
+      "department": "Finance"
+    },
+    {
+      "employee_id": "E105",
+      "employment_status": "ACTIVE",
+      "worker_type": "FULL_TIME",
+      "hire_date": "2024-01-15",
+      "termination_date": "",
+      "country": "CA",
+      "department": "Operations"
+    },
+    {
+      "employee_id": "E107",
+      "employment_status": "ACTIVE",
+      "worker_type": "FULL_TIME",
+      "hire_date": "2023-08-08",
+      "termination_date": "2025-01-01",
+      "country": "US",
+      "department": "IT"
+    }
+  ]
+}

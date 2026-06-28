@@ -1,0 +1,24 @@
+{
+  "routes": [
+    {
+      "routeId": "prime",
+      "predicate": "risk_score >= 780"
+    },
+    {
+      "routeId": "manual_review",
+      "predicate": "manual_review_flag = true OR loan_amount > 20000"
+    },
+    {
+      "routeId": "high_risk",
+      "predicate": "risk_score < 600"
+    },
+    {
+      "routeId": "standard",
+      "predicate": "default"
+    }
+  ],
+  "semantics": {
+    "defaultRoute": "standard",
+    "exclusiveRouting": true
+  }
+}

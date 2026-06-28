@@ -1,0 +1,13 @@
+{
+  "blueprintKey": "JsonStruct",
+  "scenarioId": "json-struct-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "flat visit columns are assembled into patient/provider/clinical JSON structs",
+    "passthrough visit_id and charge_amount are retained",
+    "optional null nested fields are preserved",
+    "invalid negative charges are rejected"
+  ],
+  "expectedArtifacts": ["visit-structs", "struct-rejects", "struct-report", "struct-metrics"]
+}

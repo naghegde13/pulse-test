@@ -1,0 +1,4 @@
+product_id,sku,category,brand,is_active,effective_start,effective_end
+P1,SKU-1,books,BrandA,true,2025-01-01,9999-12-31
+P2,SKU-2,games,BrandB,true,2025-01-01,9999-12-31
+P3,SKU-3,electronics,BrandC,true,2025-01-01,9999-12-31

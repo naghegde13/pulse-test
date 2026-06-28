@@ -1,0 +1,3 @@
+account_id,feature_as_of_ts,transaction_count_7d,spend_7d,transaction_count_30d,spend_30d,max_amount_30d,cross_border_count_30d,chargeback_count_30d
+A100,2026-05-10T00:00:00Z,1,50.0,2,150.0,100.0,1,1
+A200,2026-05-10T00:00:00Z,0,0.0,0,0.0,0.0,0,0

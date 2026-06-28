@@ -1,0 +1,6 @@
+{
+  "datasetName": "loan_master",
+  "currentAsof": "2026-04-29",
+  "timeGrain": "DAILY",
+  "timezone": "America/New_York"
+}

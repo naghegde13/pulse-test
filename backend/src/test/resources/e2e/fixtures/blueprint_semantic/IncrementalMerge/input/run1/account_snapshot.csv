@@ -1,0 +1,4 @@
+account_id,customer_id,balance,last_updated,status
+A1,C1,100.00,2024-01-01T00:00:00Z,OPEN
+A2,C2,250.00,2024-01-01T00:00:00Z,OPEN
+A3,C3,80.00,2024-01-01T00:00:00Z,OPEN

@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "JsonStruct",
+  "structRowCount": 3,
+  "nullOptionalVisitIds": ["V102"],
+  "rejectVisitIds": ["V900"],
+  "verdict": "draft-pass"
+}

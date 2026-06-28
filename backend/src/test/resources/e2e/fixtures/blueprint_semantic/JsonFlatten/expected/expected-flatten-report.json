@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "JsonFlatten",
+  "flatRowCount": 3,
+  "emptyArrayEventIds": ["E102"],
+  "rejectEventIds": ["E103", "E900"],
+  "verdict": "draft-pass"
+}

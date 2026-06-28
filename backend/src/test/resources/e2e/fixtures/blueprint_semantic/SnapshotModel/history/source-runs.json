@@ -1,0 +1,136 @@
+{
+  "runs": [
+    {
+      "runId": "run1-initial",
+      "rows": [
+        {
+          "subscription_id": "sub_001",
+          "customer_id": "cust_001",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-01-01T00:00:00Z",
+          "source_updated_ts": "2026-01-01T08:00:00Z",
+          "row_hash": "sub001-basic-v1"
+        },
+        {
+          "subscription_id": "sub_002",
+          "customer_id": "cust_002",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-01-01T00:00:00Z",
+          "source_updated_ts": "2026-01-01T08:15:00Z",
+          "row_hash": "sub002-basic-v1"
+        }
+      ]
+    },
+    {
+      "runId": "run2-change",
+      "rows": [
+        {
+          "subscription_id": "sub_001",
+          "customer_id": "cust_001",
+          "plan_code": "PRO",
+          "monthly_price": "99.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-02-01T00:00:00Z",
+          "source_updated_ts": "2026-02-01T08:00:00Z",
+          "row_hash": "sub001-pro-v3"
+        },
+        {
+          "subscription_id": "sub_002",
+          "customer_id": "cust_002",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-01-01T00:00:00Z",
+          "source_updated_ts": "2026-01-01T08:15:00Z",
+          "row_hash": "sub002-basic-v1"
+        }
+      ]
+    },
+    {
+      "runId": "run3-no-change-new",
+      "rows": [
+        {
+          "subscription_id": "sub_002",
+          "customer_id": "cust_002",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-01-01T00:00:00Z",
+          "source_updated_ts": "2026-01-01T08:15:00Z",
+          "row_hash": "sub002-basic-v1"
+        },
+        {
+          "subscription_id": "sub_003",
+          "customer_id": "cust_003",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "TRIAL",
+          "business_effective_ts": "2026-03-01T00:00:00Z",
+          "source_updated_ts": "2026-03-01T08:30:00Z",
+          "row_hash": "sub003-basic-v1"
+        }
+      ]
+    },
+    {
+      "runId": "run4-late-correction",
+      "rows": [
+        {
+          "subscription_id": "sub_001",
+          "customer_id": "cust_001",
+          "plan_code": "PREMIUM",
+          "monthly_price": "79.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-01-15T00:00:00Z",
+          "source_updated_ts": "2026-02-10T08:00:00Z",
+          "row_hash": "sub001-premium-late-v2"
+        }
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "type": "missing_key",
+      "rows": [
+        {
+          "subscription_id": "",
+          "customer_id": "cust_missing",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-04-01T00:00:00Z",
+          "source_updated_ts": "2026-04-01T08:00:00Z",
+          "row_hash": "missing-key"
+        }
+      ]
+    },
+    {
+      "type": "duplicate_key",
+      "rows": [
+        {
+          "subscription_id": "sub_dup",
+          "customer_id": "cust_dup_a",
+          "plan_code": "BASIC",
+          "monthly_price": "29.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-04-01T00:00:00Z",
+          "source_updated_ts": "2026-04-01T08:00:00Z",
+          "row_hash": "dup-a"
+        },
+        {
+          "subscription_id": "sub_dup",
+          "customer_id": "cust_dup_b",
+          "plan_code": "PRO",
+          "monthly_price": "99.00",
+          "status": "ACTIVE",
+          "business_effective_ts": "2026-04-01T00:00:00Z",
+          "source_updated_ts": "2026-04-01T08:05:00Z",
+          "row_hash": "dup-b"
+        }
+      ]
+    }
+  ]
+}

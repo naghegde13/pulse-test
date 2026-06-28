@@ -1,0 +1,522 @@
+<# : batch bootstrap — CMD runs this block, PowerShell skips it as a comment
+@ECHO OFF
+SETLOCAL
+SET "_SELF=%~f0"
+powershell -NoProfile -ExecutionPolicy Bypass -Command "iex (gc '%_SELF%' -Raw)"
+EXIT /B %ERRORLEVEL%
+: end batch / begin PowerShell #>
+
+# ====================================================================
+#  PULSE GCP Service Account Provisioning Script
+#  For: Capgemini Platform Team
+#  Purpose: Create service accounts with owner credentials for
+#           CG Dev 1 and CG Dev 2 GCP projects, export JSON keys
+#
+#  INSTRUCTIONS:
+#    1. Rename this file from .txt to .bat
+#    2. Double-click to run (no admin rights needed)
+#    3. Follow the on-screen prompts
+# ====================================================================
+
+$ErrorActionPreference = "Continue"
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+# ---------- helpers ----------
+function Write-Banner($msg) {
+    $line = "=" * 60
+    Write-Host "`n$line" -ForegroundColor Cyan
+    Write-Host "  $msg" -ForegroundColor Cyan
+    Write-Host "$line`n" -ForegroundColor Cyan
+}
+function Write-Step($msg)  { Write-Host "  [*] $msg" -ForegroundColor Yellow }
+function Write-Ok($msg)    { Write-Host "  [OK] $msg" -ForegroundColor Green }
+function Write-Err($msg)   { Write-Host "  [ERROR] $msg" -ForegroundColor Red }
+function Write-Warn($msg)  { Write-Host "  [WARN] $msg" -ForegroundColor DarkYellow }
+function Write-Info($msg)  { Write-Host "  [INFO] $msg" -ForegroundColor Gray }
+
+# ---------- constants ----------
+$SA_NAME    = "pulse-handoff-sa"
+$SA_DISPLAY = "PULSE Handoff Service Account"
+$SA_ROLE    = "roles/owner"
+
+# =================================================================
+#  PHASE 0: gcloud CLI check / install
+# =================================================================
+Write-Banner "PULSE GCP Service Account Provisioning"
+
+Write-Host "  This script will:" -ForegroundColor White
+Write-Host "    1. Install Google Cloud CLI (if not already installed)" -ForegroundColor White
+Write-Host "    2. Authenticate you with your GCP account" -ForegroundColor White
+Write-Host "    3. For each GCP project you provide:" -ForegroundColor White
+Write-Host "       - Verify you have admin permissions" -ForegroundColor White
+Write-Host "       - Create a service account with owner role" -ForegroundColor White
+Write-Host "       - Export the service account credentials as a JSON key" -ForegroundColor White
+Write-Host "       - Validate the credentials work" -ForegroundColor White
+Write-Host ""
+Write-Host "  Prerequisites:" -ForegroundColor White
+Write-Host "    - Internet access" -ForegroundColor White
+Write-Host "    - A web browser (for GCP authentication)" -ForegroundColor White
+Write-Host "    - Admin/Owner access to the target GCP projects" -ForegroundColor White
+Write-Host ""
+
+$gcloudCmd = $null
+
+# Check PATH first
+$gcloudPath = Get-Command gcloud -ErrorAction SilentlyContinue
+if ($gcloudPath) {
+    $gcloudCmd = $gcloudPath.Source
+    Write-Ok "Google Cloud CLI found at: $gcloudCmd"
+}
+
+# Check common local install location
+if (-not $gcloudCmd) {
+    $localSdk = Join-Path $env:LOCALAPPDATA "Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
+    if (Test-Path $localSdk) {
+        $gcloudCmd = $localSdk
+        $env:PATH = (Split-Path $localSdk) + ";" + $env:PATH
+        Write-Ok "Google Cloud CLI found at: $gcloudCmd"
+    }
+}
+
+# Check Program Files
+if (-not $gcloudCmd) {
+    $progFiles = Join-Path $env:ProgramFiles "Google\Cloud SDK\google-cloud-sdk\bin\gcloud.cmd"
+    if (Test-Path $progFiles) {
+        $gcloudCmd = $progFiles
+        $env:PATH = (Split-Path $progFiles) + ";" + $env:PATH
+        Write-Ok "Google Cloud CLI found at: $gcloudCmd"
+    }
+}
+
+# Auto-install if not found
+if (-not $gcloudCmd) {
+    Write-Banner "Installing Google Cloud CLI"
+    Write-Step "Google Cloud CLI is not installed. Installing now..."
+    Write-Step "No admin rights needed -- installing for current user only."
+    Write-Host ""
+
+    $sdkZipUrl  = "https://dl.google.com/dl/cloudsdk/channels/rapid/google-cloud-cli-windows-x86_64-bundled-python.zip"
+    $zipPath    = Join-Path $env:TEMP "google-cloud-cli.zip"
+    $installBase = Join-Path $env:LOCALAPPDATA "Google\Cloud SDK"
+
+    try {
+        Write-Step "Downloading Google Cloud CLI (~100 MB)..."
+        Write-Step "This may take a few minutes depending on your internet speed."
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $sdkZipUrl -OutFile $zipPath -UseBasicParsing
+        Write-Ok "Download complete."
+
+        Write-Step "Extracting to $installBase ..."
+        if (Test-Path $installBase) { Remove-Item -Recurse -Force $installBase }
+        New-Item -ItemType Directory -Path $installBase -Force | Out-Null
+        Expand-Archive -Path $zipPath -DestinationPath $installBase -Force
+        Write-Ok "Extraction complete."
+
+        $installBat = Join-Path $installBase "google-cloud-sdk\install.bat"
+        if (Test-Path $installBat) {
+            Write-Step "Running SDK installer (quiet mode)..."
+            $proc = Start-Process -FilePath "cmd.exe" `
+                -ArgumentList "/c `"$installBat`" --quiet --usage-reporting false" `
+                -Wait -PassThru -NoNewWindow
+            if ($proc.ExitCode -ne 0) {
+                Write-Warn "SDK install.bat returned non-zero, but CLI may still work."
+            }
+        }
+
+        $gcloudCmd = Join-Path $installBase "google-cloud-sdk\bin\gcloud.cmd"
+        $env:PATH = (Split-Path $gcloudCmd) + ";" + $env:PATH
+
+        if (-not (Test-Path $gcloudCmd)) {
+            Write-Err "gcloud.cmd not found after installation."
+            Write-Err "Expected at: $gcloudCmd"
+            Write-Err ""
+            Write-Err "Please install Google Cloud CLI manually from:"
+            Write-Err "  https://cloud.google.com/sdk/docs/install"
+            Write-Err "Choose 'Install for current user only' (no admin needed)."
+            Read-Host "`n  Press Enter to exit"
+            exit 1
+        }
+
+        Write-Ok "Google Cloud CLI installed at: $gcloudCmd"
+        Remove-Item -Force $zipPath -ErrorAction SilentlyContinue
+    }
+    catch {
+        Write-Err "Failed to install Google Cloud CLI: $_"
+        Write-Err ""
+        Write-Err "Please install it manually:"
+        Write-Err "  1. Go to https://cloud.google.com/sdk/docs/install"
+        Write-Err "  2. Download the Windows installer"
+        Write-Err "  3. Choose 'Install for current user only' (no admin needed)"
+        Write-Err "  4. Re-run this script"
+        Read-Host "`n  Press Enter to exit"
+        exit 1
+    }
+}
+
+# Print version
+try {
+    $ver = & gcloud version 2>$null | Select-String "Google Cloud SDK" | ForEach-Object { $_.ToString().Trim() }
+    Write-Info $ver
+} catch {}
+
+# =================================================================
+#  PHASE 1: Collect inputs
+# =================================================================
+Write-Banner "Step 1: Your Information"
+
+$email = Read-Host "  Enter your GCP email address (e.g. vikram@capgemini.com)"
+if ([string]::IsNullOrWhiteSpace($email)) {
+    Write-Err "Email address is required."
+    Read-Host "`n  Press Enter to exit"
+    exit 1
+}
+
+Write-Host ""
+Write-Banner "Step 2: GCP Project IDs"
+Write-Host "  Enter the GCP Project IDs for the environments to provision." -ForegroundColor White
+Write-Host "  You will need the Project ID (not the Project Name)." -ForegroundColor White
+Write-Host "  Find it at: https://console.cloud.google.com → select project → Dashboard" -ForegroundColor White
+Write-Host ""
+
+$project1 = Read-Host "  Enter GCP Project ID for CG Dev 1"
+if ([string]::IsNullOrWhiteSpace($project1)) {
+    Write-Err "At least one Project ID is required."
+    Read-Host "`n  Press Enter to exit"
+    exit 1
+}
+
+$project2 = Read-Host "  Enter GCP Project ID for CG Dev 2 (or press Enter to skip)"
+
+$projects = @($project1)
+if (-not [string]::IsNullOrWhiteSpace($project2)) { $projects += $project2 }
+
+Write-Host ""
+Write-Info "Will provision SA credentials for $($projects.Count) project(s):"
+foreach ($p in $projects) { Write-Info "  - $p" }
+
+# =================================================================
+#  PHASE 2: Authentication
+# =================================================================
+Write-Banner "Step 3: GCP Authentication"
+Write-Step "Authenticating as $email ..."
+Write-Host ""
+Write-Host "  A browser window will open shortly." -ForegroundColor White
+Write-Host "  Please:" -ForegroundColor White
+Write-Host "    1. Sign in with your account: $email" -ForegroundColor White
+Write-Host "    2. Grant the requested permissions" -ForegroundColor White
+Write-Host "    3. Return to this window after authentication completes" -ForegroundColor White
+Write-Host ""
+
+try {
+    & gcloud auth login $email --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warn "Browser auth may have had an issue. Trying --no-launch-browser..."
+        Write-Host ""
+        & gcloud auth login $email --no-launch-browser 2>&1
+        Write-Host ""
+        Write-Host "  If you see a URL above, open it in your browser," -ForegroundColor Magenta
+        Write-Host "  complete authentication, then paste the code below." -ForegroundColor Magenta
+        Write-Host ""
+    }
+}
+catch {
+    Write-Warn "Browser auth failed. Trying --no-launch-browser..."
+    & gcloud auth login $email --no-launch-browser 2>&1
+}
+
+# Verify auth
+$activeAccount = (& gcloud auth list --filter="status:ACTIVE" --format="value(account)" 2>$null).Trim()
+if ([string]::IsNullOrWhiteSpace($activeAccount)) {
+    Write-Err "Authentication failed. No active GCP account found."
+    Write-Err "Please check your credentials and try again."
+    Read-Host "`n  Press Enter to exit"
+    exit 1
+}
+Write-Ok "Authenticated as: $activeAccount"
+
+# =================================================================
+#  PHASE 3: Process each project
+# =================================================================
+
+# Output directory: same folder as the script, or current directory
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+if ([string]::IsNullOrWhiteSpace($scriptDir)) { $scriptDir = $PWD.Path }
+$outputDir = Join-Path $scriptDir "sa-keys"
+New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
+
+$results = @{}
+
+foreach ($projectId in $projects) {
+    Write-Banner "Processing Project: $projectId"
+
+    $saEmail = "$SA_NAME@$projectId.iam.gserviceaccount.com"
+    $keyFile = Join-Path $outputDir "$projectId-sa-key.json"
+
+    # --- 3a. Verify project access ---
+    Write-Step "Verifying project access..."
+    $projCheck = & gcloud projects describe $projectId --format="value(projectId)" 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        Write-Err "Cannot access project '$projectId'."
+        Write-Err ""
+        Write-Err "Possible causes:"
+        Write-Err "  - The project ID is incorrect (check for typos)"
+        Write-Err "  - Your account ($email) does not have access"
+        Write-Err "  - The project may not exist"
+        Write-Err ""
+        Write-Err "Check: https://console.cloud.google.com/home/dashboard?project=$projectId"
+        $results[$projectId] = "FAILED - Cannot access project"
+        continue
+    }
+    Write-Ok "Project '$projectId' is accessible."
+
+    # --- 3b. Permission pre-flight ---
+    Write-Step "Checking your permissions on project '$projectId'..."
+    $hasAdmin = $false
+    try {
+        $policyJson = & gcloud projects get-iam-policy $projectId --format=json 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            $iamPolicy = $policyJson | ConvertFrom-Json
+            foreach ($binding in $iamPolicy.bindings) {
+                if ($binding.role -in @("roles/owner", "roles/iam.serviceAccountAdmin", "roles/editor")) {
+                    foreach ($member in $binding.members) {
+                        if ($member -like "*$email*") {
+                            $hasAdmin = $true
+                            Write-Ok "Found role: $($binding.role) for $email"
+                            break
+                        }
+                    }
+                    if ($hasAdmin) { break }
+                }
+            }
+        }
+    }
+    catch {
+        Write-Warn "Could not check IAM policy: $_"
+        Write-Warn "Will attempt to proceed anyway..."
+        $hasAdmin = $true  # optimistic — let the actual operations fail with clear errors
+    }
+
+    if (-not $hasAdmin) {
+        Write-Err "============================================"
+        Write-Err "  INSUFFICIENT PERMISSIONS"
+        Write-Err "============================================"
+        Write-Err ""
+        Write-Err "  Your account ($email) does NOT have"
+        Write-Err "  admin access to project '$projectId'."
+        Write-Err ""
+        Write-Err "  Required: one of these roles:"
+        Write-Err "    - roles/owner"
+        Write-Err "    - roles/editor"
+        Write-Err "    - roles/iam.serviceAccountAdmin"
+        Write-Err ""
+        Write-Err "  Ask your GCP organization admin to grant"
+        Write-Err "  you one of these roles, then re-run."
+        Write-Err "============================================"
+        $results[$projectId] = "FAILED - Insufficient permissions"
+        continue
+    }
+
+    # --- 3c. Enable required APIs ---
+    Write-Step "Enabling required APIs (iam, cloudresourcemanager)..."
+    & gcloud services enable iam.googleapis.com cloudresourcemanager.googleapis.com --project=$projectId --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warn "API enablement returned non-zero. Proceeding anyway..."
+    } else {
+        Write-Ok "APIs enabled."
+    }
+
+    # --- 3d. Create service account ---
+    Write-Step "Creating service account '$SA_NAME'..."
+
+    # Check if SA already exists
+    $saCheck = & gcloud iam service-accounts describe $saEmail --project=$projectId 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Ok "Service account already exists: $saEmail"
+    }
+    else {
+        & gcloud iam service-accounts create $SA_NAME `
+            --display-name="$SA_DISPLAY" `
+            --project=$projectId --quiet 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) {
+            Write-Err "Failed to create service account on project '$projectId'."
+            Write-Err "Check the error output above for details."
+            $results[$projectId] = "FAILED - SA creation failed"
+            continue
+        }
+        Write-Ok "Service account created: $saEmail"
+    }
+
+    # --- 3e. Grant owner role ---
+    Write-Step "Granting $SA_ROLE to service account..."
+    & gcloud projects add-iam-policy-binding $projectId `
+        --member="serviceAccount:$saEmail" `
+        --role=$SA_ROLE `
+        --quiet --no-user-output-enabled 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Err "Failed to grant $SA_ROLE to $saEmail."
+        $results[$projectId] = "FAILED - Role grant failed"
+        continue
+    }
+    Write-Ok "Granted $SA_ROLE to $saEmail"
+
+    # --- 3f. Handle org policy for key creation ---
+    Write-Step "Checking org policy for SA key creation..."
+    $policyBlocked = $false
+    try {
+        $policyRaw = & gcloud resource-manager org-policies describe `
+            constraints/iam.disableServiceAccountKeyCreation `
+            --project=$projectId --effective --format=json 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            $orgPolicy = $policyRaw | ConvertFrom-Json
+            if ($orgPolicy.booleanPolicy.enforced -eq $true) {
+                $policyBlocked = $true
+                Write-Warn "Org policy BLOCKS service account key creation."
+                Write-Step "Attempting to override at project level..."
+                & gcloud resource-manager org-policies disable-enforce `
+                    constraints/iam.disableServiceAccountKeyCreation `
+                    --project=$projectId --quiet 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Ok "Org policy overridden at project level."
+                    Write-Step "Waiting 30 seconds for policy propagation..."
+                    Start-Sleep -Seconds 30
+                    $policyBlocked = $false
+                }
+                else {
+                    Write-Err "Could not override org policy."
+                    Write-Err ""
+                    Write-Err "MANUAL ACTION REQUIRED:"
+                    Write-Err "  Ask your GCP organization admin to either:"
+                    Write-Err "  1. Disable the iam.disableServiceAccountKeyCreation"
+                    Write-Err "     constraint on project '$projectId'"
+                    Write-Err "  2. Or grant you 'orgpolicy.policy.set' permission"
+                    Write-Err ""
+                    Write-Err "  Then re-run this script."
+                }
+            }
+            else {
+                Write-Ok "Org policy allows SA key creation."
+            }
+        }
+    }
+    catch {
+        Write-Info "Could not check org policy (may not be enforced). Proceeding..."
+    }
+
+    if ($policyBlocked) {
+        $results[$projectId] = "FAILED - Org policy blocks key creation (needs admin override)"
+        continue
+    }
+
+    # --- 3g. Generate JSON key ---
+    Write-Step "Generating JSON key file..."
+    if (Test-Path $keyFile) { Remove-Item -Force $keyFile }
+
+    & gcloud iam service-accounts keys create $keyFile `
+        --iam-account=$saEmail --project=$projectId --quiet 2>&1 | Out-Null
+
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $keyFile)) {
+        # Retry once after a short wait (API propagation)
+        Write-Warn "First attempt failed. Waiting 10 seconds and retrying..."
+        Start-Sleep -Seconds 10
+        & gcloud iam service-accounts keys create $keyFile `
+            --iam-account=$saEmail --project=$projectId --quiet 2>&1 | Out-Null
+    }
+
+    if (-not (Test-Path $keyFile)) {
+        Write-Err "Key file was not created."
+        Write-Err "This may be due to an org policy restriction."
+        Write-Err "Check if iam.disableServiceAccountKeyCreation is enforced."
+        $results[$projectId] = "FAILED - Key creation failed"
+        continue
+    }
+    Write-Ok "Key file created: $keyFile"
+
+    # --- 3h. Validate key file ---
+    Write-Step "Validating key file format..."
+    try {
+        $keyContent = Get-Content $keyFile -Raw | ConvertFrom-Json
+        if ($keyContent.type -ne "service_account") {
+            Write-Err "Invalid key file: type is '$($keyContent.type)', expected 'service_account'"
+            $results[$projectId] = "FAILED - Invalid key file"
+            continue
+        }
+        if ($keyContent.project_id -ne $projectId) {
+            Write-Err "Key file project_id mismatch: '$($keyContent.project_id)' vs '$projectId'"
+            $results[$projectId] = "FAILED - Key project mismatch"
+            continue
+        }
+        Write-Ok "Key file valid:"
+        Write-Info "  type       = service_account"
+        Write-Info "  project_id = $($keyContent.project_id)"
+        Write-Info "  client_email = $($keyContent.client_email)"
+    }
+    catch {
+        Write-Err "Failed to parse key file as JSON: $_"
+        $results[$projectId] = "FAILED - Key file parse error"
+        continue
+    }
+
+    # --- 3i. Validate SA authentication ---
+    Write-Step "Validating service account authentication..."
+    & gcloud auth activate-service-account --key-file=$keyFile --project=$projectId --quiet 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warn "SA auth test returned non-zero, but key may still be valid."
+    }
+    else {
+        Write-Ok "Service account authentication SUCCESSFUL."
+    }
+
+    # Switch back to user account
+    & gcloud config set account $activeAccount --quiet 2>&1 | Out-Null
+
+    Write-Ok "PROJECT '$projectId' COMPLETE"
+    $results[$projectId] = "SUCCESS"
+}
+
+# =================================================================
+#  PHASE 4: Summary
+# =================================================================
+Write-Banner "SUMMARY"
+
+$allSuccess = $true
+foreach ($p in $projects) {
+    $status = $results[$p]
+    if ($status -eq "SUCCESS") {
+        Write-Ok "$p : $status"
+        $kf = Join-Path $outputDir "$p-sa-key.json"
+        Write-Info "  Key file: $kf"
+    }
+    else {
+        Write-Err "$p : $status"
+        $allSuccess = $false
+    }
+}
+
+Write-Host ""
+if ($allSuccess) {
+    Write-Host "  ============================================" -ForegroundColor Green
+    Write-Host "   ALL PROJECTS PROVISIONED SUCCESSFULLY" -ForegroundColor Green
+    Write-Host "  ============================================" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "  Key files are in: $outputDir" -ForegroundColor White
+    Write-Host ""
+    Write-Host "  NEXT STEPS:" -ForegroundColor White
+    Write-Host "    1. Send the JSON key files to the PULSE team" -ForegroundColor White
+    Write-Host "       Use a SECURE method (OneDrive shared link," -ForegroundColor White
+    Write-Host "       SharePoint, or encrypted zip -- NOT plain email)" -ForegroundColor White
+    Write-Host "    2. The PULSE team will use these keys to deploy" -ForegroundColor White
+    Write-Host "       PULSE to your GCP projects" -ForegroundColor White
+}
+else {
+    Write-Host "  ============================================" -ForegroundColor Red
+    Write-Host "   SOME PROJECTS FAILED -- SEE ERRORS ABOVE" -ForegroundColor Red
+    Write-Host "  ============================================" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "  Fix the issues noted above and re-run this script." -ForegroundColor White
+    Write-Host "  The script is safe to re-run (it skips" -ForegroundColor White
+    Write-Host "  already-created resources)." -ForegroundColor White
+}
+
+Write-Host ""
+Read-Host "  Press Enter to exit"

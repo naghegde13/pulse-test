@@ -1,0 +1,740 @@
+{
+  "dataset" : "loan_master",
+  "oracle_version" : 1,
+  "source_file" : "data/loan_master.csv",
+  "checksums" : {
+    "file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "canonical_csv_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f"
+  },
+  "row_count" : 500,
+  "column_count" : 78,
+  "schema" : {
+    "signature" : "4de509e51df0c892720093ad839818f1195668cf57cc77a9ee03f598707d5fab",
+    "column_order_sha256" : "8407096836ceae8eef90a086dc4920b4d5a3dfd11b32085be5656826ecb1c037",
+    "columns" : [ {
+      "name" : "loan_id",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "loan_number",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "servicer_name",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "investor_name",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "loan_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "loan_purpose",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "loan_status",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "origination_date",
+      "type" : "date",
+      "nullable" : false
+    }, {
+      "name" : "maturity_date",
+      "type" : "date",
+      "nullable" : false
+    }, {
+      "name" : "original_loan_amount",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "current_upb",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "interest_rate",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "rate_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "arm_margin",
+      "type" : "decimal",
+      "nullable" : true
+    }, {
+      "name" : "arm_rate_cap",
+      "type" : "decimal",
+      "nullable" : true
+    }, {
+      "name" : "arm_rate_floor",
+      "type" : "decimal",
+      "nullable" : true
+    }, {
+      "name" : "next_rate_adjustment_date",
+      "type" : "date",
+      "nullable" : true
+    }, {
+      "name" : "original_loan_term_months",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "remaining_term_months",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "pi_payment",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "escrow_payment_monthly",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "total_monthly_payment",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "payment_frequency",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "escrow_status",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "escrow_balance",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "last_payment_date",
+      "type" : "date",
+      "nullable" : false
+    }, {
+      "name" : "next_payment_due_date",
+      "type" : "date",
+      "nullable" : false
+    }, {
+      "name" : "months_delinquent",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "ltv_ratio",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "cltv_ratio",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "appraised_value",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "property_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "occupancy_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "property_address_line1",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "property_city",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "property_state",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "property_zip",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "property_county",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "number_of_units",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "year_built",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "tax_amount_annual",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "insurance_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "insurance_premium_annual",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "flood_zone",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "flood_insurance_required",
+      "type" : "boolean",
+      "nullable" : false
+    }, {
+      "name" : "flood_insurance_annual",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "has_pmi",
+      "type" : "boolean",
+      "nullable" : false
+    }, {
+      "name" : "pmi_monthly_premium",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "pmi_provider",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "origination_channel",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "documentation_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_first_name",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_last_name",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_ssn_masked",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_dob",
+      "type" : "date",
+      "nullable" : false
+    }, {
+      "name" : "borrower_email",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_phone",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_marital_status",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_employment_status",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "borrower_annual_income",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "borrower_credit_score",
+      "type" : "integer",
+      "nullable" : false
+    }, {
+      "name" : "borrower_dti_ratio",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "borrower_bankruptcy_history",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "coborrower_first_name",
+      "type" : "string",
+      "nullable" : true
+    }, {
+      "name" : "coborrower_last_name",
+      "type" : "string",
+      "nullable" : true
+    }, {
+      "name" : "coborrower_relationship",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "coborrower_credit_score",
+      "type" : "integer",
+      "nullable" : true
+    }, {
+      "name" : "coborrower_annual_income",
+      "type" : "decimal",
+      "nullable" : true
+    }, {
+      "name" : "modification_type",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "modification_date",
+      "type" : "date",
+      "nullable" : true
+    }, {
+      "name" : "late_charges_due",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "suspense_balance",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "partial_payment_balance",
+      "type" : "decimal",
+      "nullable" : false
+    }, {
+      "name" : "last_inspection_date",
+      "type" : "date",
+      "nullable" : true
+    }, {
+      "name" : "mers_registered",
+      "type" : "boolean",
+      "nullable" : false
+    }, {
+      "name" : "mers_min_number",
+      "type" : "string",
+      "nullable" : true
+    }, {
+      "name" : "investor_loan_id",
+      "type" : "string",
+      "nullable" : false
+    }, {
+      "name" : "boarding_date",
+      "type" : "date",
+      "nullable" : false
+    } ]
+  },
+  "business_keys" : [ "loan_id", "loan_number", "investor_loan_id", "mers_min_number" ],
+  "aggregates" : {
+    "original_loan_amount" : {
+      "sum" : "321891092.54",
+      "min" : "89860.14",
+      "max" : "1198648.85",
+      "avg" : "643782.19"
+    },
+    "current_upb" : {
+      "sum" : "221754396.87",
+      "min" : "47625.95",
+      "max" : "1146297",
+      "avg" : "443508.79"
+    },
+    "interest_rate" : {
+      "sum" : "2596.677",
+      "min" : "2.514",
+      "max" : "7.738",
+      "avg" : "5.19"
+    },
+    "pi_payment" : {
+      "sum" : "1771935.87",
+      "min" : "390.26",
+      "max" : "8219.27",
+      "avg" : "3543.87"
+    },
+    "escrow_payment_monthly" : {
+      "sum" : "227365.71",
+      "min" : "154.47",
+      "max" : "791.97",
+      "avg" : "454.73"
+    },
+    "total_monthly_payment" : {
+      "sum" : "1999301.58",
+      "min" : "645.07",
+      "max" : "8529.98",
+      "avg" : "3998.60"
+    },
+    "months_delinquent" : {
+      "sum" : "2693",
+      "min" : "0",
+      "max" : "24",
+      "avg" : "5.39"
+    },
+    "ltv_ratio" : {
+      "sum" : "39148.5",
+      "min" : "60.18",
+      "max" : "96.93",
+      "avg" : "78.30"
+    },
+    "cltv_ratio" : {
+      "sum" : "41657.39",
+      "min" : "60.58",
+      "max" : "105.12",
+      "avg" : "83.31"
+    },
+    "appraised_value" : {
+      "sum" : "421353606.83",
+      "min" : "99361.01",
+      "max" : "1944616.15",
+      "avg" : "842707.21"
+    },
+    "borrower_annual_income" : {
+      "sum" : "95764940.48",
+      "min" : "36041.35",
+      "max" : "349773.43",
+      "avg" : "191529.88"
+    },
+    "borrower_credit_score" : {
+      "sum" : "359036",
+      "min" : "580",
+      "max" : "850",
+      "avg" : "718.07"
+    },
+    "remaining_term_months" : {
+      "sum" : "104219",
+      "min" : "60",
+      "max" : "359",
+      "avg" : "208.44"
+    },
+    "late_charges_due" : {
+      "sum" : "51803.71",
+      "min" : "0",
+      "max" : "499.71",
+      "avg" : "103.61"
+    },
+    "suspense_balance" : {
+      "sum" : "54865.09",
+      "min" : "0",
+      "max" : "1913.96",
+      "avg" : "109.73"
+    },
+    "partial_payment_balance" : {
+      "sum" : "32534.22",
+      "min" : "0",
+      "max" : "1441.46",
+      "avg" : "65.07"
+    },
+    "dimension_counts" : {
+      "loan_status" : {
+        "Current" : 290,
+        "Paid Off" : 47,
+        "30 Days Delinquent" : 45,
+        "60 Days Delinquent" : 26,
+        "Forbearance" : 26,
+        "90+ Days Delinquent" : 20,
+        "Foreclosure" : 19,
+        "Modification" : 19,
+        "REO" : 8
+      },
+      "investor_name" : {
+        "Portfolio" : 110,
+        "Fannie Mae" : 106,
+        "Ginnie Mae" : 104,
+        "Private Label" : 92,
+        "Freddie Mac" : 88
+      },
+      "property_state" : {
+        "TX" : 26,
+        "IL" : 22,
+        "KY" : 22,
+        "OK" : 21,
+        "UT" : 20,
+        "WI" : 20,
+        "AL" : 19,
+        "CO" : 19,
+        "NC" : 19,
+        "OH" : 19,
+        "PA" : 19,
+        "LA" : 18,
+        "MN" : 18,
+        "TN" : 18,
+        "FL" : 17,
+        "CA" : 16,
+        "CT" : 16,
+        "NJ" : 15,
+        "MD" : 14,
+        "MI" : 14,
+        "MO" : 14,
+        "NY" : 14,
+        "OR" : 14,
+        "WA" : 14,
+        "AZ" : 13,
+        "MA" : 13,
+        "VA" : 13,
+        "SC" : 12,
+        "IN" : 11,
+        "GA" : 10
+      },
+      "loan_type" : {
+        "VA" : 114,
+        "Conventional" : 107,
+        "USDA" : 99,
+        "Jumbo" : 92,
+        "FHA" : 88
+      },
+      "loan_purpose" : {
+        "Cash-Out Refinance" : 133,
+        "Rate/Term Refinance" : 124,
+        "Purchase" : 123,
+        "Streamline Refinance" : 120
+      },
+      "occupancy_type" : {
+        "Investment Property" : 178,
+        "Primary Residence" : 166,
+        "Second Home" : 156
+      }
+    }
+  },
+  "dq_counts" : {
+    "required_field_nulls" : {
+      "loan_id" : 0,
+      "loan_number" : 0,
+      "origination_date" : 0,
+      "current_upb" : 0,
+      "investor_name" : 0
+    },
+    "duplicate_key_counts" : {
+      "loan_id" : 0,
+      "investor_loan_id" : 0,
+      "loan_number" : 0
+    },
+    "email_format_failures" : 0,
+    "phone_format_failures" : 0,
+    "masked_ssn_pattern_failures" : 0,
+    "raw_ssn_leak_count" : 0,
+    "current_balance_gt_original_count" : 0,
+    "delinquent_row_count" : 210,
+    "current_status_with_delinquency_count" : 0
+  },
+  "partition_expectations" : {
+    "investor_name" : {
+      "Portfolio" : 110,
+      "Fannie Mae" : 106,
+      "Ginnie Mae" : 104,
+      "Private Label" : 92,
+      "Freddie Mac" : 88
+    },
+    "loan_status" : {
+      "Current" : 290,
+      "Paid Off" : 47,
+      "30 Days Delinquent" : 45,
+      "60 Days Delinquent" : 26,
+      "Forbearance" : 26,
+      "90+ Days Delinquent" : 20,
+      "Foreclosure" : 19,
+      "Modification" : 19,
+      "REO" : 8
+    },
+    "property_state" : {
+      "TX" : 26,
+      "IL" : 22,
+      "KY" : 22,
+      "OK" : 21,
+      "UT" : 20,
+      "WI" : 20,
+      "AL" : 19,
+      "CO" : 19,
+      "NC" : 19,
+      "OH" : 19,
+      "PA" : 19,
+      "LA" : 18,
+      "MN" : 18,
+      "TN" : 18,
+      "FL" : 17,
+      "CA" : 16,
+      "CT" : 16,
+      "NJ" : 15,
+      "MD" : 14,
+      "MI" : 14,
+      "MO" : 14,
+      "NY" : 14,
+      "OR" : 14,
+      "WA" : 14,
+      "AZ" : 13,
+      "MA" : 13,
+      "VA" : 13,
+      "SC" : 12,
+      "IN" : 11,
+      "GA" : 10
+    },
+    "investor_property_state" : {
+      "Portfolio|TX" : 8,
+      "Private Label|NC" : 8,
+      "Fannie Mae|AL" : 7,
+      "Fannie Mae|CT" : 7,
+      "Fannie Mae|LA" : 7,
+      "Freddie Mac|IL" : 7,
+      "Ginnie Mae|CA" : 7,
+      "Ginnie Mae|IL" : 7,
+      "Portfolio|WI" : 7,
+      "Fannie Mae|KY" : 6,
+      "Fannie Mae|MN" : 6,
+      "Ginnie Mae|OK" : 6,
+      "Ginnie Mae|TX" : 6,
+      "Portfolio|CO" : 6,
+      "Portfolio|NJ" : 6,
+      "Portfolio|TN" : 6,
+      "Portfolio|UT" : 6,
+      "Private Label|CO" : 6,
+      "Private Label|OH" : 6,
+      "Private Label|PA" : 6,
+      "Private Label|TX" : 6,
+      "Fannie Mae|MA" : 5,
+      "Fannie Mae|MO" : 5,
+      "Fannie Mae|NC" : 5,
+      "Freddie Mac|FL" : 5,
+      "Freddie Mac|PA" : 5,
+      "Ginnie Mae|MD" : 5,
+      "Ginnie Mae|MN" : 5,
+      "Ginnie Mae|NY" : 5,
+      "Ginnie Mae|WA" : 5,
+      "Portfolio|AL" : 5,
+      "Portfolio|NY" : 5,
+      "Portfolio|OK" : 5,
+      "Fannie Mae|IL" : 4,
+      "Fannie Mae|MI" : 4,
+      "Fannie Mae|OH" : 4,
+      "Fannie Mae|WI" : 4,
+      "Freddie Mac|CT" : 4,
+      "Freddie Mac|KY" : 4,
+      "Freddie Mac|MD" : 4,
+      "Freddie Mac|MN" : 4,
+      "Freddie Mac|OK" : 4,
+      "Freddie Mac|OR" : 4,
+      "Ginnie Mae|KY" : 4,
+      "Ginnie Mae|LA" : 4,
+      "Ginnie Mae|OR" : 4,
+      "Ginnie Mae|UT" : 4,
+      "Ginnie Mae|WI" : 4,
+      "Portfolio|KY" : 4,
+      "Portfolio|NC" : 4,
+      "Portfolio|OH" : 4,
+      "Portfolio|PA" : 4,
+      "Portfolio|WA" : 4,
+      "Private Label|FL" : 4,
+      "Private Label|KY" : 4,
+      "Private Label|SC" : 4,
+      "Private Label|TN" : 4,
+      "Private Label|UT" : 4,
+      "Private Label|VA" : 4,
+      "Private Label|WI" : 4,
+      "Fannie Mae|AZ" : 3,
+      "Fannie Mae|FL" : 3,
+      "Fannie Mae|GA" : 3,
+      "Fannie Mae|IN" : 3,
+      "Fannie Mae|NJ" : 3,
+      "Fannie Mae|OK" : 3,
+      "Fannie Mae|SC" : 3,
+      "Fannie Mae|TN" : 3,
+      "Fannie Mae|TX" : 3,
+      "Fannie Mae|UT" : 3,
+      "Freddie Mac|AZ" : 3,
+      "Freddie Mac|CA" : 3,
+      "Freddie Mac|GA" : 3,
+      "Freddie Mac|MA" : 3,
+      "Freddie Mac|MI" : 3,
+      "Freddie Mac|MO" : 3,
+      "Freddie Mac|NJ" : 3,
+      "Freddie Mac|OH" : 3,
+      "Freddie Mac|TN" : 3,
+      "Freddie Mac|TX" : 3,
+      "Freddie Mac|UT" : 3,
+      "Ginnie Mae|AL" : 3,
+      "Ginnie Mae|AZ" : 3,
+      "Ginnie Mae|CO" : 3,
+      "Ginnie Mae|FL" : 3,
+      "Ginnie Mae|IN" : 3,
+      "Ginnie Mae|MA" : 3,
+      "Ginnie Mae|PA" : 3,
+      "Portfolio|AZ" : 3,
+      "Portfolio|CT" : 3,
+      "Portfolio|LA" : 3,
+      "Portfolio|MI" : 3,
+      "Portfolio|OR" : 3,
+      "Portfolio|SC" : 3,
+      "Portfolio|VA" : 3,
+      "Private Label|AL" : 3,
+      "Private Label|CA" : 3,
+      "Private Label|LA" : 3,
+      "Private Label|OK" : 3,
+      "Fannie Mae|CA" : 2,
+      "Fannie Mae|CO" : 2,
+      "Fannie Mae|VA" : 2,
+      "Fannie Mae|WA" : 2,
+      "Freddie Mac|CO" : 2,
+      "Freddie Mac|IN" : 2,
+      "Freddie Mac|VA" : 2,
+      "Freddie Mac|WA" : 2,
+      "Ginnie Mae|CT" : 2,
+      "Ginnie Mae|MI" : 2,
+      "Ginnie Mae|MO" : 2,
+      "Ginnie Mae|NJ" : 2,
+      "Ginnie Mae|OH" : 2,
+      "Ginnie Mae|TN" : 2,
+      "Ginnie Mae|VA" : 2,
+      "Portfolio|FL" : 2,
+      "Portfolio|GA" : 2,
+      "Portfolio|IL" : 2,
+      "Portfolio|MD" : 2,
+      "Portfolio|MN" : 2,
+      "Portfolio|MO" : 2,
+      "Private Label|IL" : 2,
+      "Private Label|IN" : 2,
+      "Private Label|MD" : 2,
+      "Private Label|MI" : 2,
+      "Private Label|MO" : 2,
+      "Private Label|NY" : 2,
+      "Private Label|OR" : 2,
+      "Fannie Mae|MD" : 1,
+      "Fannie Mae|NY" : 1,
+      "Fannie Mae|OR" : 1,
+      "Fannie Mae|PA" : 1,
+      "Freddie Mac|AL" : 1,
+      "Freddie Mac|LA" : 1,
+      "Freddie Mac|NC" : 1,
+      "Freddie Mac|NY" : 1,
+      "Freddie Mac|SC" : 1,
+      "Freddie Mac|WI" : 1,
+      "Ginnie Mae|GA" : 1,
+      "Ginnie Mae|NC" : 1,
+      "Ginnie Mae|SC" : 1,
+      "Portfolio|CA" : 1,
+      "Portfolio|IN" : 1,
+      "Portfolio|MA" : 1,
+      "Private Label|AZ" : 1,
+      "Private Label|GA" : 1,
+      "Private Label|MA" : 1,
+      "Private Label|MN" : 1,
+      "Private Label|NJ" : 1,
+      "Private Label|WA" : 1
+    }
+  },
+  "masked_pii_assertions" : {
+    "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
+    "masked_columns" : [ "borrower_ssn_masked" ],
+    "ssn_mask" : {
+      "raw_leak_count" : 0,
+      "invalid_row_count" : 0,
+      "pattern" : "XXX-XX-####",
+      "valid_row_count" : 500
+    },
+    "email_assertions" : {
+      "format_valid_count" : 500,
+      "null_count" : 0
+    },
+    "phone_assertions" : {
+      "format_valid_count" : 500,
+      "null_count" : 0
+    }
+  },
+  "fixture_derivative_ids" : [ "current_loans", "delinquent_loans", "investor_state_partitions", "bad_records_required_fields", "schema_add_servicing_risk_band", "late_arriving_boarding" ]
+}

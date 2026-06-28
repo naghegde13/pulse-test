@@ -1,0 +1,18 @@
+{
+  "blueprintKey": "SchemaNormalization",
+  "canonicalColumns": [
+    "supplier_id",
+    "supplier_name",
+    "country_code",
+    "onboard_date",
+    "payment_terms_days",
+    "is_active"
+  ],
+  "canonicalRowCount": 5,
+  "rejectRowCount": 2,
+  "badCastSupplierIds": [
+    "S-900",
+    "S-901"
+  ],
+  "verdict": "draft-pass"
+}

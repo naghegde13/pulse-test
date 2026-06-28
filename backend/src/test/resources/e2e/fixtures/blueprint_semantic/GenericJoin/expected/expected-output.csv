@@ -1,0 +1,4 @@
+order_id,customer_id,order_total,currency,customer_tier,segment
+O100,C001,120.50,USD,PLATINUM,enterprise
+O101,C002,75.00,USD,GOLD,midmarket
+O102,C999,20.00,USD,,

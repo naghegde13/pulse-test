@@ -1,0 +1,2 @@
+visit_id,patient_id,patient_name,dob,provider_id,diagnosis_code,procedure_code,charge_amount
+V900,P900,Invalid Charge,2000-01-01,PR999,BAD,PROC-X,-10.0

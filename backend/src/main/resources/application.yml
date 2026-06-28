@@ -1,0 +1,182 @@
+spring:
+  application:
+    name: pulse-backend
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:pulse}
+    username: ${DB_USER:pulse}
+    password: ${DB_PASSWORD:pulse}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
+      minimum-idle: 2
+      maximum-pool-size: 10
+      keepalive-time: 60000
+      leak-detection-threshold: 30000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  mvc:
+    async:
+      request-timeout: 120000
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    out-of-order: true
+    repair-on-migrate: true
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cloud:
+    gcp:
+      sql:
+        enabled: false
+        jdbc:
+          enabled: false
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when_authorized
+
+pulse:
+  auth:
+    enabled: ${AUTH_ENABLED:false}
+  gcp:
+    secret-manager-mode: ${GCP_SECRET_MANAGER_MODE:local-stub}
+    local-stub-key: ${PULSE_LOCAL_STUB_KEY:pulse-dev-local-stub-key-do-not-use-in-prod}
+    environment-projects:
+      DEV:
+        project-id: ${GCP_DEV_PROJECT:pulse-dev}
+        region: ${GCP_DEV_REGION:us-central1}
+  storage:
+    scaffold:
+      # PKT-FINAL-5 / BUG-44: storage scaffold execute creates empty folder
+      # markers in GCS using Storage.create(BlobInfo, doesNotExist()).
+      # Safe-by-default: when false, execute returns 409 operator_blocked
+      # without making any GCS calls. Operator opts in by setting
+      # PULSE_STORAGE_SCAFFOLD_LIVE_WRITES_ENABLED=true.
+      live-writes-enabled: ${PULSE_STORAGE_SCAFFOLD_LIVE_WRITES_ENABLED:false}
+  jwt:
+    secret: ${JWT_SECRET:pulse-dev-secret-key-change-in-production-minimum-256-bits!!}
+    access-token-expiry: ${JWT_EXPIRY:28800}
+  llm:
+    # openrouter keeps the current PULSE behavior. vertex uses GCP Vertex AI /
+    # Gemini Enterprise Agent Platform OpenAI-compatible chat completions.
+    provider: ${PULSE_LLM_PROVIDER:vertex}
+    api-key: ${LLM_API_KEY:${OPENROUTER_API_KEY:}}
+    base-url: ${LLM_BASE_URL:https://openrouter.ai/api/v1}
+    model: ${LLM_MODEL:openai/gpt-5.2}
+    reasoning-model: ${LLM_REASONING_MODEL:o4-mini}
+    # ADR 0025 §2: the cheap/Flash chat tier (LlmSurface.CHAT_CHEAP) for the
+    # Router/Discovery/Configure/Provision/Responder graph stages. A NEW
+    # dedicated chat-stage key — NOT the dead schema-inference key (ADR 0011).
+    cheap-model: ${LLM_CHEAP_MODEL:google/gemini-2.5-flash}
+    story-model: ${LLM_STORY_MODEL:${LLM_MODEL:openai/gpt-5.2}}
+    vertex:
+      project-id: ${VERTEX_PROJECT_ID:}
+      location: ${VERTEX_LOCATION:global}
+      # Optional for local development only. Prefer ADC / workload identity in runtime.
+      # Do not point this at the administrative setup service account.
+      credentials-path: ${VERTEX_CREDENTIALS_PATH:}
+      # Optional local/test helper: source ADC can impersonate the PULSE runtime identity.
+      impersonate-service-account: ${VERTEX_IMPERSONATE_SERVICE_ACCOUNT:}
+      chat-model: ${VERTEX_CHAT_MODEL:google/gemini-3.1-pro-preview}
+      reasoning-model: ${VERTEX_REASONING_MODEL:google/gemini-3.1-pro-preview}
+      # ADR 0025 §2: the Vertex cheap/Flash chat tier (LlmSurface.CHAT_CHEAP).
+      # NEW dedicated chat-stage key — NOT the dead schema-model (ADR 0011).
+      cheap-chat-model: ${VERTEX_CHEAP_CHAT_MODEL:google/gemini-2.5-flash}
+      story-model: ${VERTEX_STORY_MODEL:google/gemini-3.1-pro-preview}
+      # schema-model: feeds the LLM schema-inference path. ADR 0011 RETIRES model-based schema inference (now 100%
+      # deterministic, zero-LLM): the LlmSurface.SCHEMA_INFERENCE path (SchemaInferenceService -> the
+      # SchemaPropagationService:846 fallback) is DELETED by IMPL-builder Phase 1. Do NOT reuse this as the chat cheap
+      # tier — that is a NEW pulse.llm.vertex.cheap-chat-model + LlmSurface.CHAT_CHEAP (ADR 0025). Removal of schema-model
+      # is gated on the Builder rewrite landing + the DqReadinessService decision (dq-model is a separate LLM use).
+      schema-model: ${VERTEX_SCHEMA_INFERENCE_MODEL:google/gemini-2.5-flash}
+      dq-model: ${VERTEX_DQ_READINESS_MODEL:google/gemini-2.5-flash}
+      cobol-model: ${VERTEX_COBOL_DISCOVERY_MODEL:google/gemini-3.1-pro-preview}
+  chat:
+    # Default chat turns through the LangGraph4j orchestration graph. Override
+    # PULSE_CHAT_ORCHESTRATION=loop only as a temporary rollback switch.
+    orchestration: ${PULSE_CHAT_ORCHESTRATION:graph}
+    # Default boot runs against Postgres, so chat checkpoints are durable by
+    # default. H2 fast-lane tests override this to memory in application-test.
+    checkpointer: ${PULSE_CHAT_CHECKPOINTER:postgres}
+  cobol-discovery:
+    model: ${COBOL_DISCOVERY_MODEL:anthropic/claude-opus-4.6}
+    api-key: ${COBOL_DISCOVERY_API_KEY:}
+  # schema-inference.*: the OpenRouter-path model for the LLM schema-inference fallback. RETIRED by ADR 0011 (schema
+  # inference is deterministic/zero-LLM); the fallback it feeds (SchemaPropagationService:846 -> SchemaInferenceService)
+  # is removed by IMPL-builder Phase 1. NOT the chat cheap tier (use pulse.llm.cheap-model, ADR 0025). NOTE:
+  # dq-readiness.model below inherits schema-inference.model — verify the DqReadinessService use before removing the key.
+  schema-inference:
+    api-key: ${OPENROUTER_API_KEY:${LLM_API_KEY:}}
+    base-url: ${OPENROUTER_BASE_URL:https://openrouter.ai/api/v1}
+    model: ${SCHEMA_INFERENCE_MODEL:google/gemini-2.0-flash-001}
+  dq-readiness:
+    model: ${DQ_READINESS_MODEL:${SCHEMA_INFERENCE_MODEL:google/gemini-2.0-flash-001}}
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:3000}
+  git:
+    # PKT-FINAL-3 (BUG-05/BUG-07): canonical name is `clone-base` — the host
+    # directory where PULSE clones remote tenant repos for codegen + commits,
+    # and where the local-stub Secret Manager persists secrets. The legacy
+    # `local-repo-base` key (and PULSE_GIT_LOCAL_BASE env var) are still
+    # honored for one release; both consumer beans accept either name. On
+    # macOS, override to a writable path like `~/.pulse/repos` or
+    # `/tmp/pulse/repos` because `/data` is a read-only system mount.
+    clone-base: ${PULSE_GIT_CLONE_BASE:${PULSE_GIT_LOCAL_BASE:/data/pulse/repos}}
+    # Legacy alias (one-release deprecation; remove in N+1).
+    local-repo-base: ${PULSE_GIT_LOCAL_BASE:${PULSE_GIT_CLONE_BASE:/data/pulse/repos}}
+    default-environment: ${PULSE_GIT_SECRET_ENV:dev}
+    # PKT-FINAL-3 (BUG-08): when true, PULSE wires the real GitHub HTTP client
+    # (DefaultGitHubApiClient) and PAT validation makes outbound calls to
+    # api.github.com. When false (default), the stub client returns 503 and
+    # PAT validation surfaces a stub-mode blocker on the readiness verdict.
+    github:
+      enabled: ${PULSE_GIT_GITHUB_ENABLED:false}
+  # PKT-FINAL-4 (BUG-38): decoupled secret-stub base path, independent of
+  # clone-base. Operators changing `pulse.git.clone-base` between sessions
+  # no longer orphan previously-validated PAT secrets on disk. On macOS where
+  # `/data` is read-only, `SecretStubBaseService` auto-falls back to tmpdir.
+  secret:
+    local-stub-base: ${PULSE_SECRET_LOCAL_STUB_BASE:/data/pulse/secrets}
+  runtime:
+    active-persona: ${PULSE_RUNTIME_PERSONA:GCP_PULSE}
+    secret-authority: ${PULSE_SECRET_AUTHORITY:GCP_SECRET_MANAGER}
+    allow-local-materialization: ${PULSE_ALLOW_LOCAL_MATERIALIZATION:true}
+    legal-runtime-matrix-version: arch-004.v1
+  tenants:
+    definitions:
+      - id: "tenant-home-lending"
+        name: "Home Lending D&I"
+        slug: "home-lending"
+      - id: "tenant-unsecured-lending"
+        name: "Unsecured Lending"
+        slug: "unsecured-lending"
+          

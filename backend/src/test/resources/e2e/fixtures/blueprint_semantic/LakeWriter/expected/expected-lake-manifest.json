@@ -1,0 +1,11 @@
+{
+  "blueprintKey": "LakeWriter",
+  "format": "csv",
+  "rowCount": 3,
+  "partitionColumns": ["event_date"],
+  "partitions": ["event_date=2026-05-01", "event_date=2026-05-02"],
+  "overwriteMode": "overwrite",
+  "appendMode": "append",
+  "contentSha256": "1833fe4ef0c1cadfaed2fa071c3b78ec1a55ffdcf6f449bb94580e39b394c213",
+  "verdict": "PASS"
+}

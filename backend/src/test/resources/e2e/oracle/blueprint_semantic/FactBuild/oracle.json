@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "FactBuild",
+  "scenarioId": "fact-build-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "fact output has one row per sale_id + line_id",
+    "duplicate natural keys are rejected in relationship evidence",
+    "missing product and store dimensions map to unknown members",
+    "promotion enrichment and net amount measures are exact",
+    "dbt compile/run/test evidence artifacts are present"
+  ],
+  "expectedArtifacts": ["sales-fact", "fact-grain-oracle", "relationship-test-results", "dbt-compile", "dbt-run-results", "dbt-test-results"]
+}

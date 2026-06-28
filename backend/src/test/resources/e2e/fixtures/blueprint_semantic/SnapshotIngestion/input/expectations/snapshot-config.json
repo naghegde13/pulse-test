@@ -1,0 +1,19 @@
+{
+  "requiredColumns": [
+    "sku",
+    "warehouse_id",
+    "on_hand_qty",
+    "reserved_qty",
+    "snapshot_as_of"
+  ],
+  "expectedSnapshotIds": [
+    "2024-05-01T00:00:00Z",
+    "2024-05-02T00:00:00Z"
+  ],
+  "semantics": {
+    "expectedSnapshotRowCount": 8,
+    "sameAsOfRerunIsIdempotent": true,
+    "missingAsOfIsRejected": true,
+    "missingSkuIsRepresentedByAbsenceFromLaterSnapshot": true
+  }
+}

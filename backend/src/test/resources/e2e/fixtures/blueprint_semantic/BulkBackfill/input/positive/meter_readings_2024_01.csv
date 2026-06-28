@@ -1,0 +1,5 @@
+meter_id,account_id,read_date,kwh,read_type,batch_month
+M100,A100,2024-01-01,31.5,actual,2024-01
+M101,A101,2024-01-02,42.0,actual,2024-01
+M102,A102,2024-01-03,27.25,estimated,2024-01
+M103,A103,2024-01-04,55.75,actual,2024-01

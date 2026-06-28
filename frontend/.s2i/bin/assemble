@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+export HOME="${HOME:-/tmp}"
+export npm_config_cache="${npm_config_cache:-/tmp/npm-cache}"
+export NEXT_TELEMETRY_DISABLED=1
+
+npm ci
+npm run build
+npm prune --omit=dev

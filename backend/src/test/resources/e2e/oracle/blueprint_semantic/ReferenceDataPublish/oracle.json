@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "ReferenceDataPublish",
+  "scenarioId": "reference-data-publish-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "active, retired, and future reference codes are represented exactly",
+    "duplicate codes are detected",
+    "overlapping effective windows are detected",
+    "published output is unique by code",
+    "constraint test artifact reports PASS"
+  ],
+  "expectedArtifacts": ["reference-table", "reference-report", "reference-metrics", "reference-constraint-tests"]
+}

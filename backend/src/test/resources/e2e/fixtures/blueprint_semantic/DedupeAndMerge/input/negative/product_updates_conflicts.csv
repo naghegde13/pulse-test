@@ -1,0 +1,4 @@
+product_id,version_ts,name,price,status,source_priority
+,2026-05-04T10:00:00Z,Missing Key,3.0,active,1
+P300,2026-05-05T10:00:00Z,Conflict A,7.0,active,1
+P300,2026-05-05T10:00:00Z,Conflict B,8.0,active,1

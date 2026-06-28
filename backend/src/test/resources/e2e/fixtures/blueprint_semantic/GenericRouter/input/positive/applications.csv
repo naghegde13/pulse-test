@@ -1,0 +1,5 @@
+application_id,risk_score,loan_amount,manual_review_flag
+A100,810,12000,false
+A101,690,26000,false
+A102,550,8000,false
+A103,720,9500,true

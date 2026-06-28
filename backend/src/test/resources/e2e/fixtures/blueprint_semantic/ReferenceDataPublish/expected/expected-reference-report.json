@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "ReferenceDataPublish",
+  "publishedRowCount": 5,
+  "duplicateCodes": ["US"],
+  "overlapCodes": ["CA"],
+  "verdict": "draft-pass"
+}

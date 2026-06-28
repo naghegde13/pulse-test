@@ -1,0 +1,221 @@
+{
+  "blueprintKey": "FreshnessChecks",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft FreshnessChecks semantic pack distinguishes recent, boundary, and stale POS loads so SLA-proof artifacts can be expanded without reopening pack ownership later.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "input/edge/boundary_batches.csv",
+      "caseType": "edge",
+      "schemaRef": "freshness_batches_csv_v1",
+      "rowCount": 1,
+      "sha256": "d11ca539e8303e203e60a8eab66a2da3c98756418ca2a5d80147db59bc9191ec"
+    },
+    {
+      "path": "input/expectations/freshness-config.json",
+      "caseType": "expectation",
+      "schemaRef": "freshness_config_v1",
+      "rowCount": 1,
+      "sha256": "fbfcba0664cb7da3a7f8484e41292c3857e3561c03a1578b27afadbe0ce346ce"
+    },
+    {
+      "path": "input/negative/stale_batches.csv",
+      "caseType": "negative",
+      "schemaRef": "freshness_batches_csv_v1",
+      "rowCount": 1,
+      "sha256": "1c4f42e783ff54843ccbdf080ab510b2a68b818fc21a5fb0dc20b9efd32c78de"
+    },
+    {
+      "path": "input/positive/recent_batches.csv",
+      "caseType": "positive",
+      "schemaRef": "freshness_batches_csv_v1",
+      "rowCount": 1,
+      "sha256": "0a4b66306df0ea86b11d74ff219a7a9b2ea073e16bff2fa15740d5969fe76dd7"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "freshness_batches_csv_v1",
+      "columns": [
+        {
+          "name": "batch_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "business_date",
+          "type": "date",
+          "nullable": false
+        },
+        {
+          "name": "loaded_at",
+          "type": "timestamp",
+          "nullable": false
+        },
+        {
+          "name": "store_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "row_count",
+          "type": "integer",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "freshness_config_v1",
+      "columns": [
+        {
+          "name": "asOfTimestamp",
+          "type": "timestamp",
+          "nullable": false
+        },
+        {
+          "name": "maxLagMinutes",
+          "type": "integer",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "recent-and-boundary-batches-pass",
+      "inputRefs": [
+        "input/positive/recent_batches.csv",
+        "input/edge/boundary_batches.csv",
+        "input/expectations/freshness-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-freshness-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "B100 is fresh",
+        "B101 passes exactly on the SLA boundary"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "stale-batch-fails-sla",
+      "inputRefs": [
+        "input/negative/stale_batches.csv",
+        "input/expectations/freshness-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-freshness-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "B200 is classified as stale"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "boundary-batch-is-inclusive",
+      "inputRefs": [
+        "input/edge/boundary_batches.csv",
+        "input/expectations/freshness-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-freshness-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "boundary batch B101 remains fresh when age equals maxLagMinutes"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "stale-batch-placeholder-for-downstream-stop-policy",
+      "inputRefs": [
+        "input/negative/stale_batches.csv",
+        "input/expectations/freshness-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-freshness-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "future runtime work will decide whether stale batches hard-fail or quarantine downstream"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "recent-then-stale-sla-evaluation",
+      "runs": [
+        {
+          "runId": "recent-eval",
+          "inputRefs": [
+            "input/positive/recent_batches.csv",
+            "input/edge/boundary_batches.csv",
+            "input/expectations/freshness-config.json"
+          ]
+        },
+        {
+          "runId": "stale-eval",
+          "inputRefs": [
+            "input/negative/stale_batches.csv",
+            "input/expectations/freshness-config.json"
+          ],
+          "expectedOutputRefs": [
+            "expected/expected-freshness-report.json"
+          ],
+          "expectedMetricRefs": [
+            "expected/expected-metrics.json"
+          ]
+        }
+      ],
+      "assertions": [
+        "freshness report preserves consistent boundary and stale classifications across runs"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "expected/expected-freshness-report.json",
+      "format": "json",
+      "comparatorType": "dq_report",
+      "sha256": "32e7a37e58a2d2037a9c6056b2b8bc845e830e6024dfb1b68d1af416f8fb4e16"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "stale_batch_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 1,
+      "comparatorType": "aggregate_exact",
+      "sha256": "a3311b01a02501d58a07894acdae63db74cc4c21ef16dd9dbbfacad1bb90b6bf"
+    }
+  ],
+  "comparator": {
+    "type": "dq_report",
+    "ownerClass": "com.pulse.e2e.semantic.FreshnessChecksSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

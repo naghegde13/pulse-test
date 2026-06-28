@@ -1,0 +1,445 @@
+-- V7: Blueprint catalog table + seed all 50 blueprints with lay-person descriptions.
+
+CREATE TABLE blueprints (
+    id                    VARCHAR(26) PRIMARY KEY,
+    blueprint_key         VARCHAR(100) NOT NULL UNIQUE,
+    name                  VARCHAR(255) NOT NULL,
+    description           VARCHAR(1000) NOT NULL,
+    category              VARCHAR(50) NOT NULL,
+    version               VARCHAR(20) NOT NULL,
+    params_schema         JSONB DEFAULT '[]',
+    input_ports           JSONB DEFAULT '[]',
+    output_ports          JSONB DEFAULT '[]',
+    runtime_requirements  JSONB DEFAULT '{}',
+    deferred              BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at            TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_bp_category ON blueprints(category);
+CREATE INDEX idx_bp_key ON blueprints(blueprint_key);
+
+-- =====================================================
+-- INGESTION (10)
+-- =====================================================
+
+INSERT INTO blueprints (id, blueprint_key, name, description, category, version, params_schema, input_ports, output_ports, deferred) VALUES
+('01JBP0INGESTION0FILE00001', 'FileIngestion', 'File Ingestion',
+ 'Picks up data files (CSV, JSON, Parquet, Excel) from a folder or cloud storage bucket and loads them into your data lake. Handles large files in batches and organizes them by date so nothing gets lost.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_path","type":"string","required":true,"description":"Path or URI to the source files"},{"name":"file_format","type":"enum","options":["csv","json","parquet","excel"],"default":"csv"},{"name":"delimiter","type":"string","default":","},{"name":"has_header","type":"boolean","default":true},{"name":"partition_by","type":"string","default":"ingestion_date"}]',
+ '[]',
+ '[{"name":"raw_output","description":"Raw ingested data in the data lake"}]',
+ false),
+
+('01JBP0INGESTION0CDC000001', 'CDCIngestion', 'Change Data Capture Ingestion',
+ 'Watches a database for changes (new rows, updates, deletes) and streams only the changes into your data lake. Like having a live feed of everything happening in the source system without copying the whole database every time.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_type","type":"enum","options":["postgres","mysql","oracle","sqlserver"],"required":true},{"name":"tables","type":"string[]","required":true,"description":"Tables to capture changes from"},{"name":"initial_snapshot","type":"boolean","default":true}]',
+ '[]',
+ '[{"name":"cdc_stream","description":"Change events with before/after values"}]',
+ false),
+
+('01JBP0INGESTION0API000001', 'ApiIngestion', 'API Ingestion',
+ 'Connects to a REST API (like Salesforce, Stripe, or any web service), pulls data page by page, and loads it into your data lake. Respects rate limits so you do not get blocked by the source system.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"api_url","type":"string","required":true},{"name":"auth_type","type":"enum","options":["oauth2","api_key","basic"],"default":"api_key"},{"name":"rate_limit_rpm","type":"integer","default":60},{"name":"pagination_type","type":"enum","options":["offset","cursor","link"],"default":"offset"},{"name":"incremental_field","type":"string"}]',
+ '[]',
+ '[{"name":"api_output","description":"API response data landed in the data lake"}]',
+ false),
+
+('01JBP0INGESTION0STREAM001', 'StreamIngestion', 'Stream Ingestion',
+ 'Listens to a real-time event stream (like Kafka or a message queue) and continuously captures events as they happen. Perfect for systems that push data rather than wait to be asked.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"stream_type","type":"enum","options":["kafka","kinesis","eventhub","pubsub"],"required":true},{"name":"topic","type":"string","required":true},{"name":"consumer_group","type":"string","required":true},{"name":"batch_window_seconds","type":"integer","default":60}]',
+ '[]',
+ '[{"name":"stream_output","description":"Micro-batched stream events"}]',
+ false),
+
+('01JBP0INGESTION0SNAP00001', 'SnapshotIngestion', 'Snapshot Ingestion',
+ 'Takes a complete picture of a data source at a point in time -- like a photograph of the entire table. Useful for systems that do not track changes, so you compare snapshots to figure out what changed.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_table","type":"string","required":true},{"name":"snapshot_frequency","type":"enum","options":["daily","weekly","monthly"],"default":"daily"},{"name":"compare_key","type":"string","description":"Column(s) to detect changes between snapshots"}]',
+ '[]',
+ '[{"name":"snapshot_output","description":"Full point-in-time snapshot of source"}]',
+ false),
+
+('01JBP0INGESTION0BULK00001', 'BulkBackfill', 'Bulk Backfill',
+ 'Loads a large volume of historical data in one go -- for example, importing three years of transactions when setting up a new pipeline. Runs in parallel chunks so it finishes in hours instead of days.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_query","type":"string","required":true},{"name":"date_range_start","type":"date","required":true},{"name":"date_range_end","type":"date","required":true},{"name":"chunk_size","type":"integer","default":100000},{"name":"parallelism","type":"integer","default":4}]',
+ '[]',
+ '[{"name":"backfill_output","description":"Backfilled historical data"}]',
+ false),
+
+('01JBP0INGESTION0FANIN0001', 'MultiSourceFanIn', 'Multi-Source Fan-In',
+ 'Pulls data from multiple different sources (different APIs, databases, or files) and combines them into a single unified stream. Like merging several incoming roads into one highway.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"sources","type":"object[]","required":true,"description":"List of source configurations"},{"name":"merge_strategy","type":"enum","options":["union","interleave"],"default":"union"}]',
+ '[]',
+ '[{"name":"merged_output","description":"Combined data from all sources"}]',
+ false),
+
+('01JBP0INGESTION0SCHEV0001', 'SchemaEvolutionAwareIngest', 'Schema Evolution-Aware Ingestion',
+ 'Ingests data from sources where the structure changes over time -- like when someone adds a new column. Automatically detects these changes and adapts instead of breaking.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_ref","type":"string","required":true},{"name":"evolution_policy","type":"enum","options":["add_columns","strict","log_and_skip"],"default":"add_columns"}]',
+ '[]',
+ '[{"name":"evolved_output","description":"Data with schema changes handled gracefully"}]',
+ false),
+
+('01JBP0INGESTION0ENCR00001', 'EncryptedSourceIngest', 'Encrypted Source Ingestion',
+ 'Ingests data from encrypted sources (PGP-encrypted files, TLS-only endpoints, encrypted databases). Handles decryption securely so sensitive data is never exposed in transit.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"encryption_type","type":"enum","options":["pgp","aes256","tls","kms"],"required":true},{"name":"key_ref","type":"string","required":true,"description":"Reference to decryption key in secrets vault"}]',
+ '[]',
+ '[{"name":"decrypted_output","description":"Decrypted data ready for processing"}]',
+ false),
+
+('01JBP0INGESTION0XRGN00001', 'CrossRegionReplicationIngest', 'Cross-Region Replication Ingestion',
+ 'Copies data from one geographic region to another (e.g., EU to US) while respecting data residency rules. Ensures your pipelines have access to data regardless of where it was originally stored.',
+ 'INGESTION', '1.0.0',
+ '[{"name":"source_region","type":"string","required":true},{"name":"target_region","type":"string","required":true},{"name":"compliance_mode","type":"enum","options":["full_copy","anonymized","metadata_only"],"default":"full_copy"}]',
+ '[]',
+ '[{"name":"replicated_output","description":"Data replicated to target region"}]',
+ false);
+
+-- =====================================================
+-- TRANSFORM (10)
+-- =====================================================
+
+INSERT INTO blueprints (id, blueprint_key, name, description, category, version, params_schema, input_ports, output_ports, deferred) VALUES
+('01JBP0TRANSFORM0B2S000001', 'BronzeToSilverCleaning', 'Bronze-to-Silver Cleaning',
+ 'Takes raw, messy data and cleans it up: fixes data types, removes junk rows, standardizes formats (like dates and phone numbers), and produces a reliable, query-ready version of the data.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"null_handling","type":"enum","options":["drop","fill_default","flag"],"default":"flag"},{"name":"dedup_key","type":"string[]"},{"name":"type_coercions","type":"object","description":"Column-to-type mapping for casting"}]',
+ '[{"name":"raw_input","description":"Raw data from ingestion"}]',
+ '[{"name":"cleaned_output","description":"Cleaned, typed, deduplicated data"}]',
+ false),
+
+('01JBP0TRANSFORM0NORM00001', 'SchemaNormalization', 'Schema Normalization',
+ 'Converts data from one format or structure to a standard one your organization uses. Like translating different languages into one common language so all your data speaks the same way.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"target_schema","type":"string","required":true,"description":"Reference to the target standard schema"},{"name":"mapping_rules","type":"object","description":"Source-to-target field mapping"},{"name":"strict_mode","type":"boolean","default":false}]',
+ '[{"name":"source_data","description":"Data in its original format"}]',
+ '[{"name":"normalized_output","description":"Data conforming to the target schema"}]',
+ false),
+
+('01JBP0TRANSFORM0DEDUP0001', 'DedupeAndMerge', 'Dedupe & Merge',
+ 'Finds and removes duplicate records -- like when the same customer appears three times with slightly different spellings. Merges the best information from each duplicate into one golden record.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"match_keys","type":"string[]","required":true},{"name":"match_strategy","type":"enum","options":["exact","fuzzy","composite"],"default":"exact"},{"name":"merge_priority","type":"string","description":"Which source wins on conflict"}]',
+ '[{"name":"input_data","description":"Data potentially containing duplicates"}]',
+ '[{"name":"deduped_output","description":"Deduplicated and merged records"}]',
+ false),
+
+('01JBP0TRANSFORM0PII000001', 'PIIMasking', 'PII Masking & Tokenization',
+ 'Protects personal information (names, SSNs, email addresses) by masking or replacing it with tokens. The data remains useful for analytics but cannot be traced back to real people without special access.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"pii_columns","type":"string[]","required":true},{"name":"masking_strategy","type":"enum","options":["hash","redact","tokenize","encrypt"],"default":"hash"},{"name":"preserve_format","type":"boolean","default":true}]',
+ '[{"name":"sensitive_data","description":"Data containing PII"}]',
+ '[{"name":"masked_output","description":"Data with PII protected"}]',
+ false),
+
+('01JBP0TRANSFORM0ENRCH0001', 'EnrichmentJoin', 'Enrichment Join',
+ 'Adds extra context to your data by joining it with reference data -- like adding customer names to transaction IDs, or adding geographic details to zip codes. Makes your data more complete and useful.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"join_type","type":"enum","options":["inner","left","right","full"],"default":"left"},{"name":"join_keys","type":"object","required":true,"description":"Mapping of keys between main and reference data"},{"name":"select_fields","type":"string[]","description":"Fields to bring from reference data"}]',
+ '[{"name":"main_data","description":"Primary dataset to enrich"},{"name":"reference_data","description":"Reference dataset to join with"}]',
+ '[{"name":"enriched_output","description":"Data enriched with reference information"}]',
+ false),
+
+('01JBP0TRANSFORM0STDDM0001', 'StandardizeDimensions', 'Standardize Dimensions',
+ 'Ensures your business dimensions (products, regions, departments, cost centers) use consistent codes and names everywhere. No more "US", "USA", and "United States" meaning the same thing in different reports.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"dimension_type","type":"string","required":true},{"name":"lookup_table","type":"string","required":true},{"name":"unmapped_policy","type":"enum","options":["reject","default_bucket","log"],"default":"log"}]',
+ '[{"name":"raw_dimension_data","description":"Data with unstandardized dimension values"}]',
+ '[{"name":"standardized_output","description":"Data with consistent dimension values"}]',
+ false),
+
+('01JBP0TRANSFORM0CONFM0001', 'ConformanceToEnterpriseModel', 'Conformance to Enterprise Model',
+ 'Reshapes your data to fit your company official data model -- the single agreed-upon way data should be structured. Ensures every pipeline produces data that fits together like puzzle pieces.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"enterprise_model_ref","type":"string","required":true},{"name":"validation_level","type":"enum","options":["strict","warn","best_effort"],"default":"strict"}]',
+ '[{"name":"source_data","description":"Data in source-specific format"}]',
+ '[{"name":"conformed_output","description":"Data conforming to enterprise model"}]',
+ false),
+
+('01JBP0TRANSFORM0DVHLS0001', 'DataVaultHubLinkSat', 'Data Vault Hub-Link-Satellite',
+ 'Organizes data using the Data Vault methodology -- a proven approach for building a flexible, auditable data warehouse. Separates business keys, relationships, and descriptive details into modular building blocks.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"hub_keys","type":"string[]","required":true},{"name":"link_relationships","type":"object[]"},{"name":"satellite_attributes","type":"string[]"},{"name":"load_date_column","type":"string","default":"load_timestamp"}]',
+ '[{"name":"staged_data","description":"Cleaned data ready for Data Vault loading"}]',
+ '[{"name":"hub_output","description":"Hub entities (business keys)"},{"name":"link_output","description":"Link entities (relationships)"},{"name":"sat_output","description":"Satellite entities (descriptive attributes)"}]',
+ false),
+
+('01JBP0TRANSFORM0FLAT00001', 'FlattenNestedStructures', 'Flatten Nested Structures',
+ 'Takes complex, deeply nested data (like JSON with objects inside objects inside arrays) and flattens it into simple rows and columns that are easy to query and report on.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"flatten_depth","type":"integer","default":2},{"name":"array_handling","type":"enum","options":["explode","stringify","first_element"],"default":"explode"},{"name":"naming_convention","type":"enum","options":["dot_notation","underscore"],"default":"underscore"}]',
+ '[{"name":"nested_data","description":"Data with nested or complex structures"}]',
+ '[{"name":"flat_output","description":"Flattened, tabular data"}]',
+ false),
+
+('01JBP0TRANSFORM0DERIV0001', 'DerivedMetricsComputation', 'Derived Metrics Computation',
+ 'Calculates new business metrics from your existing data -- like computing profit margins from revenue and cost, or calculating customer lifetime value from purchase history. Turns raw numbers into business insights.',
+ 'TRANSFORM', '1.0.0',
+ '[{"name":"metrics","type":"object[]","required":true,"description":"List of metric definitions with formulas"},{"name":"window_functions","type":"object[]","description":"Rolling/cumulative calculations"},{"name":"output_precision","type":"integer","default":4}]',
+ '[{"name":"source_data","description":"Base data for metric computation"}]',
+ '[{"name":"metrics_output","description":"Data with computed business metrics"}]',
+ false);
+
+-- =====================================================
+-- MODELING (10)
+-- =====================================================
+
+INSERT INTO blueprints (id, blueprint_key, name, description, category, version, params_schema, input_ports, output_ports, deferred) VALUES
+('01JBP0MODELING0SCD200001', 'SCD2Dimension', 'SCD2 Dimension',
+ 'Builds a dimension table that keeps the full history of changes -- so you can see what a customer''s address was last year, not just today. Every change creates a new version of the record with date ranges.',
+ 'MODELING', '1.0.0',
+ '[{"name":"business_key","type":"string[]","required":true},{"name":"tracked_columns","type":"string[]","required":true,"description":"Columns that trigger a new version when changed"},{"name":"effective_date_column","type":"string","default":"effective_from"}]',
+ '[{"name":"source_data","description":"Current state of dimension data"}]',
+ '[{"name":"scd2_output","description":"Slowly changing dimension with full history"}]',
+ false),
+
+('01JBP0MODELING0FACT000001', 'FactBuild', 'Fact Table Build',
+ 'Builds a fact table -- the core of your analytics. Combines transaction data with dimension keys to create a table optimized for answering business questions like "how much did we sell by region last quarter?"',
+ 'MODELING', '1.0.0',
+ '[{"name":"grain","type":"string","required":true,"description":"Level of detail (e.g., daily, per-transaction)"},{"name":"measures","type":"string[]","required":true},{"name":"dimension_keys","type":"string[]","required":true},{"name":"incremental","type":"boolean","default":true}]',
+ '[{"name":"transaction_data","description":"Source transaction/event data"},{"name":"dimension_refs","description":"Dimension tables for key lookups"}]',
+ '[{"name":"fact_output","description":"Analytical fact table"}]',
+ false),
+
+('01JBP0MODELING0INCMG00001', 'IncrementalMerge', 'Incremental Merge',
+ 'Updates an existing table with only the new and changed records -- instead of rebuilding the whole thing every time. Like updating a phone book with just the new listings rather than reprinting the entire book.',
+ 'MODELING', '1.0.0',
+ '[{"name":"merge_key","type":"string[]","required":true},{"name":"merge_strategy","type":"enum","options":["upsert","delete_insert","append"],"default":"upsert"},{"name":"soft_delete","type":"boolean","default":false}]',
+ '[{"name":"incremental_data","description":"New/changed records to merge"}]',
+ '[{"name":"merged_output","description":"Updated target table"}]',
+ false),
+
+('01JBP0MODELING0SNAPM00001', 'SnapshotModel', 'Snapshot Model',
+ 'Captures the complete state of a table at regular intervals (daily, weekly) and stores each snapshot. Lets you answer "what did the data look like on any given date?" -- essential for auditing and trend analysis.',
+ 'MODELING', '1.0.0',
+ '[{"name":"snapshot_frequency","type":"enum","options":["daily","weekly","monthly"],"default":"daily"},{"name":"retention_days","type":"integer","default":365},{"name":"partition_column","type":"string","default":"snapshot_date"}]',
+ '[{"name":"source_data","description":"Current state data to snapshot"}]',
+ '[{"name":"snapshot_output","description":"Point-in-time snapshots"}]',
+ false),
+
+('01JBP0MODELING0LATE000001', 'LateArrivingDataHandler', 'Late-Arriving Data Handler',
+ 'Handles data that shows up after it was expected -- like a transaction from Monday that does not arrive until Wednesday. Correctly slots it into the right time period and updates affected aggregates.',
+ 'MODELING', '1.0.0',
+ '[{"name":"event_time_column","type":"string","required":true},{"name":"processing_time_column","type":"string","required":true},{"name":"late_threshold_hours","type":"integer","default":72},{"name":"restatement_policy","type":"enum","options":["recompute","flag_only","quarantine"],"default":"recompute"}]',
+ '[{"name":"late_data","description":"Records arriving after their expected window"}]',
+ '[{"name":"corrected_output","description":"Target data with late records properly integrated"}]',
+ false),
+
+('01JBP0MODELING0REFDP00001', 'ReferenceDataPublish', 'Reference Data Publish',
+ 'Takes curated reference data (country codes, product catalogs, exchange rates) and publishes it as a shared, versioned dataset that other pipelines can depend on. Like maintaining a company-wide dictionary.',
+ 'MODELING', '1.0.0',
+ '[{"name":"reference_type","type":"string","required":true},{"name":"publish_frequency","type":"enum","options":["on_change","daily","weekly"],"default":"on_change"},{"name":"versioned","type":"boolean","default":true}]',
+ '[{"name":"reference_source","description":"Curated reference data"}]',
+ '[{"name":"published_reference","description":"Published, versioned reference dataset"}]',
+ false),
+
+('01JBP0MODELING0WDMART0001', 'WideDenormalizedMart', 'Wide Denormalized Mart',
+ 'Builds a wide, flat table that combines data from many sources into one easy-to-query table. Optimized for dashboards and BI tools -- analysts can get answers without writing complex joins.',
+ 'MODELING', '1.0.0',
+ '[{"name":"fact_source","type":"string","required":true},{"name":"dimension_joins","type":"object[]","required":true},{"name":"pre_aggregations","type":"object[]","description":"Optional pre-computed aggregations"}]',
+ '[{"name":"fact_data","description":"Core fact table"},{"name":"dimension_data","description":"Dimension tables to denormalize"}]',
+ '[{"name":"mart_output","description":"Wide denormalized mart for BI consumption"}]',
+ false),
+
+('01JBP0MODELING0AGGMT00001', 'AggregateMaterialization', 'Aggregate Materialization',
+ 'Pre-computes summary tables (totals, averages, counts by group) so dashboards load instantly instead of crunching millions of rows every time someone opens a report.',
+ 'MODELING', '1.0.0',
+ '[{"name":"group_by","type":"string[]","required":true},{"name":"aggregations","type":"object[]","required":true,"description":"List of measures and aggregation functions"},{"name":"refresh_strategy","type":"enum","options":["full","incremental"],"default":"incremental"}]',
+ '[{"name":"detail_data","description":"Detailed source data to aggregate"}]',
+ '[{"name":"aggregate_output","description":"Pre-computed summary table"}]',
+ false),
+
+('01JBP0MODELING0TSOPT00001', 'TimeSeriesOptimization', 'Time Series Optimization',
+ 'Structures time-stamped data (sensor readings, stock prices, daily metrics) for fast time-based queries. Applies partitioning, indexing, and optional downsampling so your time series analysis runs efficiently.',
+ 'MODELING', '1.0.0',
+ '[{"name":"time_column","type":"string","required":true},{"name":"partition_interval","type":"enum","options":["hourly","daily","weekly","monthly"],"default":"daily"},{"name":"downsample_strategy","type":"enum","options":["none","average","first","last"],"default":"none"}]',
+ '[{"name":"timeseries_data","description":"Raw time-stamped data"}]',
+ '[{"name":"optimized_output","description":"Time-series optimized table"}]',
+ false),
+
+('01JBP0MODELING0FEAT000001', 'FeatureTablePublish', 'Feature Table Publish (ML-Ready)',
+ 'Prepares and publishes a feature table for machine learning models. Computes features from raw data, handles point-in-time correctness (no data leakage), and outputs in a format ML frameworks can consume directly.',
+ 'MODELING', '1.0.0',
+ '[{"name":"entity_key","type":"string","required":true},{"name":"features","type":"object[]","required":true},{"name":"point_in_time_column","type":"string","required":true},{"name":"output_format","type":"enum","options":["delta","parquet","feature_store"],"default":"delta"}]',
+ '[{"name":"source_data","description":"Raw data for feature computation"}]',
+ '[{"name":"feature_output","description":"ML-ready feature table"}]',
+ false);
+
+-- =====================================================
+-- DATA QUALITY (10)
+-- =====================================================
+
+INSERT INTO blueprints (id, blueprint_key, name, description, category, version, params_schema, input_ports, output_ports, deferred) VALUES
+('01JBP0DQ0VALIDATOR0000001', 'DQValidator', 'Data Quality Validator',
+ 'Runs a set of quality checks on your data: are required fields filled in? Are values in the expected range? Are there unexpected nulls? Catches data problems before they reach reports and dashboards.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"rules","type":"object[]","required":true,"description":"List of validation rules"},{"name":"failure_policy","type":"enum","options":["fail_fast","quarantine","alert_only"],"default":"quarantine"},{"name":"threshold_percent","type":"number","default":99.0}]',
+ '[{"name":"data_to_validate","description":"Data to run quality checks against"}]',
+ '[{"name":"validated_output","description":"Records that passed validation"},{"name":"quarantine_output","description":"Records that failed validation"}]',
+ false),
+
+('01JBP0DQ0FRESHNESS000001', 'FreshnessChecks', 'Freshness Checks',
+ 'Monitors whether your data is arriving on time. If the daily sales data usually shows up by 6am and it is 8am with nothing new, this alerts your team so they can investigate before it affects downstream reports.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"freshness_column","type":"string","required":true},{"name":"expected_frequency","type":"enum","options":["hourly","daily","weekly"],"required":true},{"name":"max_delay_minutes","type":"integer","default":120}]',
+ '[{"name":"monitored_dataset","description":"Dataset to check for freshness"}]',
+ '[{"name":"freshness_result","description":"Freshness check results and alerts"}]',
+ false),
+
+('01JBP0DQ0SCHEMADRIFT0001', 'SchemaDriftDetection', 'Schema Drift Detection',
+ 'Watches for unexpected changes in your data structure -- like a column being renamed, removed, or having its type changed upstream. Catches these surprises before they silently break your pipelines.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"baseline_schema_ref","type":"string","required":true},{"name":"drift_policy","type":"enum","options":["block","warn","auto_adapt"],"default":"warn"},{"name":"ignore_columns","type":"string[]"}]',
+ '[{"name":"incoming_data","description":"New data to check for schema changes"}]',
+ '[{"name":"drift_report","description":"Schema drift detection results"}]',
+ false),
+
+('01JBP0DQ0ANOMALY00000001', 'AnomalyDetection', 'Anomaly Detection',
+ 'Uses statistical methods to spot unusual patterns in your data -- a sudden spike in transactions, an unexpected drop in records, or values way outside normal ranges. Helps catch data problems and fraud early.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"metric_columns","type":"string[]","required":true},{"name":"method","type":"enum","options":["z_score","iqr","moving_average","isolation_forest"],"default":"z_score"},{"name":"sensitivity","type":"number","default":2.0}]',
+ '[{"name":"data_to_monitor","description":"Data to scan for anomalies"}]',
+ '[{"name":"anomaly_report","description":"Detected anomalies with scores"}]',
+ false),
+
+('01JBP0DQ0RECONCILE000001', 'Reconciliation', 'Source-Target Reconciliation',
+ 'Compares data between two systems (like source database vs. data lake) to make sure nothing was lost or changed during transfer. Counts rows, sums amounts, and reports any mismatches.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"comparison_keys","type":"string[]","required":true},{"name":"comparison_columns","type":"string[]","required":true},{"name":"tolerance_percent","type":"number","default":0.01}]',
+ '[{"name":"source_data","description":"Data from the source system"},{"name":"target_data","description":"Data from the target system"}]',
+ '[{"name":"recon_report","description":"Reconciliation results with mismatches"}]',
+ false),
+
+('01JBP0DQ0QUARANTINE00001', 'QuarantineBadRecords', 'Quarantine Bad Records',
+ 'Separates records that fail quality checks into a quarantine area instead of discarding them. Bad records can be reviewed, fixed, and reprocessed later -- nothing is permanently lost.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"quarantine_rules","type":"object[]","required":true},{"name":"retention_days","type":"integer","default":30},{"name":"alert_on_threshold","type":"boolean","default":true}]',
+ '[{"name":"mixed_data","description":"Data containing both good and bad records"}]',
+ '[{"name":"clean_output","description":"Records that passed all checks"},{"name":"quarantine_output","description":"Records moved to quarantine"}]',
+ false),
+
+('01JBP0DQ0VOLSPIKE0000001', 'VolumeSpikeDetection', 'Volume Spike Detection',
+ 'Monitors how many records arrive in each batch and alerts when the volume is unusually high or low. A sudden 10x increase might mean duplicate data; a 90% drop might mean the source broke.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"volume_metric","type":"enum","options":["row_count","byte_size","distinct_keys"],"default":"row_count"},{"name":"baseline_window_days","type":"integer","default":30},{"name":"spike_threshold_percent","type":"number","default":200},{"name":"drop_threshold_percent","type":"number","default":50}]',
+ '[{"name":"monitored_dataset","description":"Dataset to monitor for volume changes"}]',
+ '[{"name":"volume_report","description":"Volume analysis and spike alerts"}]',
+ false),
+
+('01JBP0DQ0DUPMON00000001', 'DuplicateThresholdMonitor', 'Duplicate Threshold Monitor',
+ 'Continuously monitors your data for duplicates and raises an alarm if the duplicate rate exceeds a threshold. Unlike dedup which fixes the problem, this watches and warns so you can fix the root cause.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"duplicate_keys","type":"string[]","required":true},{"name":"threshold_percent","type":"number","default":1.0},{"name":"alert_channel","type":"string","default":"webhook"}]',
+ '[{"name":"data_to_monitor","description":"Dataset to monitor for duplicates"}]',
+ '[{"name":"duplicate_report","description":"Duplicate rate metrics and alerts"}]',
+ false),
+
+('01JBP0DQ0REFINT00000001', 'ReferentialIntegrityCheck', 'Referential Integrity Check',
+ 'Verifies that relationships between tables are valid -- every order references a real customer, every transaction references a real account. Catches broken links before they cause errors in reports.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"parent_table","type":"string","required":true},{"name":"parent_key","type":"string","required":true},{"name":"child_key","type":"string","required":true},{"name":"violation_policy","type":"enum","options":["reject","flag","log"],"default":"flag"}]',
+ '[{"name":"child_data","description":"Table with foreign key references"},{"name":"parent_data","description":"Referenced parent table"}]',
+ '[{"name":"integrity_report","description":"Referential integrity check results"}]',
+ false),
+
+('01JBP0DQ0SCORECARD000001', 'DQScorecardPublish', 'DQ Scorecard Publish',
+ 'Compiles all data quality metrics into a single scorecard -- an overall health grade for your data. Published to the data catalog so stakeholders can see at a glance whether they can trust the data.',
+ 'DATA_QUALITY', '1.0.0',
+ '[{"name":"dq_sources","type":"string[]","required":true,"description":"DQ check results to aggregate"},{"name":"scoring_model","type":"enum","options":["weighted","pass_fail","tiered"],"default":"weighted"},{"name":"publish_to_catalog","type":"boolean","default":true}]',
+ '[{"name":"dq_results","description":"Results from various DQ checks"}]',
+ '[{"name":"scorecard_output","description":"Aggregated DQ scorecard"}]',
+ false);
+
+-- =====================================================
+-- ORCHESTRATION / CI/CD / GOVERNANCE (10)
+-- =====================================================
+
+INSERT INTO blueprints (id, blueprint_key, name, description, category, version, params_schema, input_ports, output_ports, deferred) VALUES
+('01JBP0ORCH0SCHEDULE000001', 'ScheduleAndTriggers', 'Schedule & Triggers',
+ 'Defines when and how your pipeline runs -- on a schedule (every day at 6am), on a trigger (when new data arrives), or on demand. The control panel for your pipeline''s timing.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"schedule_type","type":"enum","options":["cron","event","manual"],"required":true},{"name":"cron_expression","type":"string"},{"name":"trigger_dataset","type":"string"},{"name":"timezone","type":"string","default":"UTC"},{"name":"retry_count","type":"integer","default":3}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0BACKFILL000001', 'BackfillAndReplay', 'Backfill & Replay',
+ 'Re-runs your pipeline for a specific date range in the past. Useful when you fix a bug and need to reprocess last month''s data, or when you add a new pipeline and need to catch up on historical data.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"start_date","type":"date","required":true},{"name":"end_date","type":"date","required":true},{"name":"parallelism","type":"integer","default":1},{"name":"clear_existing","type":"boolean","default":false}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0CIVALIDATE001', 'CIValidate', 'CI Validation (Lint + Test)',
+ 'Automatically checks your pipeline code for errors, style issues, and runs tests before it can be deployed. Like a spell-checker and grammar checker for your pipeline -- catches mistakes before they go live.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"lint_enabled","type":"boolean","default":true},{"name":"test_enabled","type":"boolean","default":true},{"name":"coverage_threshold_percent","type":"number","default":80}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0GENARTIF00001', 'GenerateArtifacts', 'Generate Artifacts',
+ 'Takes your pipeline configuration and generates the actual code (Airflow DAGs, dbt models, Spark jobs) that will run in production. You configure what you want; this builds the how.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"target_runtime","type":"enum","options":["airflow_dbt","airflow_spark","airflow_mixed"],"default":"airflow_dbt"},{"name":"dbt_project","type":"string"},{"name":"dag_id_prefix","type":"string"}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0DEPLOYENV0001', 'DeployToEnv', 'Deploy to Environment',
+ 'Deploys your pipeline to a specific environment (dev or test). Applies database changes, updates Airflow DAGs, and activates schedules -- getting your pipeline ready to actually run.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"target_env","type":"enum","options":["dev","integration"],"required":true},{"name":"run_ddl","type":"boolean","default":true},{"name":"activate_schedule","type":"boolean","default":true}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0PROMOTE000001', 'PromoteAcrossEnvs', 'Promote Across Environments',
+ 'Moves a tested, validated pipeline from one environment to the next (dev to integration, integration to UAT). Builds an immutable deployment package and applies it through the approval workflow.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"source_env","type":"string","required":true},{"name":"target_env","type":"string","required":true},{"name":"require_approval","type":"boolean","default":true}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0BLUEGREEN001', 'BlueGreenDeployment', 'Blue-Green Deployment',
+ 'Deploys a new version of your pipeline alongside the current one, then switches traffic over once the new version is verified. If anything goes wrong, switch back instantly with zero downtime.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"switch_strategy","type":"enum","options":["immediate","canary_then_full"],"default":"immediate"}]',
+ '[]',
+ '[]',
+ true),
+
+('01JBP0ORCH0CANARY0000001', 'CanaryReleasePattern', 'Canary Release Pattern',
+ 'Rolls out a new pipeline version to a small subset of data first (like 5% of traffic). If the canary looks healthy, gradually increases to 100%. Minimizes risk when deploying changes to critical pipelines.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"canary_percent","type":"integer","default":5},{"name":"promotion_criteria","type":"object","description":"Health metrics that must pass before full rollout"}]',
+ '[]',
+ '[]',
+ true),
+
+('01JBP0ORCH0ROLLBACK00001', 'RollbackOnFailure', 'Rollback on Failure',
+ 'Automatically reverts to the last working version if a deployment fails or causes errors. Like an undo button for deployments -- your pipeline keeps running on the known-good version while you fix the problem.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"rollback_trigger","type":"enum","options":["deploy_failure","health_check_failure","manual"],"default":"deploy_failure"},{"name":"keep_failed_artifacts","type":"boolean","default":true}]',
+ '[]',
+ '[]',
+ false),
+
+('01JBP0ORCH0COSTMON000001', 'CostMonitoringHook', 'Cost Monitoring Hook',
+ 'Tracks how much compute and storage each pipeline run costs. Alerts your team when spending exceeds budgets or when a pipeline suddenly gets much more expensive -- prevents surprise cloud bills.',
+ 'ORCHESTRATION', '1.0.0',
+ '[{"name":"budget_limit_daily","type":"number"},{"name":"alert_threshold_percent","type":"number","default":80},{"name":"track_compute","type":"boolean","default":true},{"name":"track_storage","type":"boolean","default":true}]',
+ '[]',
+ '[]',
+ false);

@@ -1,0 +1,19 @@
+{
+  "requiredColumns": [
+    "customer_id",
+    "name",
+    "email",
+    "phone",
+    "state",
+    "signup_date"
+  ],
+  "semantics": {
+    "trimStrings": true,
+    "lowercaseEmail": true,
+    "uppercaseState": true,
+    "normalizePhoneDigits": true,
+    "blankPhoneAllowed": true,
+    "rejectInvalidEmail": true,
+    "rejectInvalidPhone": true
+  }
+}

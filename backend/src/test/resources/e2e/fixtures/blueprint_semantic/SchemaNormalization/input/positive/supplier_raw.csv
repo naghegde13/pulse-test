@@ -1,0 +1,5 @@
+Supplier ID, Supplier Name ,Country Code,Onboard Date,Payment Terms Days,Active Flag
+S-100, Acme Parts ,us,05/01/2024,30,Y
+S-101,Northwind Supply, ca ,2024-05-02,45,true
+S-102, Global Industrial ,GB,03-May-2024,60,N
+S-103,Contoso Metals,us,2024/05/04,15,false

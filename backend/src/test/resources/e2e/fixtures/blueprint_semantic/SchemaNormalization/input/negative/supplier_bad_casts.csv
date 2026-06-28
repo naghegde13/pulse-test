@@ -1,0 +1,3 @@
+Supplier ID, Supplier Name ,Country Code,Onboard Date,Payment Terms Days,Active Flag
+S-900,Bad Terms,US,2024-05-06,thirty,Y
+S-901,Bad Date,US,not-a-date,30,Y

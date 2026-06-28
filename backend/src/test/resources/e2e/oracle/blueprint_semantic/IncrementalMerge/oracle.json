@@ -1,0 +1,32 @@
+{
+  "blueprintKey": "IncrementalMerge",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "incremental-merge-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft IncrementalMerge semantic pack applies CDC upserts and deletes across two runs while preserving a stable final account snapshot for later idempotency hardening.",
+  "run1InputPath": "input/run1/account_snapshot.csv",
+  "run2InputPath": "input/run2/cdc_events.csv",
+  "mergeConfigPath": "input/expectations/merge-config.json",
+  "expectedOutputPath": "expected/final-state.csv",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedFinalAccountIds": [
+    "A1",
+    "A2",
+    "A4"
+  ],
+  "negativeAssertion": {
+    "inputPath": "input/negative/invalid-merge-event.json",
+    "expectedFailureCode": "INVALID_MERGE_OPERATION"
+  },
+  "checksums": {
+    "manifestSha256": "351cd4fc5a6d7f878f6f5a59247e1d032af386afed130843956d0c722299e7b2",
+    "comparatorConfigSha256": "070e3f1dd1ac9aa3467ff1a757288b11719450779fb695dc8863f6bbd72b41e8",
+    "input_expectations_merge-config_json_sha256": "09258e911537bd7c2bb4d95bf7104635f2ae15ec0fb6aae021a3c3645326f42a",
+    "input_negative_invalid-merge-event_json_sha256": "c74b457e23583cfda8676912ec3f60e752f6bede846ebb730ab8065ea0acb4ec",
+    "input_run1_account_snapshot_csv_sha256": "2629ee9c8b538a21ffcd51020e2776e2ebab8db357a245f7e3cb32e65cedc773",
+    "input_run2_cdc_events_csv_sha256": "fc878bfa0a7554c09f9505c8688f28dee274323558a1cd0202823bb279ef7aed",
+    "expected_final-state_csv_sha256": "ce855adea37523d44434abe08226e05e2bbb52193deae9ef3eb363eebcf4ce05",
+    "expected_merge-report_json_sha256": "6babaeb5f1237d07599064a1cd9d608f5d715d00a9a3d86881ee4343fb4238b1",
+    "expected_expected-metrics_json_sha256": "6c17945dc1e21f86f7dad1333d761a2368d7627d7863a3751fa3d7c1574ee82a"
+  }
+}

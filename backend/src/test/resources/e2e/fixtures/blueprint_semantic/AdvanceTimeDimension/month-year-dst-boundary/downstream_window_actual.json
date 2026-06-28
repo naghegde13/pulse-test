@@ -1,0 +1,16 @@
+{
+  "datasetName": "loan_master",
+  "selectedWindow": {
+    "startInclusive": "2026-03-08T00:00:00-05:00",
+    "endExclusive": "2026-03-09T00:00:00-04:00"
+  },
+  "selectedRows": [
+    "loan-20260308-dst-start",
+    "loan-20260308-dst-end"
+  ],
+  "boundaryAssertions": {
+    "localDate": "2026-03-08",
+    "timezone": "America/New_York",
+    "localDayHours": 23
+  }
+}

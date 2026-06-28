@@ -1,0 +1,10 @@
+{
+  "requiredParentObjects": ["session", "customer"],
+  "flattenArray": "items",
+  "semantics": {
+    "emptyArrayProducesNoRows": true,
+    "missingCustomerRejected": true,
+    "malformedJsonRejected": true,
+    "parentFieldsRetained": true
+  }
+}

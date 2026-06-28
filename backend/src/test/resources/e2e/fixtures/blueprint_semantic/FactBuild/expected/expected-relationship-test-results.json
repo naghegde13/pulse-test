@@ -1,0 +1,7 @@
+{
+  "missingProductIds": ["PROD_MISSING"],
+  "missingStoreIds": ["STORE_MISSING"],
+  "duplicateNaturalKeys": ["SALE9:L1"],
+  "unknownMemberRows": 2,
+  "verdict": "PASS"
+}

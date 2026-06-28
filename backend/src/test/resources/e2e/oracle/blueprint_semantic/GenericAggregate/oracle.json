@@ -1,0 +1,18 @@
+{
+  "blueprintKey": "GenericAggregate",
+  "scenarioId": "generic-aggregate-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "sales are grouped by store/date/category",
+    "sum, count, min, and max aggregates are exact",
+    "return rows are allowed only for return line type",
+    "negative sale quantity rows are rejected"
+  ],
+  "expectedArtifacts": [
+    "aggregate-output",
+    "aggregate-rejects",
+    "aggregate-report",
+    "aggregate-metrics"
+  ]
+}

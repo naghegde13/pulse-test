@@ -1,0 +1,18 @@
+{
+  "blueprintKey": "SchemaNormalization",
+  "scenarioId": "schema-normalization-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "raw supplier columns are renamed to canonical names",
+    "string trimming and country uppercasing are applied",
+    "supported date formats normalize to ISO date",
+    "bad numeric/date casts are rejected"
+  ],
+  "expectedArtifacts": [
+    "canonical-suppliers",
+    "normalization-rejects",
+    "normalization-report",
+    "normalization-metrics"
+  ]
+}

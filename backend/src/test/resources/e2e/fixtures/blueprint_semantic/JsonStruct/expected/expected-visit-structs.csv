@@ -1,0 +1,4 @@
+"visit_id","patient","provider","clinical","charge_amount"
+"V100","{\"dob\":\"1815-12-10\",\"patient_id\":\"P100\",\"patient_name\":\"Ada Lovelace\"}","{\"provider_id\":\"PR100\"}","{\"diagnosis_code\":\"E11\",\"procedure_code\":\"PROC-A\"}","125.5"
+"V101","{\"dob\":\"1906-12-09\",\"patient_id\":\"P101\",\"patient_name\":\"Grace Hopper\"}","{\"provider_id\":\"PR200\"}","{\"diagnosis_code\":\"I10\",\"procedure_code\":\"PROC-B\"}","300.0"
+"V102","{\"dob\":null,\"patient_id\":\"P102\",\"patient_name\":\"Alan Turing\"}","{\"provider_id\":\"PR200\"}","{\"diagnosis_code\":\"Z99\",\"procedure_code\":null}","0.0"

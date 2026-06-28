@@ -1,0 +1,9 @@
+{
+  "type": "row_exact",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/expected-output.csv",
+  "sortKeys": [
+    "application_id"
+  ]
+}

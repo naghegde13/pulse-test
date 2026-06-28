@@ -1,0 +1,4 @@
+employee_id,ssn,email,phone,salary,dob,department
+E100,123-45-6789,ada@example.com,212-555-0100,120000,1815-12-10,Engineering
+E101,MASKED_SSN_EXISTING,MASKED_EMAIL_EXISTING,MASKED_PHONE_EXISTING,130000,1906-12-09,Operations
+E102,,,,90000,1980-01-01,Finance

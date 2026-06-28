@@ -1,0 +1,8 @@
+{
+  "scenarioId": "advance-time-dimension-backward-rejection",
+  "advanceTargetMode": "dataset_advance",
+  "advanceAttemptKind": "rejected_backward",
+  "datasetName": "loan_master",
+  "advance_domain": false,
+  "runId": "run-advance-20260506-backward"
+}

@@ -1,0 +1,12 @@
+{
+  "routeCounts": {
+    "prime": 1,
+    "manual_review": 2,
+    "high_risk": 1,
+    "standard": 0
+  },
+  "manualReviewApplicationIds": [
+    "A101",
+    "A103"
+  ]
+}

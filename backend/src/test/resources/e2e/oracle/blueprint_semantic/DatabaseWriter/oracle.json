@@ -1,0 +1,13 @@
+{
+  "blueprintKey": "DatabaseWriter",
+  "scenarioId": "database-writer-gcp-golden-bigquery",
+  "canonicalGcpDestination": "bigquery",
+  "requiredEvidence": [
+    "runtime/composer-dag-runs-final.raw.txt",
+    "runtime/composer-task-states-final.raw.txt",
+    "data/bigquery-final-rows.json",
+    "data/bigquery-probe.json",
+    "data/bigquery-oracle-comparison.json"
+  ],
+  "promotionAllowed": true
+}

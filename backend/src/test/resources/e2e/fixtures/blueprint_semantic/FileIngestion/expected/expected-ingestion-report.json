@@ -1,0 +1,21 @@
+{
+  "blueprintKey": "FileIngestion",
+  "schemaColumns": [
+    "order_id",
+    "order_ts",
+    "store_id",
+    "customer_id",
+    "sku",
+    "quantity",
+    "unit_price",
+    "currency",
+    "source_file_date"
+  ],
+  "rowCount": 20,
+  "emptyFileRowCount": 0,
+  "badHeaderRejected": true,
+  "corruptRowIds": [
+    "O999"
+  ],
+  "verdict": "draft-pass"
+}

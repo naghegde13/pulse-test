@@ -1,0 +1,5 @@
+order_id,order_line_id,customer_id,product_id,order_ts,quantity,unit_price,line_amount,order_status,customer_name,loyalty_tier,customer_region,sku,category,brand,shipment_id,carrier,shipment_status,payment_method,authorized_amount,captured_amount,payment_status
+O100,L1,C1,P1,2026-05-01T10:00:00Z,2,15.0,30.0,complete,Ada Buyer,gold,East,SKU-1,books,BrandA,S100,UPS,delivered,card,55.0,55.0,captured
+O100,L2,C1,P2,2026-05-01T10:00:00Z,1,25.0,25.0,complete,Ada Buyer,gold,East,SKU-2,games,BrandB,S100,UPS,delivered,card,55.0,55.0,captured
+O101,L1,C2,P3,2026-05-02T11:15:00Z,1,50.0,50.0,paid_no_ship,Grace Shopper,silver,West,SKU-3,electronics,BrandC,,,,card,50.0,25.0,partial
+O102,L1,C_MISSING,P1,2026-05-03T09:30:00Z,3,15.0,45.0,complete,UNKNOWN,UNKNOWN,UNKNOWN,SKU-1,books,BrandA,S102,FedEx,in_transit,ach,45.0,45.0,captured

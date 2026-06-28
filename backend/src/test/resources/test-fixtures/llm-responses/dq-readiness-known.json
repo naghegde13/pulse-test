@@ -1,0 +1,50 @@
+[
+  {
+    "requestSignature": "dq_readiness:known_composition_score_72",
+    "match": {
+      "userPromptContains": "## Pipeline Steps:"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"score\": 72, \"recommendations\": [{\"instance_name\": \"Loan Master Ingestion\", \"expectations\": [{\"type\": \"ExpectColumnValuesToNotBeNull\", \"kwargs\": {\"column\": \"loan_id\"}, \"severity\": \"critical\", \"reason\": \"Primary key must never be null\"}]}], \"reasoning\": \"Coverage is moderate. Add not-null checks on primary key columns and range checks on amount columns to lift the score above 80.\"}"
+      }
+    ]
+  },
+  {
+    "requestSignature": "dq_readiness:empty_composition_score_0",
+    "match": {
+      "userPromptContains": "## Pipeline Steps:"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"score\": 0, \"recommendations\": [], \"reasoning\": \"Pipeline contains no steps with DQ expectations; nothing to evaluate.\"}"
+      }
+    ]
+  },
+  {
+    "requestSignature": "dq_readiness:source_only_no_transform",
+    "match": {
+      "userPromptContains": "## Pipeline Steps:"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"score\": 15, \"recommendations\": [{\"instance_name\": \"Source\", \"expectations\": [{\"type\": \"ExpectTableRowCountToBeBetween\", \"kwargs\": {\"min_value\": 1}, \"severity\": \"high\", \"reason\": \"At minimum verify the source produces rows\"}]}], \"reasoning\": \"Pipeline has only an ingestion step and no transform/sink. Add a row-count freshness check and downstream cleaning to improve readiness.\"}"
+      }
+    ]
+  },
+  {
+    "requestSignature": "dq_readiness:malformed_json_payload",
+    "match": {
+      "userPromptContains": "## Pipeline Steps:"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "this is definitely not json {{{ broken"
+      }
+    ]
+  }
+]

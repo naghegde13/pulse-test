@@ -1,0 +1,13 @@
+{
+  "blueprintKey": "JsonFlatten",
+  "scenarioId": "json-flatten-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "items array expands to one row per item",
+    "parent event/session/customer/device/geo fields are retained",
+    "empty arrays produce no flat rows but are reported",
+    "missing customer and malformed JSON are rejected"
+  ],
+  "expectedArtifacts": ["flat-events", "flatten-rejects", "flatten-report", "flatten-metrics"]
+}

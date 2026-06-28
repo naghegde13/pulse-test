@@ -1,0 +1,7 @@
+{
+  "blueprintKey": "PIIMasking",
+  "maskedRowCount": 4,
+  "rejectEmployeeIds": ["E900"],
+  "rawLeakCount": 0,
+  "verdict": "draft-pass"
+}

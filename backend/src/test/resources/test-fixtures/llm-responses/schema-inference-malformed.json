@@ -1,0 +1,62 @@
+[
+  {
+    "requestSignature": "schema_infer:malformed:non_json",
+    "match": {
+      "userPromptContains": "MALFORMED_NON_JSON"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "Sure! Here is your schema: it has three columns and looks great."
+      }
+    ]
+  },
+  {
+    "requestSignature": "schema_infer:malformed:truncated",
+    "match": {
+      "userPromptContains": "MALFORMED_TRUNCATED"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"columns\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"status\","
+      }
+    ]
+  },
+  {
+    "requestSignature": "schema_infer:malformed:missing_columns_key",
+    "match": {
+      "userPromptContains": "MALFORMED_MISSING_COLUMNS"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"fields\":[{\"name\":\"id\",\"type\":\"long\"}]}"
+      }
+    ]
+  },
+  {
+    "requestSignature": "schema_infer:empty:string",
+    "match": {
+      "userPromptContains": "EMPTY_BODY_BLUEPRINT"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": ""
+      }
+    ]
+  },
+  {
+    "requestSignature": "schema_infer:empty:whitespace",
+    "match": {
+      "userPromptContains": "WHITESPACE_BODY_BLUEPRINT"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "   \n\t  "
+      }
+    ]
+  }
+]

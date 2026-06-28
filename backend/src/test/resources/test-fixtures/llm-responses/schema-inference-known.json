@@ -1,0 +1,26 @@
+[
+  {
+    "requestSignature": "schema_infer:GenericFilter:loan_master",
+    "match": {
+      "userPromptContains": "GenericFilter"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "{\"columns\":[{\"name\":\"loan_id\",\"type\":\"long\"},{\"name\":\"Customer_Name\",\"type\":\"string\"},{\"name\":\"payment_amount\",\"type\":\"double\"}]}"
+      }
+    ]
+  },
+  {
+    "requestSignature": "schema_infer:GenericFilter:mixed_casing",
+    "match": {
+      "userPromptContains": "MIXED_CASE_BLUEPRINT"
+    },
+    "responses": [
+      {
+        "kind": "message",
+        "content": "```json\n{\"columns\":[{\"name\":\"Order_ID\",\"type\":\"long\"},{\"name\":\"customerName\",\"type\":\"string\"},{\"name\":\"TOTAL_AMOUNT\",\"type\":\"decimal\"}]}\n```"
+      }
+    ]
+  }
+]

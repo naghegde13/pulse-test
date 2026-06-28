@@ -1,0 +1,243 @@
+{
+  "blueprintKey": "AnomalyDetection",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft AnomalyDetection semantic pack separates a stable telemetry baseline from a deterministic spike so future runtime hardening can anchor on blueprint-specific evidence.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "input/expectations/anomaly-config.json",
+      "caseType": "expectation",
+      "schemaRef": "anomaly_detection_config_v1",
+      "rowCount": 1,
+      "sha256": "f2edfb99c416d00342ee0dee3b1c6415db75c8ef63550ae1e0051bbf7d4f8266"
+    },
+    {
+      "path": "input/negative/invalid-anomaly-config.json",
+      "caseType": "negative",
+      "schemaRef": "anomaly_detection_config_v1",
+      "rowCount": 1,
+      "sha256": "1082124fab21ad5260ba7635676b560b5cc5532ec1d94eb7ddd7dd0df571c1f8"
+    },
+    {
+      "path": "input/run1/telemetry_baseline.csv",
+      "caseType": "run1",
+      "schemaRef": "anomaly_detection_telemetry_csv_v1",
+      "rowCount": 3,
+      "sha256": "0f830f4243686f452201a9036070991116065dac14d1aa8454ee96f899450331"
+    },
+    {
+      "path": "input/run2/telemetry_spike.csv",
+      "caseType": "run2",
+      "schemaRef": "anomaly_detection_telemetry_csv_v1",
+      "rowCount": 2,
+      "sha256": "ec25f613d5b3d1ec291d25f30f9dfd7918c8458e72dabb1be4f195b9c0f840e8"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "anomaly_detection_telemetry_csv_v1",
+      "columns": [
+        {
+          "name": "event_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "device_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "event_ts",
+          "type": "timestamp",
+          "nullable": false
+        },
+        {
+          "name": "temperature_c",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "vibration",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "battery_pct",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "site_id",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "anomaly_detection_config_v1",
+      "columns": [
+        {
+          "name": "primaryMetric",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "baselineWindowEvents",
+          "type": "integer",
+          "nullable": false
+        },
+        {
+          "name": "spikeThreshold",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "telemetry-spike-detected-against-baseline",
+      "inputRefs": [
+        "input/run1/telemetry_baseline.csv",
+        "input/run2/telemetry_spike.csv",
+        "input/expectations/anomaly-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/anomaly-events.csv",
+        "expected/expected-anomaly-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "baseline rows remain non-anomalous",
+        "T201 is flagged as a high-severity temperature spike"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "missing-primary-metric-rejected",
+      "inputRefs": [
+        "input/negative/invalid-anomaly-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "expectedFailureCode equals MISSING_PRIMARY_METRIC"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "baseline-window-must-be-separate-from-spike-run",
+      "inputRefs": [
+        "input/run1/telemetry_baseline.csv",
+        "input/run2/telemetry_spike.csv",
+        "input/expectations/anomaly-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-anomaly-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "baselineAccepted remains true before the spike evaluation occurs"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "draft-missing-metric-placeholder",
+      "inputRefs": [
+        "input/negative/invalid-anomaly-config.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "invalid anomaly config remains reserved for future runtime failure proofing"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "baseline-run-then-spike-run",
+      "runs": [
+        {
+          "runId": "baseline-window",
+          "inputRefs": [
+            "input/run1/telemetry_baseline.csv",
+            "input/expectations/anomaly-config.json"
+          ]
+        },
+        {
+          "runId": "spike-window",
+          "inputRefs": [
+            "input/run2/telemetry_spike.csv",
+            "input/expectations/anomaly-config.json"
+          ],
+          "expectedOutputRefs": [
+            "expected/anomaly-events.csv",
+            "expected/expected-anomaly-report.json"
+          ],
+          "expectedMetricRefs": [
+            "expected/expected-metrics.json"
+          ]
+        }
+      ],
+      "assertions": [
+        "the spike run produces exactly one anomaly after establishing the baseline window"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "expected/anomaly-events.csv",
+      "format": "csv",
+      "comparatorType": "aggregate_exact",
+      "sha256": "e61e58519339f4a51ad003690913ed15fd1b5fc35ed9bd93ededde5f1cd3c947"
+    },
+    {
+      "path": "expected/expected-anomaly-report.json",
+      "format": "json",
+      "comparatorType": "aggregate_exact",
+      "sha256": "8ff8734cb41fd3b3cdcd304b467e4f2e6cbfe66f07dad32b552534026139f208"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "anomaly_row_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 1,
+      "comparatorType": "aggregate_exact",
+      "sha256": "22e190e77d24c09379a0c507eab4e76a6a164ec84234c62910721d37ff29227c"
+    }
+  ],
+  "comparator": {
+    "type": "aggregate_exact",
+    "ownerClass": "com.pulse.e2e.semantic.AnomalyDetectionSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

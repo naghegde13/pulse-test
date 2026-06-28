@@ -1,0 +1,19 @@
+{
+  "groupBy": [
+    "store_id",
+    "sale_date",
+    "category"
+  ],
+  "measures": [
+    "sum_quantity",
+    "sum_revenue",
+    "line_count",
+    "min_unit_price",
+    "max_unit_price"
+  ],
+  "semantics": {
+    "returnsAllowedWhenLineTypeReturn": true,
+    "zeroQuantityAllowed": true,
+    "negativeSaleQuantityRejected": true
+  }
+}

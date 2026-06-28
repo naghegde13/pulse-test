@@ -1,0 +1,74 @@
+{
+  "rows": [
+    {
+      "subscription_id": "sub_001",
+      "customer_id": "cust_001",
+      "plan_code": "BASIC",
+      "monthly_price": "29.00",
+      "status": "ACTIVE",
+      "business_effective_ts": "2026-01-01T00:00:00Z",
+      "source_updated_ts": "2026-01-01T08:00:00Z",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_to": "2026-01-15T00:00:00Z",
+      "current_flag": false,
+      "version": "1",
+      "row_hash": "sub001-basic-v1"
+    },
+    {
+      "subscription_id": "sub_001",
+      "customer_id": "cust_001",
+      "plan_code": "PREMIUM",
+      "monthly_price": "79.00",
+      "status": "ACTIVE",
+      "business_effective_ts": "2026-01-15T00:00:00Z",
+      "source_updated_ts": "2026-02-10T08:00:00Z",
+      "valid_from": "2026-01-15T00:00:00Z",
+      "valid_to": "2026-02-01T00:00:00Z",
+      "current_flag": false,
+      "version": "2",
+      "row_hash": "sub001-premium-late-v2"
+    },
+    {
+      "subscription_id": "sub_001",
+      "customer_id": "cust_001",
+      "plan_code": "PRO",
+      "monthly_price": "99.00",
+      "status": "ACTIVE",
+      "business_effective_ts": "2026-02-01T00:00:00Z",
+      "source_updated_ts": "2026-02-01T08:00:00Z",
+      "valid_from": "2026-02-01T00:00:00Z",
+      "valid_to": null,
+      "current_flag": true,
+      "version": "3",
+      "row_hash": "sub001-pro-v3"
+    },
+    {
+      "subscription_id": "sub_002",
+      "customer_id": "cust_002",
+      "plan_code": "BASIC",
+      "monthly_price": "29.00",
+      "status": "ACTIVE",
+      "business_effective_ts": "2026-01-01T00:00:00Z",
+      "source_updated_ts": "2026-01-01T08:15:00Z",
+      "valid_from": "2026-01-01T00:00:00Z",
+      "valid_to": null,
+      "current_flag": true,
+      "version": "1",
+      "row_hash": "sub002-basic-v1"
+    },
+    {
+      "subscription_id": "sub_003",
+      "customer_id": "cust_003",
+      "plan_code": "BASIC",
+      "monthly_price": "29.00",
+      "status": "TRIAL",
+      "business_effective_ts": "2026-03-01T00:00:00Z",
+      "source_updated_ts": "2026-03-01T08:30:00Z",
+      "valid_from": "2026-03-01T00:00:00Z",
+      "valid_to": null,
+      "current_flag": true,
+      "version": "1",
+      "row_hash": "sub003-basic-v1"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "joinType": "left",
+  "leftKey": "customer_id",
+  "rightKey": "customer_id",
+  "selectedColumns": [
+    "order_id",
+    "customer_id",
+    "order_total",
+    "currency",
+    "customer_tier",
+    "segment"
+  ],
+  "semantics": {
+    "preserveUnmatchedLeftRows": true,
+    "expectedMatchedOrderIds": [
+      "O100",
+      "O101"
+    ],
+    "expectedUnmatchedOrderIds": [
+      "O102"
+    ]
+  }
+}

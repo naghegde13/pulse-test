@@ -1,0 +1,14 @@
+{
+  "acceptedCount": 2,
+  "rejectedCount": 2,
+  "nullMemberIds": [
+    "CL3"
+  ],
+  "negativeAmountIds": [
+    "CL4"
+  ],
+  "invalidStatusIds": [
+    "CL4"
+  ],
+  "quarantineRequired": true
+}

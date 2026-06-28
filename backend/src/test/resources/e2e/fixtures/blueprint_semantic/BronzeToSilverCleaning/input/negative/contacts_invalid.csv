@@ -1,0 +1,3 @@
+customer_id,name,email,phone,state,signup_date
+C900,Bad Email,not-an-email,2125550199,ny,2024-05-07
+C901,Bad Phone,bad.phone@example.com,abc123,ny,2024-05-08

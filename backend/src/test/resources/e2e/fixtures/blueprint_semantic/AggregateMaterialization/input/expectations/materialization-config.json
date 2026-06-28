@@ -1,0 +1,6 @@
+{
+  "grain": ["seller_id", "business_date"],
+  "measures": ["gross_revenue", "refund_amount", "net_revenue", "units", "order_count"],
+  "materialization": "table",
+  "invalidAmountPolicy": "reject"
+}

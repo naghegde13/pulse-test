@@ -1,0 +1,230 @@
+{
+  "blueprintKey": "DQValidator",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft DQValidator semantic pack separates clean healthcare claims from dirty rows and preserves quarantine-style evidence for later runtime enforcement hardening.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "input/expectations/dq-rules.json",
+      "caseType": "expectation",
+      "schemaRef": "dq_validator_rules_v1",
+      "rowCount": 1,
+      "sha256": "6490c3bf464ad4d542cd8ffef9db350f5085778e1b56ea2b9214f790667b41ef"
+    },
+    {
+      "path": "input/negative/claims_dirty.csv",
+      "caseType": "negative",
+      "schemaRef": "dq_validator_claims_csv_v1",
+      "rowCount": 2,
+      "sha256": "0c157afbe66db7f8ee3833a4c747318bfb697f11be643675814aed5377fcc753"
+    },
+    {
+      "path": "input/positive/claims_clean.csv",
+      "caseType": "positive",
+      "schemaRef": "dq_validator_claims_csv_v1",
+      "rowCount": 2,
+      "sha256": "ba26067bfe18ff16d184c049cb2d80bc543de6b52767bda5208d1c6136046386"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "dq_validator_claims_csv_v1",
+      "columns": [
+        {
+          "name": "claim_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "member_id",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "provider_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "service_date",
+          "type": "date",
+          "nullable": false
+        },
+        {
+          "name": "charge_amount",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "dq_validator_rules_v1",
+      "columns": [
+        {
+          "name": "requiredColumns",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "allowedStatusValues",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "minimumChargeAmount",
+          "type": "decimal",
+          "nullable": false
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "clean-claims-pass-all-rules",
+      "inputRefs": [
+        "input/positive/claims_clean.csv",
+        "input/expectations/dq-rules.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/accepted-claims.csv",
+        "expected/expected-dq-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "all clean claims remain accepted",
+        "dirty rules are only expressed in the separate dirty batch"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "dirty-claims-trigger-quarantine-style-report",
+      "inputRefs": [
+        "input/negative/claims_dirty.csv",
+        "input/expectations/dq-rules.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-dq-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "CL3 is rejected for null member_id",
+        "CL4 is rejected for negative amount and invalid status"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "pending-status-remains-valid",
+      "inputRefs": [
+        "input/positive/claims_clean.csv",
+        "input/expectations/dq-rules.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/accepted-claims.csv"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "PENDING status remains accepted at draft scope"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "dirty-batch-reserved-for-downstream-stop-policy",
+      "inputRefs": [
+        "input/negative/claims_dirty.csv",
+        "input/expectations/dq-rules.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-dq-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "future runtime work will decide hard-fail versus quarantine downstream action"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "clean-batch-then-dirty-batch-rerun",
+      "runs": [
+        {
+          "runId": "clean-batch",
+          "inputRefs": [
+            "input/positive/claims_clean.csv",
+            "input/expectations/dq-rules.json"
+          ]
+        },
+        {
+          "runId": "dirty-batch",
+          "inputRefs": [
+            "input/negative/claims_dirty.csv",
+            "input/expectations/dq-rules.json"
+          ],
+          "expectedOutputRefs": [
+            "expected/expected-dq-report.json"
+          ],
+          "expectedMetricRefs": [
+            "expected/expected-metrics.json"
+          ]
+        }
+      ],
+      "assertions": [
+        "dirty batch retains deterministic rejection counts after the clean baseline run"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "expected/accepted-claims.csv",
+      "format": "csv",
+      "comparatorType": "row_exact",
+      "sha256": "ba26067bfe18ff16d184c049cb2d80bc543de6b52767bda5208d1c6136046386"
+    },
+    {
+      "path": "expected/expected-dq-report.json",
+      "format": "json",
+      "comparatorType": "dq_report",
+      "sha256": "c1b0ec62f93db5a65494ff5c80ec9995014fafc0bc73b83d0999a65858bb6732"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "rejected_row_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 2,
+      "comparatorType": "aggregate_exact",
+      "sha256": "fca6e865f966b7dd1d099fd27efed7b626fcc073bf2a3e5365cc99c1b23f03e0"
+    }
+  ],
+  "comparator": {
+    "type": "dq_report",
+    "ownerClass": "com.pulse.e2e.semantic.DQValidatorSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

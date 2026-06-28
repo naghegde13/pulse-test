@@ -1,0 +1,6 @@
+store_id,sale_date,category,sum_quantity,sum_revenue,line_count,min_unit_price,max_unit_price
+S1,2024-05-01,books,2,25.0,3,10.0,15.0
+S1,2024-05-01,games,3,60.0,1,20.0,20.0
+S2,2024-05-01,books,1,10.0,1,10.0,10.0
+S2,2024-05-02,games,2,50.0,1,25.0,25.0
+S3,2024-05-02,books,0,0.0,1,12.0,12.0

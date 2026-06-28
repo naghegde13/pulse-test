@@ -1,0 +1,6 @@
+line_id,store_id,sale_date,category,sku,quantity,unit_price,line_type
+L100,S1,2024-05-01,books,B001,2,10.00,sale
+L101,S1,2024-05-01,books,B002,1,15.00,sale
+L102,S1,2024-05-01,games,G001,3,20.00,sale
+L103,S2,2024-05-01,books,B001,1,10.00,sale
+L104,S2,2024-05-02,games,G002,2,25.00,sale

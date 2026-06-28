@@ -1,0 +1,16 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: pulse-frontend
+  labels:
+    app: pulse-frontend
+spec:
+  host: pulse-frontend.apps.cluster.example.com
+  to:
+    kind: Service
+    name: pulse-frontend
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

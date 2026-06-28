@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "WideDenormalizedMart",
+  "scenarioId": "wide-denormalized-mart-gcp-golden",
+  "requiredEvidence": [
+    "data/mart-oracle-comparison.json",
+    "data/relationship-test-results.jsonl",
+    "data/row-grain-uniqueness.jsonl",
+    "data/dbt-compile.jsonl",
+    "data/dbt-run-results.jsonl",
+    "data/dbt-test-results.jsonl",
+    "data/dbt-reuse-proof.jsonl"
+  ],
+  "promotionAllowed": true
+}

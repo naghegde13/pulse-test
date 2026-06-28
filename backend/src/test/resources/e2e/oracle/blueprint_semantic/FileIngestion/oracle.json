@@ -1,0 +1,18 @@
+{
+  "blueprintKey": "FileIngestion",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "file-ingestion-semantic-draft",
+  "proofShape": "gcp-golden",
+  "businessScenario": "Verify FileIngestion preserves valid retail order rows, captures schema, accepts an empty file, rejects a bad header, and identifies a corrupt row.",
+  "validInputPath": "input/positive/orders_valid.csv",
+  "emptyInputPath": "input/edge/orders_empty.csv",
+  "badHeaderInputPath": "input/negative/orders_bad_header.csv",
+  "corruptInputPath": "input/negative/orders_corrupt.csv",
+  "configPath": "input/expectations/ingestion-config.json",
+  "expectedReportPath": "expected/expected-ingestion-report.json",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedValidRowCount": 20,
+  "expectedCorruptRowIds": [
+    "O999"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "duplicateCodes": ["US"],
+  "overlapCodes": ["CA"],
+  "futureCodesRepresented": ["XK"],
+  "retiredCodesRepresented": ["YU"],
+  "verdict": "PASS"
+}

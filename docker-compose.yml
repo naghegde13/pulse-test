@@ -1,0 +1,162 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: pulse
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: pulse
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pulse"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      # bitnami/minio doesn't ship curl; mc is the official client baked into the image.
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # #30 P9 — pre-create the convention buckets on local startup so PULSE's
+  # storage_backends seed (V96) sees the buckets it expects. Mirrors the
+  # naming pulse-{tenant_slug}-{env}-{kind} for GCP backend +
+  # pulse-dpc-{tenant_slug}-{env}-{kind} for DPC. Only the dev env is
+  # provisioned locally; integration/uat/prod buckets are created in real
+  # cloud projects by the platform team.
+  minio-bucket-bootstrap:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -eu
+        mc alias set local http://minio:9000 minioadmin minioadmin
+        for tenant in default home-lending unsecured-lending; do
+          for kind in files lake; do
+            # 'local' env (V98): laptop-MinIO buckets — pre-validated by seed.
+            mc mb --ignore-existing local/pulse-$${tenant}-local-$${kind}
+            mc mb --ignore-existing local/pulse-dpc-$${tenant}-local-$${kind}
+            # 'dev' env: kept for parity with provisioned deployed-dev
+            # cloud projects (rows are pending until platform team validates).
+            mc mb --ignore-existing local/pulse-$${tenant}-dev-$${kind}
+            mc mb --ignore-existing local/pulse-dpc-$${tenant}-dev-$${kind}
+          done
+        done
+        echo "PULSE storage convention buckets ready."
+    restart: "no"
+
+  airflow:
+    build:
+      context: .
+      dockerfile: docker/airflow/Dockerfile
+    image: pulse-airflow-local:2.10.4-python3.11
+    ports:
+      - "8081:8080"
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/pulse/repo
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://pulse:pulse@postgres:5432/airflow
+      PULSE_REPO_ROOT: /opt/pulse/repo
+      # PULSE metadata DB connection — used by pulse_dates resolver to query
+      # date_dim_holiday_calendar for business-day mnemonics (PBD/NBD/FBOM/etc.).
+      PULSE_PG_HOST: postgres
+      PULSE_PG_PORT: "5432"
+      PULSE_PG_DB: pulse
+      PULSE_PG_USER: pulse
+      PULSE_PG_PASSWORD: pulse
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      # Local live-runtime fallback for generated vault://pulse/dev/aws/*
+      # secret refs until backend-managed vault resolution exists.
+      AWS_ACCESS_KEY: minioadmin
+      AWS_SECRET_KEY: minioadmin
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      AWS_DEFAULT_REGION: us-east-1
+      DBT_SCHEMA: pulse_dev
+      # dbt-spark[session] picks up SPARK_MASTER_URL when constructing its
+      # in-process SparkSession, so generated dbt models dispatch to the
+      # spark-master service instead of running everything in the airflow
+      # container's local thread.  PULSE's profiles.yml `local` target uses
+      # method=session and relies on this env var.
+      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_CONF_DIR: /opt/spark/conf
+    volumes:
+      # Writable: dbt creates target/log/dbt_packages, and sink/extract
+      # blueprints can materialize outgoing files under the tenant repo.
+      # PKT-FINAL-3: canonical env var is PULSE_GIT_CLONE_BASE (the host
+      # directory where PULSE clones remote tenant repos). PULSE_GIT_LOCAL_BASE
+      # is the legacy alias and is still honored for one release.
+      - ${PULSE_GIT_CLONE_BASE:-${PULSE_GIT_LOCAL_BASE:-/data/pulse/repos}}:/opt/pulse/repo
+      - ./docker/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf:ro
+      # pulse_dates Python helper — installed via local pip install at startup so
+      # generated PySpark/Airflow DAGs can `from pulse_dates import resolve_mnemonic`.
+      - ./backend/src/main/resources/runtime-helpers/pulse_dates:/opt/pulse_dates:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    entrypoint: ["bash", "-c"]
+    command:
+      - |
+        set -e
+        airflow db migrate
+        airflow users create --username admin --password admin --firstname Admin --lastname Admin --role Admin --email admin@pulse.local 2>/dev/null || true
+        airflow connections delete spark_default >/dev/null 2>&1 || true
+        airflow connections add spark_default --conn-type spark --conn-host spark://spark-master --conn-port 7077
+        (airflow scheduler &) && exec airflow webserver
+
+  spark-master:
+    image: bitnamilegacy/spark:3.5
+    ports:
+      - "7077:7077"
+      - "8082:8080"
+    environment:
+      SPARK_MODE: master
+    # Hadoop S3A config so s3a:// paths route to local MinIO. PULSE itself
+    # never references this file — it lives in the cluster's runtime config.
+    volumes:
+      - ./docker/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
+
+  spark-worker:
+    image: bitnamilegacy/spark:3.5
+    environment:
+      SPARK_MODE: worker
+      SPARK_MASTER_URL: spark://spark-master:7077
+    depends_on:
+      - spark-master
+    volumes:
+      - ./docker/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf:ro
+
+volumes:
+  pgdata:
+  minio-data:

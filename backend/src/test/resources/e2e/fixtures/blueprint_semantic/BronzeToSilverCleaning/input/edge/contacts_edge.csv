@@ -1,0 +1,3 @@
+customer_id,name,email,phone,state,signup_date
+C104,  Blank Phone  ,blank.phone@example.com,,tx,2024-05-05
+C105,Case State,case.state@example.com,2125550105,Wa,2024-05-06

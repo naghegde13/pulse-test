@@ -1,0 +1,2 @@
+line_id,store_id,sale_date,category,sku,quantity,unit_price,line_type
+L900,S9,2024-05-03,books,B999,-2,12.00,sale

@@ -1,0 +1,9 @@
+{
+  "blueprintKey": "DatabaseWriter",
+  "canonicalGcpDestination": "bigquery",
+  "decisionStatus": "selected",
+  "selectedAt": "2026-05-06",
+  "selectedBy": "user",
+  "proofScenarioId": "database-writer-gcp-golden-bigquery",
+  "evidenceRoot": "backend/build/e2e-semantic-hardening/gcp-golden/database-writer/run-20260506-1225"
+}

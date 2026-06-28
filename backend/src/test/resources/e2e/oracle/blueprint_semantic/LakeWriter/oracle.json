@@ -1,0 +1,11 @@
+{
+  "blueprintKey": "LakeWriter",
+  "scenarioId": "lake-writer-gcp-golden",
+  "requiredEvidence": [
+    "data/lake-manifest.jsonl",
+    "data/path-layout-comparison.json",
+    "data/append-audit.jsonl",
+    "runtime/output-objects.txt"
+  ],
+  "promotionAllowed": true
+}

@@ -1,0 +1,6 @@
+{
+  "type": "dq_report",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/accepted-claims.csv"
+}

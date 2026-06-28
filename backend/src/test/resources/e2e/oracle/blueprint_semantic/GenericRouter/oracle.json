@@ -1,0 +1,30 @@
+{
+  "blueprintKey": "GenericRouter",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "generic-router-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft GenericRouter semantic pack assigns loan applications to prime, manual-review, and high-risk routes before deeper multi-branch hardening.",
+  "routerConfigPath": "input/expectations/router-config.json",
+  "expectedOutputPath": "expected/expected-output.csv",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "routeCounts": {
+    "prime": 1,
+    "manual_review": 2,
+    "high_risk": 1,
+    "standard": 0
+  },
+  "negativeAssertion": {
+    "configPath": "input/negative/invalid-router-config.json",
+    "expectedFailureCode": "ROUTE_CONFIG_INVALID"
+  },
+  "checksums": {
+    "manifestSha256": "262eb2de09f99f35208388f7c29d31c1b2b93c23ffdb82bbbe41a5fa3716088f",
+    "comparatorConfigSha256": "2b30443800095c5808d4aae1d46ceaa2a7a031c601669be1be41def8e291b506",
+    "input_expectations_router-config_json_sha256": "196585c90a003f3ca3397066e5e6c6f810d089c456107e5112cdbc0c9164f289",
+    "input_negative_invalid-router-config_json_sha256": "cd96ab8f8227ed65a2c1c7bffbe468bbc4d31a0117dfd6fd121842c5c357548e",
+    "input_positive_applications_csv_sha256": "f8f272f3d47c888b2e5b9a6579d2db173289eed0d4f4763daaf485352bb02ea7",
+    "expected_expected-output_csv_sha256": "2533f53ac48a0b7025c798be8a3c1735a548bc941f366cbd4bedc91f9a2b53c3",
+    "expected_router-report_json_sha256": "846ca6dcb2970cb06b8194019140179fe65446cbf083ef8f6f72c53924edf07f",
+    "expected_expected-metrics_json_sha256": "f109b97ac4e6df1f3c3819e2dc0b699688ff15821500df9595ff1d7578a626d6"
+  }
+}

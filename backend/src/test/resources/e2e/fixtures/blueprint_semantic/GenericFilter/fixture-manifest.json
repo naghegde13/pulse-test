@@ -1,0 +1,204 @@
+{
+  "blueprintKey": "GenericFilter",
+  "semanticPackVersion": "1.0.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify the golden GCP GenericFilter proof keeps only active full-time employees hired on or before the cutoff date and not terminated before the run date.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": false,
+    "statefulScope": false
+  },
+  "inputFiles": [
+    {
+      "path": "input/positive/employees.csv",
+      "caseType": "positive",
+      "schemaRef": "generic_filter_employee_csv_v1",
+      "rowCount": 8,
+      "sha256": "402aaed4970c7d60e7315d92945de28fea100208947f8bff72b70ae043f93b8e"
+    },
+    {
+      "path": "input/expectations/filter-config.json",
+      "caseType": "expectation",
+      "schemaRef": "generic_filter_config_v1",
+      "rowCount": 1,
+      "sha256": "c348d58131c70ee2ca4ab1c40e5e200e1ccd7c46cc375acf31ff72287608f3f9"
+    },
+    {
+      "path": "input/expectations/invalid-filter-params.json",
+      "caseType": "negative_expectation",
+      "schemaRef": "generic_filter_config_v1",
+      "rowCount": 1,
+      "sha256": "bda80c6d578c11b6ec1fee22b241985305d855a4c78894b9b694990f3435f4dd"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "generic_filter_employee_csv_v1",
+      "columns": [
+        {
+          "name": "employee_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "employment_status",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "worker_type",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "hire_date",
+          "type": "date",
+          "nullable": false
+        },
+        {
+          "name": "termination_date",
+          "type": "date",
+          "nullable": true
+        },
+        {
+          "name": "country",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "generic_filter_config_v1",
+      "columns": [
+        {
+          "name": "filter_mode",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "raw_sql",
+          "type": "string",
+          "nullable": true
+        },
+        {
+          "name": "conditions",
+          "type": "json",
+          "nullable": true
+        },
+        {
+          "name": "cutoffDate",
+          "type": "date",
+          "nullable": true
+        },
+        {
+          "name": "semantics",
+          "type": "json",
+          "nullable": true
+        },
+        {
+          "name": "expectedFailureCode",
+          "type": "string",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "employee-eligibility-positive",
+      "inputRefs": [
+        "input/positive/employees.csv",
+        "input/expectations/filter-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv",
+        "expected/expected-output.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "selectedEmployeeIds exactly equal E100,E105,E107",
+        "excludedEmployeeIds exactly equal E101,E102,E103,E104,E106",
+        "rowExact output matches expected-output.csv"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "invalid-operator-rejected",
+      "inputRefs": [
+        "input/positive/employees.csv",
+        "input/expectations/invalid-filter-params.json"
+      ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "expectedFailureCode equals INVALID_FILTER_OPERATOR",
+        "invalid operator string remains unsupported"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "null-status-and-boundary-hire-date",
+      "inputRefs": [
+        "input/positive/employees.csv",
+        "input/expectations/filter-config.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-output.csv"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "employee E104 remains excluded when employment_status is null",
+        "employee E105 remains included when hire_date equals the cutoff date"
+      ]
+    }
+  ],
+  "failureCases": [],
+  "multiRunCases": [],
+  "expectedOutputs": [
+    {
+      "path": "expected/expected-output.csv",
+      "format": "csv",
+      "comparatorType": "row_exact",
+      "sha256": "04c442c51b343f2e7c497172a9e61f6b79e0a820061e7da950ac5ab266054d59"
+    },
+    {
+      "path": "expected/expected-output.json",
+      "format": "json",
+      "comparatorType": "row_exact",
+      "sha256": "b310584faa5936b357c978fbde54b49577fde2b83a509f73b08fbe4115ce211c"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "eligible_row_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 3,
+      "comparatorType": "aggregate_exact",
+      "sha256": "c71d940e62abd5da87d160944bbe07ec4497b07b6b28bddf546f997c803059e5"
+    }
+  ],
+  "comparator": {
+    "type": "row_exact",
+    "ownerClass": "com.pulse.e2e.semantic.GenericFilterSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

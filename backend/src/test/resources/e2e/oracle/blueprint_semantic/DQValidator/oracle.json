@@ -1,0 +1,27 @@
+{
+  "blueprintKey": "DQValidator",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "dq-validator-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft DQValidator semantic pack separates clean healthcare claims from dirty rows and preserves quarantine-style evidence for later runtime enforcement hardening.",
+  "cleanInputPath": "input/positive/claims_clean.csv",
+  "dirtyInputPath": "input/negative/claims_dirty.csv",
+  "rulesPath": "input/expectations/dq-rules.json",
+  "expectedAcceptedPath": "expected/accepted-claims.csv",
+  "expectedReportPath": "expected/expected-dq-report.json",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedRejectedClaimIds": [
+    "CL3",
+    "CL4"
+  ],
+  "checksums": {
+    "manifestSha256": "8f1ecd5a0cb393b0855462bdc869b98987540a02f258727f33d52ad25b96bfaa",
+    "comparatorConfigSha256": "60c9e2275818d6453c8f985e23d81e98850da0fb00c703f9719a7a6a211c6572",
+    "input_expectations_dq-rules_json_sha256": "6490c3bf464ad4d542cd8ffef9db350f5085778e1b56ea2b9214f790667b41ef",
+    "input_negative_claims_dirty_csv_sha256": "0c157afbe66db7f8ee3833a4c747318bfb697f11be643675814aed5377fcc753",
+    "input_positive_claims_clean_csv_sha256": "ba26067bfe18ff16d184c049cb2d80bc543de6b52767bda5208d1c6136046386",
+    "expected_accepted-claims_csv_sha256": "ba26067bfe18ff16d184c049cb2d80bc543de6b52767bda5208d1c6136046386",
+    "expected_expected-dq-report_json_sha256": "c1b0ec62f93db5a65494ff5c80ec9995014fafc0bc73b83d0999a65858bb6732",
+    "expected_expected-metrics_json_sha256": "fca6e865f966b7dd1d099fd27efed7b626fcc073bf2a3e5365cc99c1b23f03e0"
+  }
+}

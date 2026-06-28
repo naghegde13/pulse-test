@@ -1,0 +1,4 @@
+session_id,event_date,user_id,event_count,country
+S1,2026-05-01,U1,3,US
+S2,2026-05-01,U2,5,CA
+S3,2026-05-02,U3,7,US

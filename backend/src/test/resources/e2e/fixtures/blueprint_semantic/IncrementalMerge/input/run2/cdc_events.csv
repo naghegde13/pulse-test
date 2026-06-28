@@ -1,0 +1,4 @@
+event_id,account_id,customer_id,op,balance,last_updated,status
+E1,A2,C2,UPSERT,275.00,2024-01-02T00:00:00Z,OPEN
+E2,A3,C3,DELETE,,2024-01-02T00:00:00Z,CLOSED
+E3,A4,C4,UPSERT,40.00,2024-01-02T00:00:00Z,OPEN

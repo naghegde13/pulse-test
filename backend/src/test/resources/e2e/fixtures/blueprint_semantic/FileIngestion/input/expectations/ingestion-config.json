@@ -1,0 +1,26 @@
+{
+  "requiredColumns": [
+    "order_id",
+    "order_ts",
+    "store_id",
+    "customer_id",
+    "sku",
+    "quantity",
+    "unit_price",
+    "currency",
+    "source_file_date"
+  ],
+  "timestampColumn": "order_ts",
+  "integerColumns": [
+    "quantity"
+  ],
+  "decimalColumns": [
+    "unit_price"
+  ],
+  "semantics": {
+    "expectedValidRowCount": 20,
+    "emptyFileAllowed": true,
+    "badHeaderIsRejected": true,
+    "corruptRowsAreRejected": true
+  }
+}

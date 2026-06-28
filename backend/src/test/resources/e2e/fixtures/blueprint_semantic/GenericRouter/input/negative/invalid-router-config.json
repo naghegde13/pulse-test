@@ -1,0 +1,18 @@
+{
+  "routes": [
+    {
+      "routeId": "prime",
+      "predicate": "risk_score >= 780"
+    },
+    {
+      "routeId": "fallback-a",
+      "predicate": "default"
+    },
+    {
+      "routeId": "fallback-b",
+      "predicate": "default"
+    }
+  ],
+  "expectedFailureCode": "ROUTE_CONFIG_INVALID",
+  "expectedFailureMessage": "GenericRouter accepts exactly one default route."
+}

@@ -1,0 +1,19 @@
+{
+  "blueprintKey": "BronzeToSilverCleaning",
+  "scenarioId": "bronze-to-silver-cleaning-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "names are trimmed",
+    "emails are lowercased and validated",
+    "phone punctuation is removed while blank optional phone is allowed",
+    "state codes are uppercased",
+    "invalid email and invalid phone rows are rejected"
+  ],
+  "expectedArtifacts": [
+    "clean-contacts",
+    "cleaning-rejects",
+    "cleaning-report",
+    "cleaning-metrics"
+  ]
+}

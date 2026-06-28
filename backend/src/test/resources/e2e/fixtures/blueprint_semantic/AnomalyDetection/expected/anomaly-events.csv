@@ -1,0 +1,2 @@
+event_id,device_id,severity,metric_name,metric_value
+T201,D1,high,temperature_c,95.0

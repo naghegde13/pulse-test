@@ -1,0 +1,6 @@
+{
+  "grain": ["sale_id", "line_id"],
+  "missingDimensionPolicy": "unknown_member",
+  "duplicateNaturalKeyPolicy": "reject",
+  "measures": ["gross_amount", "discount_amount", "tax_amount", "net_amount"]
+}

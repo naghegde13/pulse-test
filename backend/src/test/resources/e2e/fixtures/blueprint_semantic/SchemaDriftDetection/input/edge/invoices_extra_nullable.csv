@@ -1,0 +1,2 @@
+invoice_id,vendor_id,invoice_date,amount,currency,optional_note
+INV3,V3,2024-02-03,500.00,USD,

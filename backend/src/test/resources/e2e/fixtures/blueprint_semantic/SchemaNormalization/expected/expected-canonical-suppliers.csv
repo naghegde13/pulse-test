@@ -1,0 +1,6 @@
+supplier_id,supplier_name,country_code,onboard_date,payment_terms_days,is_active
+S-100,Acme Parts,US,2024-05-01,30,true
+S-101,Northwind Supply,CA,2024-05-02,45,true
+S-102,Global Industrial,GB,2024-05-03,60,false
+S-103,Contoso Metals,US,2024-05-04,15,false
+S-104,Tailspin Tools,MX,2024-05-05,0,true

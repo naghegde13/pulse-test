@@ -1,0 +1,11 @@
+{
+  "blueprintKey": "WideDenormalizedMart",
+  "martRowCount": 4,
+  "grain": ["order_id", "order_line_id"],
+  "missingCustomerPolicy": "unknown_member",
+  "missingShipmentPolicy": "null_fill",
+  "duplicateProductPolicy": "reject_before_publication",
+  "partialPaymentOrderIds": ["O101"],
+  "totalLineAmount": 150.0,
+  "verdict": "PASS"
+}

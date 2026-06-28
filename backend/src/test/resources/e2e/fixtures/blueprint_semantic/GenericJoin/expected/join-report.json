@@ -1,0 +1,10 @@
+{
+  "matchedOrderIds": [
+    "O100",
+    "O101"
+  ],
+  "unmatchedOrderIds": [
+    "O102"
+  ],
+  "preservedLeftJoinSemantics": true
+}

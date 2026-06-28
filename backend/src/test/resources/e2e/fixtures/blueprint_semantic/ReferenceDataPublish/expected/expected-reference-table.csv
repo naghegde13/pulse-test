@@ -1,0 +1,6 @@
+code,display_name,currency_code,effective_start,effective_end,is_active,sort_order
+CA,Canada,CAD,2020-01-01,,true,2
+GB,United Kingdom,GBP,2020-01-01,,true,3
+US,United States,USD,2020-01-01,,true,1
+XK,Kosovo,EUR,2027-01-01,,false,50
+YU,Yugoslavia,YUM,1980-01-01,2003-02-04,false,99

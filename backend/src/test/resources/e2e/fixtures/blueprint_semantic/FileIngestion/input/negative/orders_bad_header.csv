@@ -1,0 +1,2 @@
+order_id,order_ts,store_id,customer_id,sku,quantity,unit_price,currency
+O2000,2024-05-01T11:00:00Z,S011,C021,SKU-021,1,1.00,USD

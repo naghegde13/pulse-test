@@ -1,0 +1,8 @@
+{
+  "missingCustomerIds": ["C_MISSING"],
+  "ordersWithoutShipments": ["O101"],
+  "duplicateProductIds": ["P2"],
+  "unknownMemberRows": 1,
+  "nullShipmentRows": 1,
+  "verdict": "PASS"
+}

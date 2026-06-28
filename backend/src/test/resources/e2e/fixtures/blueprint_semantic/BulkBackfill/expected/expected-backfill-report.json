@@ -1,0 +1,14 @@
+{
+  "blueprintKey": "BulkBackfill",
+  "rowCount": 12,
+  "partitionMonths": [
+    "2024-01",
+    "2024-02",
+    "2024-03"
+  ],
+  "duplicateMonthRejected": true,
+  "missingMonths": [
+    "2024-03"
+  ],
+  "verdict": "draft-pass"
+}

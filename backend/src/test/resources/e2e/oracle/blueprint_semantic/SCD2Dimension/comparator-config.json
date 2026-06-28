@@ -1,0 +1,10 @@
+{
+  "type": "history_window",
+  "strictRowOrder": false,
+  "fixtureRootRelativeExpectedMetricPath": "expected/expected-metrics.json",
+  "fixtureRootRelativeExpectedOutputPath": "expected/history-output.csv",
+  "sortKeys": [
+    "customer_id",
+    "effective_start"
+  ]
+}

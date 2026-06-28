@@ -1,0 +1,26 @@
+{
+  "blueprintKey": "SchemaDriftDetection",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "schema-drift-detection-semantic-draft",
+  "proofShape": "blocked-semantic-dev",
+  "businessScenario": "Verify a draft SchemaDriftDetection semantic pack captures compatible and incompatible vendor invoice schema drift outcomes before later runtime promotion work begins.",
+  "baselineInputPath": "input/positive/invoices_v1.csv",
+  "compatibleDriftPath": "input/edge/invoices_extra_nullable.csv",
+  "incompatibleDriftPath": "input/negative/invoices_missing_amount.csv",
+  "configPath": "input/expectations/baseline-schema.json",
+  "expectedReportPath": "expected/expected-drift-report.json",
+  "expectedMetricsPath": "expected/expected-metrics.json",
+  "expectedFailingFiles": [
+    "input/negative/invoices_missing_amount.csv"
+  ],
+  "checksums": {
+    "manifestSha256": "2a6700cca1404be6dc40dca0100cb4122e0c3664e506ac9e3036a02dcbd3890e",
+    "comparatorConfigSha256": "462e83b229b6772776b2c0a75517ae273c2e6d23d9fae7b6941ab57df971a923",
+    "input_edge_invoices_extra_nullable_csv_sha256": "6c14e1726bfacc61156387650d04479b9e446794b5b4b8cc981b9fe60377ad5f",
+    "input_expectations_baseline-schema_json_sha256": "2fcbbe2921f0e9bca6c7a64135c7ee1b039dfc8bf37576dc16a252e4880ad481",
+    "input_negative_invoices_missing_amount_csv_sha256": "68b33386ead138ac87f74f3f91c12a0f7d1ebdf1e39eabc147c4df1f00994180",
+    "input_positive_invoices_v1_csv_sha256": "d7dcd5f670fa5499c2379856167454b0e932a7b884ca807186458485d424e9c9",
+    "expected_expected-drift-report_json_sha256": "fe77daf9bf78da2bcd7d74b3d41faed7cb4cc6e4df372c637e38ec39b8d7dfd1",
+    "expected_expected-metrics_json_sha256": "21435244118246cfc216ebf0a4df30983fc2689b5232f17d03984e1c8ad1b062"
+  }
+}

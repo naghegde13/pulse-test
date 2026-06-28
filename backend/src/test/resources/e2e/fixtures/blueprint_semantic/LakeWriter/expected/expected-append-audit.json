@@ -1,0 +1,6 @@
+{
+  "appendRows": 3,
+  "appendMode": "append",
+  "idempotencyKey": "run-20260506-1130",
+  "verdict": "PASS"
+}

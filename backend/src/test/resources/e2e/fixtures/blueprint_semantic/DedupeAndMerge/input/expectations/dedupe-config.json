@@ -1,0 +1,6 @@
+{
+  "businessKey": "product_id",
+  "orderBy": ["version_ts desc", "source_priority asc"],
+  "conflictPolicy": "quarantine_same_timestamp_different_values",
+  "nullKeyPolicy": "quarantine"
+}

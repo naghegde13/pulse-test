@@ -1,0 +1,3 @@
+store_id,store_name,region,open_date,close_date
+STORE1,Downtown,East,2010-01-01,
+STORE2,Airport,West,2012-01-01,

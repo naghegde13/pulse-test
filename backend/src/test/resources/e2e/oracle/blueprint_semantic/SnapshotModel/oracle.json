@@ -1,0 +1,24 @@
+{
+  "blueprintKey": "SnapshotModel",
+  "semanticPackVersion": "0.1.0",
+  "scenarioId": "snapshot-model-subscription-history",
+  "proofShape": "gcp-golden",
+  "businessScenario": "Verify SnapshotModel records subscription point-in-time history rows across initial, changed, unchanged, new, and late-correction runs without duplicating reruns.",
+  "manifestPath": "history/manifest.json",
+  "sourceRunsPath": "history/source-runs.json",
+  "expectedHistoryPath": "history/expected-history.json",
+  "actualHistoryPath": "history/actual-history.json",
+  "keyRejectionVerdictPath": "history/snapshot-key-rejection-verdict.json",
+  "expectedBusinessKey": "subscription_id",
+  "expectedCurrentRule": "current_flag_and_open_end",
+  "negativeAssertion": {
+    "missingKeyAccepted": false,
+    "duplicateKeyAccepted": false
+  },
+  "checksums": {
+    "history_manifest_json_sha256": "1530be0fa7986f1894eff345e66381fc5f5170c167a9242e9d2f217f4cf9f9d4",
+    "history_source-runs_json_sha256": "d110016408ad68595321527dc9ba6c4223c888005b6a1092ef1d7bcc84e9a5bc",
+    "history_expected-history_json_sha256": "a450e0b5c27e0ff2253064528ad9bf6ce19528135ef70a100e7186516c3e2073",
+    "history_snapshot-key-rejection-verdict_json_sha256": "d4f3ec5c7481454c3894fccac384f5b445f40f237a6fee9b9bf4ac6a4595a122"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "blueprintKey": "SnapshotModel",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": true,
+  "businessScenario": "Verify SnapshotModel records subscription point-in-time history rows across initial, changed, unchanged, new, and late-correction runs without duplicating reruns.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "history/manifest.json",
+      "caseType": "expectation",
+      "schemaRef": "snapshot_history_manifest_v1",
+      "rowCount": 1,
+      "sha256": "1530be0fa7986f1894eff345e66381fc5f5170c167a9242e9d2f217f4cf9f9d4"
+    },
+    {
+      "path": "history/source-runs.json",
+      "caseType": "positive",
+      "schemaRef": "snapshot_source_runs_v1",
+      "rowCount": 10,
+      "sha256": "d110016408ad68595321527dc9ba6c4223c888005b6a1092ef1d7bcc84e9a5bc"
+    },
+    {
+      "path": "history/snapshot-key-rejection-verdict.json",
+      "caseType": "negative",
+      "schemaRef": "snapshot_key_rejection_v1",
+      "rowCount": 2,
+      "sha256": "d4f3ec5c7481454c3894fccac384f5b445f40f237a6fee9b9bf4ac6a4595a122"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "snapshot_history_rows_v1",
+      "columns": [
+        { "name": "subscription_id", "type": "string", "nullable": false },
+        { "name": "business_effective_ts", "type": "timestamp", "nullable": false },
+        { "name": "valid_from", "type": "timestamp", "nullable": false },
+        { "name": "valid_to", "type": "timestamp", "nullable": true },
+        { "name": "current_flag", "type": "boolean", "nullable": false },
+        { "name": "row_hash", "type": "string", "nullable": false },
+        { "name": "version", "type": "string", "nullable": false }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "subscription-history-late-correction-splits-window",
+      "inputRefs": [ "history/manifest.json", "history/source-runs.json" ],
+      "expectedOutputRefs": [ "history/expected-history.json" ],
+      "expectedMetricRefs": [],
+      "assertions": [
+        "sub_001 has BASIC, late PREMIUM, and current PRO windows",
+        "sub_002 unchanged rerun remains a single current row",
+        "sub_003 new subscription appears once as current"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "missing-and-duplicate-business-keys-rejected",
+      "inputRefs": [ "history/source-runs.json" ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [],
+      "assertions": [
+        "missing_key accepted=false",
+        "duplicate_key accepted=false"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "unchanged-rerun-does-not-duplicate-history",
+      "inputRefs": [ "history/manifest.json", "history/source-runs.json" ],
+      "expectedOutputRefs": [ "history/expected-history.json" ],
+      "expectedMetricRefs": [],
+      "assertions": [
+        "history row count remains exact after no-change run"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "overlapping-history-window-fails-comparator",
+      "inputRefs": [ "history/manifest.json" ],
+      "expectedOutputRefs": [],
+      "expectedMetricRefs": [],
+      "assertions": [
+        "SnapshotHistoryComparator emits SNAPSHOT_WINDOWS_OVERLAP"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "run1-run2-no-change-new-late-correction",
+      "runs": [
+        { "runId": "run1-initial", "inputRefs": [ "history/source-runs.json" ] },
+        { "runId": "run2-change", "inputRefs": [ "history/source-runs.json" ] },
+        { "runId": "run3-no-change-new", "inputRefs": [ "history/source-runs.json" ] },
+        {
+          "runId": "run4-late-correction",
+          "inputRefs": [ "history/source-runs.json" ],
+          "expectedOutputRefs": [ "history/expected-history.json" ]
+        }
+      ],
+      "assertions": [
+        "late correction splits the sub_001 history window deterministically"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "history/expected-history.json",
+      "format": "json",
+      "comparatorType": "snapshot_history",
+      "sha256": "a450e0b5c27e0ff2253064528ad9bf6ce19528135ef70a100e7186516c3e2073"
+    }
+  ],
+  "expectedMetrics": [],
+  "comparator": {
+    "type": "snapshot_history",
+    "ownerClass": "com.pulse.e2e.semantic.SnapshotHistoryComparator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": [ "AC-SEMANTIC-PACK", "AC-ORACLE-PASS", "AC-GCP-COMPOSER-DATAPROC-RUNTIME", "AC-RERUN-IDEMPOTENCY" ]
+}

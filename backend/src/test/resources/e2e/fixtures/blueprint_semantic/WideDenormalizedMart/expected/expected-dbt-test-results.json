@@ -1,0 +1,9 @@
+{
+  "tests": [
+    "unique_order_line_grain",
+    "relationships_customer_unknown_member",
+    "relationships_product_dim_unique",
+    "accepted_values_payment_status"
+  ],
+  "status": "success"
+}

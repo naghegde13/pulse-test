@@ -1,0 +1,17 @@
+{
+  "blueprintKey": "SnapshotIngestion",
+  "scenarioId": "snapshot-ingestion-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "snapshot output preserves immutable t1 and t2 as-of IDs",
+    "same-as-of rerun does not create duplicate rows",
+    "missing as-of input is rejected",
+    "new, missing, and changed SKU semantics are reported"
+  ],
+  "expectedArtifacts": [
+    "snapshot-folders",
+    "snapshot-report",
+    "snapshot-metrics"
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "blueprintKey": "SchemaDriftDetection",
+  "semanticPackVersion": "0.1.0",
+  "promotionEligible": false,
+  "businessScenario": "Verify a draft SchemaDriftDetection semantic pack captures compatible and incompatible vendor invoice schema drift outcomes before later runtime promotion work begins.",
+  "scopeClassifications": {
+    "negativeScope": true,
+    "edgeScope": true,
+    "failureScope": true,
+    "statefulScope": true
+  },
+  "inputFiles": [
+    {
+      "path": "input/edge/invoices_extra_nullable.csv",
+      "caseType": "edge",
+      "schemaRef": "schema_drift_invoice_csv_v1",
+      "rowCount": 1,
+      "sha256": "6c14e1726bfacc61156387650d04479b9e446794b5b4b8cc981b9fe60377ad5f"
+    },
+    {
+      "path": "input/expectations/baseline-schema.json",
+      "caseType": "expectation",
+      "schemaRef": "schema_drift_config_v1",
+      "rowCount": 1,
+      "sha256": "2fcbbe2921f0e9bca6c7a64135c7ee1b039dfc8bf37576dc16a252e4880ad481"
+    },
+    {
+      "path": "input/negative/invoices_missing_amount.csv",
+      "caseType": "negative",
+      "schemaRef": "schema_drift_invoice_csv_v1",
+      "rowCount": 1,
+      "sha256": "68b33386ead138ac87f74f3f91c12a0f7d1ebdf1e39eabc147c4df1f00994180"
+    },
+    {
+      "path": "input/positive/invoices_v1.csv",
+      "caseType": "positive",
+      "schemaRef": "schema_drift_invoice_csv_v1",
+      "rowCount": 2,
+      "sha256": "d7dcd5f670fa5499c2379856167454b0e932a7b884ca807186458485d424e9c9"
+    }
+  ],
+  "schemas": [
+    {
+      "schemaId": "schema_drift_invoice_csv_v1",
+      "columns": [
+        {
+          "name": "invoice_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "vendor_id",
+          "type": "string",
+          "nullable": false
+        },
+        {
+          "name": "invoice_date",
+          "type": "date",
+          "nullable": false
+        },
+        {
+          "name": "amount",
+          "type": "decimal",
+          "nullable": false
+        },
+        {
+          "name": "currency",
+          "type": "string",
+          "nullable": false
+        }
+      ]
+    },
+    {
+      "schemaId": "schema_drift_config_v1",
+      "columns": [
+        {
+          "name": "requiredColumns",
+          "type": "json",
+          "nullable": false
+        },
+        {
+          "name": "optionalColumns",
+          "type": "json",
+          "nullable": true
+        }
+      ]
+    }
+  ],
+  "positiveCases": [
+    {
+      "caseId": "baseline-schema-remains-compatible",
+      "inputRefs": [
+        "input/positive/invoices_v1.csv",
+        "input/expectations/baseline-schema.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-drift-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "baseline invoice schema is treated as compatible"
+      ]
+    }
+  ],
+  "negativeCases": [
+    {
+      "caseId": "missing-required-column-fails",
+      "inputRefs": [
+        "input/negative/invoices_missing_amount.csv",
+        "input/expectations/baseline-schema.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-drift-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "missing amount column is classified as FAIL"
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "caseId": "extra-nullable-column-warns",
+      "inputRefs": [
+        "input/edge/invoices_extra_nullable.csv",
+        "input/expectations/baseline-schema.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-drift-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "optional_note is classified as a compatible WARN drift"
+      ]
+    }
+  ],
+  "failureCases": [
+    {
+      "caseId": "draft-incompatible-drift-placeholder",
+      "inputRefs": [
+        "input/negative/invoices_missing_amount.csv",
+        "input/expectations/baseline-schema.json"
+      ],
+      "expectedOutputRefs": [
+        "expected/expected-drift-report.json"
+      ],
+      "expectedMetricRefs": [
+        "expected/expected-metrics.json"
+      ],
+      "assertions": [
+        "future runtime work will decide how incompatible drift blocks downstream tasks"
+      ]
+    }
+  ],
+  "multiRunCases": [
+    {
+      "caseId": "baseline-then-drift-compare",
+      "runs": [
+        {
+          "runId": "baseline-scan",
+          "inputRefs": [
+            "input/positive/invoices_v1.csv",
+            "input/expectations/baseline-schema.json"
+          ]
+        },
+        {
+          "runId": "drift-scan",
+          "inputRefs": [
+            "input/edge/invoices_extra_nullable.csv",
+            "input/negative/invoices_missing_amount.csv",
+            "input/expectations/baseline-schema.json"
+          ],
+          "expectedOutputRefs": [
+            "expected/expected-drift-report.json"
+          ],
+          "expectedMetricRefs": [
+            "expected/expected-metrics.json"
+          ]
+        }
+      ],
+      "assertions": [
+        "drift report distinguishes warning and failure files after the baseline run"
+      ]
+    }
+  ],
+  "expectedOutputs": [
+    {
+      "path": "expected/expected-drift-report.json",
+      "format": "json",
+      "comparatorType": "control_plane_audit",
+      "sha256": "fe77daf9bf78da2bcd7d74b3d41faed7cb4cc6e4df372c637e38ec39b8d7dfd1"
+    }
+  ],
+  "expectedMetrics": [
+    {
+      "metricId": "incompatible_change_count",
+      "path": "expected/expected-metrics.json",
+      "format": "json",
+      "valueType": "integer",
+      "expectedValue": 1,
+      "comparatorType": "aggregate_exact",
+      "sha256": "21435244118246cfc216ebf0a4df30983fc2689b5232f17d03984e1c8ad1b062"
+    }
+  ],
+  "comparator": {
+    "type": "control_plane_audit",
+    "ownerClass": "com.pulse.e2e.semantic.SchemaDriftDetectionSemanticPackValidator",
+    "configPath": "comparator-config.json",
+    "tolerance": 0
+  },
+  "caseExemptions": [],
+  "promotionCriteria": []
+}

@@ -1,0 +1,3 @@
+product_id,sku,category,brand,effective_start,effective_end,is_current
+PROD1,SKU-1,books,BrandA,2020-01-01,,true
+PROD2,SKU-2,games,BrandB,2020-01-01,,true

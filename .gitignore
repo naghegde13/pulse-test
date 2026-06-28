@@ -1,0 +1,48 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# MS Office lock/temp files
+~$*
+
+# Local tunnel config (tunnel id / machine paths); use *.example.yml as template
+.cloudflared/config.frontend.yml
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env*.local
+
+# Backend
+backend/build/
+backend/.gradle/
+backend/bin/
+backend/out/
+*.class
+*.jar
+*.war
+
+# Docker
+docker-data/
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# OpenShift local secret copies
+ocp/**/02-secret.yaml
+
+# Logs
+*.log
+logs/
+.omx/
+.claude/worktrees/

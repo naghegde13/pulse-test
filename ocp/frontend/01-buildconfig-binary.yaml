@@ -1,0 +1,24 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: pulse-frontend
+  labels:
+    app: pulse-frontend
+spec:
+  source:
+    type: Binary
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/ubi9/nodejs-22:latest
+      env:
+        - name: NEXT_PUBLIC_API_URL
+          value: https://pulse-backend.apps.cluster.example.com
+  output:
+    to:
+      kind: ImageStreamTag
+      name: pulse-frontend:latest
+  triggers:
+    - type: ConfigChange

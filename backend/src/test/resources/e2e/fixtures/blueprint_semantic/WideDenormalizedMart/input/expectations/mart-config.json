@@ -1,0 +1,7 @@
+{
+  "grain": ["order_id", "order_line_id"],
+  "missingCustomerPolicy": "unknown_member",
+  "missingShipmentPolicy": "null_fill",
+  "duplicateProductPolicy": "reject_before_publication",
+  "supportsReuse": true
+}

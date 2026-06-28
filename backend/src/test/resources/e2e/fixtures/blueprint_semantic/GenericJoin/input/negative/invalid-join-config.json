@@ -1,0 +1,7 @@
+{
+  "joinType": "left",
+  "leftKey": "customer_id",
+  "rightKey": "customer_tier_id",
+  "expectedFailureCode": "MISSING_JOIN_KEY",
+  "expectedFailureMessage": "Join configuration references rightKey customer_tier_id that is absent from the enrichment dataset."
+}

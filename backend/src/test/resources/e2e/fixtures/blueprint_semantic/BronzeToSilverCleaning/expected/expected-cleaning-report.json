@@ -1,0 +1,13 @@
+{
+  "blueprintKey": "BronzeToSilverCleaning",
+  "cleanRowCount": 6,
+  "rejectRowCount": 2,
+  "rejectCustomerIds": [
+    "C900",
+    "C901"
+  ],
+  "blankPhoneAllowedCustomerIds": [
+    "C104"
+  ],
+  "verdict": "draft-pass"
+}

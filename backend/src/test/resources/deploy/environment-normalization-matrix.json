@@ -1,0 +1,125 @@
+{
+  "schemaVersion": "deployment-environment-normalization-matrix.v1",
+  "phase": "deployment-productization-plan/Phase 1: Environment Canonicalization",
+  "generatedFrom": "com.pulse.deploy.environment.DeploymentEnvironment",
+  "canonicalEnvironments": [
+    { "key": "local", "label": "Local", "purpose": "Laptop docker-compose + MinIO; pre-validated storage_backends rows. Not a customer runtime." },
+    { "key": "dev", "label": "Dev", "purpose": "First deployed env; real cloud project. PULSE chat/builder runs here." },
+    { "key": "integration", "label": "Integration", "purpose": "Pre-prod cloud env for integration testing." },
+    { "key": "uat", "label": "UAT", "purpose": "User acceptance testing pre-prod cloud env." },
+    { "key": "prod", "label": "Production", "purpose": "Production cloud env." }
+  ],
+  "legacyToCanonical": [
+    { "input": "LOCAL",       "canonical": "local",       "rationale": "Legacy uppercase form of local env." },
+    { "input": "local",       "canonical": "local",       "rationale": "Already canonical (case-insensitive accept)." },
+    { "input": "DEV",         "canonical": "dev",         "rationale": "Pre-Phase-1 deploy controller persisted DEV; V103 backfills." },
+    { "input": "dev",         "canonical": "dev",         "rationale": "Already canonical." },
+    { "input": "INT",         "canonical": "integration", "rationale": "Shorthand alias used by some legacy callers." },
+    { "input": "INTEGRATION", "canonical": "integration", "rationale": "Pre-Phase-1 deploy controller persisted INTEGRATION; V103 backfills." },
+    { "input": "integration", "canonical": "integration", "rationale": "Already canonical." },
+    { "input": "UAT",         "canonical": "uat",         "rationale": "Pre-Phase-1 uppercase form; V103 backfills." },
+    { "input": "uat",         "canonical": "uat",         "rationale": "Already canonical." },
+    { "input": "PROD",        "canonical": "prod",        "rationale": "Shorthand alias historically used by chat tools." },
+    { "input": "PRODUCTION",  "canonical": "prod",        "rationale": "Pre-Phase-1 deploy controller persisted PRODUCTION; V103 backfills." },
+    { "input": "prod",        "canonical": "prod",        "rationale": "Already canonical." }
+  ],
+  "rejectedInputs": [
+    { "input": null,          "reason": "null is rejected with IllegalArgumentException by parse(); normalizeNullable() returns null without throwing." },
+    { "input": "",            "reason": "blank string is rejected with IllegalArgumentException." },
+    { "input": "   ",         "reason": "whitespace-only string is rejected with IllegalArgumentException." },
+    { "input": "STAGING",     "reason": "Not in supported alias set." },
+    { "input": "preprod",     "reason": "Not in supported alias set." },
+    { "input": "production1", "reason": "Not in supported alias set." }
+  ],
+  "boundaryEnforcement": [
+    {
+      "boundary": "DeployController.normalizeEnvironment",
+      "behavior": "Accepts canonical lowercase or any legacy alias; returns canonical lowercase. Null/blank input defaults to 'dev' to preserve historical behavior.",
+      "writeSurfaces": [
+        "POST /api/v1/tenants/{tenantId}/deployment-targets",
+        "POST /api/v1/packages/{packageId}/deploy"
+      ]
+    },
+    {
+      "boundary": "ConnectorInstanceController.upsertCredential / skipCredential / credentialReadiness",
+      "behavior": "Path/query env normalized via DeploymentEnvironment.normalize before persistence/lookup; unknown values return 400 invalid_environment.",
+      "writeSurfaces": [
+        "PUT /api/v1/connector-instances/{ciId}/credentials/{env}",
+        "POST /api/v1/connector-instances/{ciId}/credentials/{env}/skip",
+        "GET /api/v1/pipelines/{pipelineId}/credential-readiness?environment=..."
+      ]
+    },
+    {
+      "boundary": "StorageBackendDeployGate.check",
+      "behavior": "Normalizes the env argument before storage_backends lookup so 'DEV' and 'dev' both hit the same row.",
+      "writeSurfaces": ["internal call from DeployController.deploy"]
+    },
+    {
+      "boundary": "GcpEnvironmentConfig.resolveProjectId",
+      "behavior": "Accepts canonical lowercase or any legacy alias. YAML config keys may use either case for backward compatibility (existing pulse.gcp.environment-projects.DEV is honored).",
+      "writeSurfaces": ["GcpSecretManagerService.* and CredentialPersistenceService"]
+    },
+    {
+      "boundary": "GcpSecretManagerService.buildSecretId (local-stub mode only)",
+      "behavior": "When isLocalStub() returns true, the env segment of the local-stub filename is normalized to canonical lowercase. Real GSM mode drops the env segment entirely (project id partitions per env)."
+    }
+  ],
+  "migrationBackfill": {
+    "migration": "V105__deployment_environment_canonicalization.sql",
+    "tablesUpdated": [
+      {
+        "table": "deployment_targets",
+        "column": "environment",
+        "rule": "Lowercase via mapping LOCAL→local, DEV→dev, INT→integration, INTEGRATION→integration, UAT→uat, PROD→prod, PRODUCTION→prod.",
+        "preservesUnknownValues": true,
+        "notes": "Older deployment_targets rows persisted by DeployController predate the normalization flip and may hold uppercase values. The migration only updates rows whose value differs from canonical; unknown values are intentionally left untouched for human review."
+      },
+      {
+        "table": "credential_profiles",
+        "column": "environment",
+        "rule": "Same mapping as deployment_targets.",
+        "preservesUnknownValues": true,
+        "notes": "V10__sor_connector_catalog.sql seeded credential_profiles with environment='DEV'. The migration normalizes those rows to 'dev' so future lookups by canonical key resolve."
+      },
+      {
+        "table": "deployments",
+        "column": "metadata->>targetEnvironment",
+        "rule": "Same mapping; jsonb_set rewrites the targetEnvironment value in place.",
+        "preservesUnknownValues": true,
+        "notes": "Older deployments copied target.environment into metadata.targetEnvironment in legacy uppercase form. The migration rewrites only mismatched values."
+      }
+    ],
+    "tablesIntentionallyUntouched": [
+      {
+        "table": "storage_backends",
+        "reason": "Already canonical lowercase, with chk_storage_backends_environment CHECK constraint enforcing ('local','dev','integration','uat','prod') since V96 + V98."
+      }
+    ]
+  },
+  "frontendContract": {
+    "type": "DeployEnvironment",
+    "values": ["local", "dev", "integration", "uat", "prod"],
+    "labelMap": {
+      "local": "Local",
+      "dev": "Dev",
+      "integration": "Integration",
+      "uat": "UAT",
+      "prod": "Production"
+    },
+    "shortLabelMap": {
+      "local": "Local",
+      "dev": "Dev",
+      "integration": "Int",
+      "uat": "UAT",
+      "prod": "Prod"
+    },
+    "normalizerHelper": "normalizeDeployEnvironment(raw): DeployEnvironment | null",
+    "consumers": [
+      "frontend/src/components/pipeline/deploy-panel.tsx",
+      "frontend/src/app/targets/[targetId]/page.tsx",
+      "frontend/src/app/producers/[sorId]/page.tsx",
+      "frontend/src/components/pipeline/add-sink-dialog.tsx",
+      "frontend/src/components/sor/credential-dialog.tsx"
+    ]
+  }
+}

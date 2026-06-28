@@ -1,0 +1,16 @@
+{
+  "requiredColumns": [
+    "invoice_id",
+    "vendor_id",
+    "invoice_date",
+    "amount",
+    "currency"
+  ],
+  "optionalColumns": [
+    "optional_note"
+  ],
+  "semantics": {
+    "extraNullableIsWarning": true,
+    "missingRequiredIsFailure": true
+  }
+}

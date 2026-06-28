@@ -1,0 +1,17 @@
+{
+  "blueprintKey": "BulkBackfill",
+  "scenarioId": "bulk-backfill-gcp-golden",
+  "runtimeAdapter": "GCP_COMPOSER_DATAPROC_BRIDGE",
+  "proofShape": "gcp-golden",
+  "assertions": [
+    "partitioned readings preserve all Jan-Feb-Mar positive rows",
+    "partition manifest contains exactly 2024-01, 2024-02, and 2024-03",
+    "duplicate February input is rejected",
+    "missing March edge input is detected"
+  ],
+  "expectedArtifacts": [
+    "partitioned-readings",
+    "backfill-report",
+    "backfill-metrics"
+  ]
+}
