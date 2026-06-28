@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { ConnectorInstance } from "@/types";
+import type { ConnectorInstance, CredentialStatus, DeployEnvironment } from "@/types";
 import {
   resolveSinkWriterKind,
   resolveSinkBlueprintKey,
@@ -257,7 +257,7 @@ describe("buildCredentialWarning", () => {
   it("falls back to credentialStatuses map when no readiness", () => {
     const c = makeConnector({
       id: "1", sorId: "s1", connectorDefinitionId: "d1", name: "Postgres", enabled: true,
-      credentialStatuses: { dev: "VALID" } as Record<string, unknown> as any,
+      credentialStatuses: { dev: "VALID" } as Partial<Record<DeployEnvironment, CredentialStatus>> as ConnectorInstance["credentialStatuses"],
     });
     const w = buildCredentialWarning(c, "dev", "Dev");
     expect(w.tone).toBe("none");

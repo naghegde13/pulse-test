@@ -23,7 +23,8 @@ class SecretStubBaseServiceTest {
 
         Path tmpFallback = Path.of(System.getProperty("java.io.tmpdir"), "pulse", "secrets");
         Path resolved = svc.getResolvedSecretStubBase();
-        boolean canonicalKept = resolved.toString().startsWith("/data/pulse/secrets");
+        String normalizedResolved = resolved.toString().replace('\\', '/');
+        boolean canonicalKept = normalizedResolved.startsWith("/data/pulse/secrets");
         boolean tmpdirFallback = resolved.equals(tmpFallback);
         assertThat(canonicalKept || tmpdirFallback)
                 .as("Expected resolved path to be canonical default or tmpdir fallback, got: %s", resolved)

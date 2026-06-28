@@ -8,7 +8,7 @@ spec:
   source:
     type: Git
     git:
-      uri: https://git.example.com/your-org/pulse.git
+      uri: https://github.com/naghegde13/pulse-test.git
       ref: main
     contextDir: frontend
   strategy:

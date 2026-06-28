@@ -201,8 +201,7 @@ class OrphanServiceMethodContractTest {
         // exactly as it appears in the controller body, alongside the mutation
         // annotation. Walking the FILESYSTEM keeps the test independent of how
         // controllers are wired (DI vs. explicit instantiation, etc.).
-        Path controllerRoot = Paths.get("src", "main", "java", "com", "pulse")
-                .toAbsolutePath();
+        Path controllerRoot = resolveControllerRoot();
         // Tests run with cwd = backend/, so the path above resolves under the
         // backend module. If a future tree restructure breaks this, the empty-list
         // guard in the main test will fail loudly.
@@ -214,7 +213,7 @@ class OrphanServiceMethodContractTest {
         try (Stream<Path> stream = Files.walk(controllerRoot)) {
             stream.filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> p.toString().contains("/controller/"))
+                    .filter(p -> p.toString().replace('\\', '/').contains("/controller/"))
                     .forEach(p -> {
                         try {
                             sources.add(Files.readString(p));
@@ -224,6 +223,15 @@ class OrphanServiceMethodContractTest {
                     });
         }
         return sources;
+    }
+
+    private Path resolveControllerRoot() {
+        Path moduleRelative = Paths.get("src", "main", "java", "com", "pulse").toAbsolutePath();
+        if (Files.isDirectory(moduleRelative)) {
+            return moduleRelative;
+        }
+        Path repoRelative = Paths.get("backend", "src", "main", "java", "com", "pulse").toAbsolutePath();
+        return repoRelative;
     }
 
     private boolean isPublicInstanceMethod(Method m) {

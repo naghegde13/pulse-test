@@ -203,11 +203,15 @@ class LoanMasterScenarioFamilyCatalogTest {
     @Test
     void snapshotMatchesCheckedInScenarioFamilyCatalog() throws Exception {
         var catalog = catalogBuilder.build(loadActiveBlueprintCatalog(), loadFixtureDerivativeIds());
-        String actual = objectMapper.writeValueAsString(catalog) + System.lineSeparator();
+                String actual = objectMapper.writeValueAsString(catalog) + "\n";
         maybeRewriteSnapshot(actual);
         assertTrue(Files.exists(SNAPSHOT), () -> "Missing snapshot file: " + SNAPSHOT);
-        assertEquals(Files.readString(SNAPSHOT), actual);
+                assertEquals(normalizeNewlines(Files.readString(SNAPSHOT)), normalizeNewlines(actual));
     }
+
+        private String normalizeNewlines(String input) {
+                return input.replace("\r\n", "\n");
+        }
 
     private void maybeRewriteSnapshot(String actual) throws Exception {
         if (!Boolean.parseBoolean(System.getenv().getOrDefault("UPDATE_E2E_SCENARIO_SNAPSHOTS", "false"))) {

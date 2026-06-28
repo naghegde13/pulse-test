@@ -20,7 +20,8 @@ class GitCloneBaseServiceTest {
 
         Path tmpFallback = Path.of(System.getProperty("java.io.tmpdir"), "pulse", "repos");
         Path resolved = svc.getResolvedCloneBase();
-        boolean canonicalKept = resolved.toString().startsWith("/data/pulse/repos");
+        String normalizedResolved = resolved.toString().replace('\\', '/');
+        boolean canonicalKept = normalizedResolved.startsWith("/data/pulse/repos");
         boolean tmpdirFallback = resolved.equals(tmpFallback);
         assertThat(canonicalKept || tmpdirFallback)
                 .as("Expected resolved to be canonical path (CI box) or tmpdir fallback (dev box), got: %s",
