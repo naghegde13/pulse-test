@@ -102,6 +102,11 @@ final class LoanMasterFixtureOracleSupport {
         return repoRoot().resolve("data/loan_master.csv");
     }
 
+    private static byte[] normalizedCsvBytes(Path csvPath) throws IOException {
+        return String.join("\n", Files.readAllLines(csvPath, StandardCharsets.UTF_8))
+                .getBytes(StandardCharsets.UTF_8);
+    }
+
     static Map<String, Object> buildFixtureManifest(Path csvPath) throws IOException {
         CsvTable table = CsvTable.load(csvPath);
 
@@ -128,7 +133,7 @@ final class LoanMasterFixtureOracleSupport {
         oracle.put("oracle_version", 1);
         oracle.put("source_file", repoRoot().relativize(csvPath.toAbsolutePath().normalize()).toString().replace('\\', '/'));
         oracle.put("checksums", Map.of(
-                "file_sha256", sha256(Files.readAllBytes(csvPath)),
+            "file_sha256", sha256(normalizedCsvBytes(csvPath)),
                 "canonical_csv_sha256", sha256(table.toCanonicalCsv().getBytes(StandardCharsets.UTF_8))
         ));
         oracle.put("row_count", table.rows().size());
@@ -155,7 +160,7 @@ final class LoanMasterFixtureOracleSupport {
         source.put("relative_path", repoRoot().relativize(csvPath.toAbsolutePath().normalize()).toString().replace('\\', '/'));
         source.put("row_count", table.rows().size());
         source.put("column_count", table.headers().size());
-        source.put("file_sha256", sha256(Files.readAllBytes(csvPath)));
+        source.put("file_sha256", sha256(normalizedCsvBytes(csvPath)));
         source.put("canonical_csv_sha256", sha256(table.toCanonicalCsv().getBytes(StandardCharsets.UTF_8)));
         source.put("schema_signature", schemaSignature(table.headers(), inferColumnTypes(table)));
         source.put("business_keys", BUSINESS_KEYS);
@@ -563,7 +568,7 @@ final class LoanMasterFixtureOracleSupport {
 
     private static String sha256Bytes(Path path) {
         try {
-            return sha256(Files.readAllBytes(path));
+            return sha256(normalizedCsvBytes(path));
         } catch (IOException e) {
             throw new IllegalStateException("Failed to hash " + path, e);
         }

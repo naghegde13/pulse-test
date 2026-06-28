@@ -3,6 +3,7 @@ package com.pulse.e2e;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.HexFormat;
 import java.util.List;
@@ -36,7 +37,7 @@ public record LoanMasterFixture(Path path, String sha256, int rowCount, int colu
     private static String sha256(Path path) throws IOException {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            digest.update(Files.readAllBytes(path));
+            digest.update(String.join("\n", Files.readAllLines(path, StandardCharsets.UTF_8)).getBytes(StandardCharsets.UTF_8));
             return HexFormat.of().formatHex(digest.digest());
         } catch (Exception e) {
             throw new IOException("Failed to hash loan_master fixture", e);

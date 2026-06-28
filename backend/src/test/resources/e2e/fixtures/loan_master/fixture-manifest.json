@@ -5,7 +5,7 @@
     "relative_path" : "data/loan_master.csv",
     "row_count" : 500,
     "column_count" : 78,
-    "file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "canonical_csv_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "schema_signature" : "4de509e51df0c892720093ad839818f1195668cf57cc77a9ee03f598707d5fab",
     "business_keys" : [ "loan_id", "loan_number", "investor_loan_id", "mers_min_number" ],
@@ -15,12 +15,12 @@
   },
   "derivatives" : [ {
     "derivative_id" : "current_loans",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
       "column" : "loan_status",
-      "operator" : "eq",
+      "value" : "Current",
       "type" : "filter",
-      "value" : "Current"
+      "operator" : "eq"
     } ],
     "output_file" : "loan_master_current.csv",
     "row_count" : 290,
@@ -521,9 +521,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -713,28 +713,28 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 290,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 290
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 290,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 290
       },
       "phone_assertions" : {
-        "format_valid_count" : 290,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 290
       }
     }
   }, {
     "derivative_id" : "delinquent_loans",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
       "column" : "months_delinquent",
-      "operator" : "gt",
+      "value" : 0,
       "type" : "filter",
-      "value" : 0
+      "operator" : "gt"
     } ],
     "output_file" : "loan_master_delinquent.csv",
     "row_count" : 210,
@@ -1242,9 +1242,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -1433,26 +1433,26 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 210,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 210
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 210,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 210
       },
       "phone_assertions" : {
-        "format_valid_count" : 210,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 210
       }
     }
   }, {
     "derivative_id" : "investor_state_partitions",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
-      "type" : "partition_by",
-      "columns" : [ "investor_name", "property_state" ]
+      "columns" : [ "investor_name", "property_state" ],
+      "type" : "partition_by"
     } ],
     "output_file" : "loan_master_partitioned/",
     "row_count" : 500,
@@ -1961,9 +1961,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -2180,18 +2180,18 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 500,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 500
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       },
       "phone_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       }
     },
     "partition_count" : 149,
@@ -2348,22 +2348,22 @@
     }
   }, {
     "derivative_id" : "bad_records_required_fields",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
       "column" : "loan_id",
-      "loan_id" : "LN100000",
+      "value" : "",
       "type" : "mutate_value",
-      "value" : ""
+      "loan_id" : "LN100000"
     }, {
       "column" : "current_upb",
-      "loan_id" : "LN100001",
+      "value" : "",
       "type" : "mutate_value",
-      "value" : ""
+      "loan_id" : "LN100001"
     }, {
       "column" : "origination_date",
-      "loan_id" : "LN100002",
+      "value" : "",
       "type" : "mutate_value",
-      "value" : ""
+      "loan_id" : "LN100002"
     } ],
     "output_file" : "loan_master_bad_required_fields.csv",
     "row_count" : 500,
@@ -2872,9 +2872,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -3091,18 +3091,18 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 500,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 500
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       },
       "phone_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       }
     },
     "expected_dq_counts" : {
@@ -3114,9 +3114,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -3128,11 +3128,11 @@
     }
   }, {
     "derivative_id" : "schema_add_servicing_risk_band",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
-      "column" : "servicing_risk_band",
+      "type" : "add_column",
       "expression" : "months_delinquent>=12?critical:months_delinquent>=3?watch:stable",
-      "type" : "add_column"
+      "column" : "servicing_risk_band"
     } ],
     "output_file" : "loan_master_with_risk_band.csv",
     "row_count" : 500,
@@ -3645,9 +3645,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -3864,23 +3864,23 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 500,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 500
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       },
       "phone_assertions" : {
-        "format_valid_count" : 500,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 500
       }
     },
     "added_columns" : [ {
-      "type" : "string",
-      "name" : "servicing_risk_band"
+      "name" : "servicing_risk_band",
+      "type" : "string"
     } ],
     "servicing_risk_band_counts" : {
       "stable" : 304,
@@ -3889,20 +3889,20 @@
     }
   }, {
     "derivative_id" : "late_arriving_boarding",
-    "source_file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
+    "source_file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
     "operations" : [ {
       "column" : "loan_id",
-      "operator" : "in",
+      "value" : [ "LN100475", "LN100476", "LN100477", "LN100478", "LN100479", "LN100480", "LN100481", "LN100482", "LN100483", "LN100484" ],
       "type" : "filter",
-      "value" : [ "LN100475", "LN100476", "LN100477", "LN100478", "LN100479", "LN100480", "LN100481", "LN100482", "LN100483", "LN100484" ]
+      "operator" : "in"
     }, {
-      "rule" : "minus_days:45",
+      "type" : "mutate_value",
       "column" : "boarding_date",
-      "type" : "mutate_value"
+      "rule" : "minus_days:45"
     }, {
-      "rule" : "minus_days:30",
+      "type" : "mutate_value",
       "column" : "last_payment_date",
-      "type" : "mutate_value"
+      "rule" : "minus_days:30"
     } ],
     "output_file" : "loan_master_late_arriving.csv",
     "row_count" : 10,
@@ -4386,9 +4386,9 @@
         "investor_name" : 0
       },
       "duplicate_key_counts" : {
-        "loan_id" : 0,
+        "loan_number" : 0,
         "investor_loan_id" : 0,
-        "loan_number" : 0
+        "loan_id" : 0
       },
       "email_format_failures" : 0,
       "phone_format_failures" : 0,
@@ -4440,18 +4440,18 @@
       "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
       "masked_columns" : [ "borrower_ssn_masked" ],
       "ssn_mask" : {
-        "raw_leak_count" : 0,
-        "invalid_row_count" : 0,
+        "valid_row_count" : 10,
         "pattern" : "XXX-XX-####",
-        "valid_row_count" : 10
+        "invalid_row_count" : 0,
+        "raw_leak_count" : 0
       },
       "email_assertions" : {
-        "format_valid_count" : 10,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 10
       },
       "phone_assertions" : {
-        "format_valid_count" : 10,
-        "null_count" : 0
+        "null_count" : 0,
+        "format_valid_count" : 10
       }
     },
     "loan_ids" : [ "LN100475", "LN100476", "LN100477", "LN100478", "LN100479", "LN100480", "LN100481", "LN100482", "LN100483", "LN100484" ],

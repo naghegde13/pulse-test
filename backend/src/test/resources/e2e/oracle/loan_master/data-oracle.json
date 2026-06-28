@@ -3,8 +3,8 @@
   "oracle_version" : 1,
   "source_file" : "data/loan_master.csv",
   "checksums" : {
-    "file_sha256" : "e3e56e4d2570a5d6641ab3be91dacd588153d15acde4a378e89bca5edd75b67a",
-    "canonical_csv_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f"
+    "canonical_csv_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f",
+    "file_sha256" : "c8ec1c0de81048ac250513a7e1b107c7ace081ec273a106b245d06a35759bc8f"
   },
   "row_count" : 500,
   "column_count" : 78,
@@ -503,9 +503,9 @@
       "investor_name" : 0
     },
     "duplicate_key_counts" : {
-      "loan_id" : 0,
+      "loan_number" : 0,
       "investor_loan_id" : 0,
-      "loan_number" : 0
+      "loan_id" : 0
     },
     "email_format_failures" : 0,
     "phone_format_failures" : 0,
@@ -722,18 +722,18 @@
     "pii_columns" : [ "borrower_first_name", "borrower_last_name", "borrower_ssn_masked", "borrower_dob", "borrower_email", "borrower_phone", "property_address_line1", "coborrower_first_name", "coborrower_last_name" ],
     "masked_columns" : [ "borrower_ssn_masked" ],
     "ssn_mask" : {
-      "raw_leak_count" : 0,
-      "invalid_row_count" : 0,
+      "valid_row_count" : 500,
       "pattern" : "XXX-XX-####",
-      "valid_row_count" : 500
+      "invalid_row_count" : 0,
+      "raw_leak_count" : 0
     },
     "email_assertions" : {
-      "format_valid_count" : 500,
-      "null_count" : 0
+      "null_count" : 0,
+      "format_valid_count" : 500
     },
     "phone_assertions" : {
-      "format_valid_count" : 500,
-      "null_count" : 0
+      "null_count" : 0,
+      "format_valid_count" : 500
     }
   },
   "fixture_derivative_ids" : [ "current_loans", "delinquent_loans", "investor_state_partitions", "bad_records_required_fields", "schema_add_servicing_risk_band", "late_arriving_boarding" ]
