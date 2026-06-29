@@ -4,4 +4,9 @@ set -euo pipefail
 export PORT="${PORT:-3000}"
 export NEXT_TELEMETRY_DISABLED=1
 
-exec npm start
+if [[ -f .next/standalone/server.js ]]; then
+	exec node .next/standalone/server.js
+fi
+
+echo "[frontend s2i] Missing standalone server at .next/standalone/server.js"
+exit 1
