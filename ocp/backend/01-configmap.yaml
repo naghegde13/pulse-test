@@ -8,7 +8,7 @@ data:
   SERVER_PORT: "8080"
   DB_PORT: "5432"
   REDIS_PORT: "6379"
-  CORS_ORIGINS: "https://pulse-frontend.apps.cluster.example.com"
+  CORS_ORIGINS: "https://pulse-frontend-naghegde13-dev.apps.rm3.7wse.p1.openshiftapps.com"
   # Keep green health while Redis is not yet provisioned on OCP.
   MANAGEMENT_HEALTH_REDIS_ENABLED: "false"
   # Optional LLM provider selector.
