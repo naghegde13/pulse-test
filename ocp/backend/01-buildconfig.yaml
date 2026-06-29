@@ -12,9 +12,12 @@ spec:
       ref: main
     contextDir: backend
   strategy:
-    type: Docker
-    dockerStrategy:
-      dockerfilePath: Dockerfile
+    type: Source
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/ubi9/openjdk-21:1.24
+      incremental: false
   output:
     to:
       kind: ImageStreamTag
