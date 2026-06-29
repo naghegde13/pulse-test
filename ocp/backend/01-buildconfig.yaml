@@ -5,6 +5,8 @@ metadata:
   labels:
     app: pulse-backend
 spec:
+  runPolicy: SerialLatestOnly
+  completionDeadlineSeconds: 2400
   source:
     type: Git
     git:
@@ -17,6 +19,11 @@ spec:
       from:
         kind: DockerImage
         name: registry.access.redhat.com/ubi9/openjdk-21:1.24
+      env:
+        - name: GRADLE_OPTS
+          value: "-Dorg.gradle.jvmargs=-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8 -Dorg.gradle.workers.max=1 -Dorg.gradle.vfs.watch=false"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-XX:+ExitOnOutOfMemoryError"
       incremental: false
   output:
     to:
@@ -24,11 +31,11 @@ spec:
       name: pulse-backend:latest
   resources:
     requests:
-      cpu: "500m"
-      memory: "2Gi"
+      cpu: "1"
+      memory: "3Gi"
     limits:
-      cpu: "2"
-      memory: "4Gi"
+      cpu: "3"
+      memory: "6Gi"
   triggers:
     - type: ConfigChange
     - type: ImageChange

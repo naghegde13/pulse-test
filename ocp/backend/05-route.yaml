@@ -5,7 +5,6 @@ metadata:
   labels:
     app: pulse-backend
 spec:
-  host: pulse-backend.apps.cluster.example.com
   to:
     kind: Service
     name: pulse-backend
