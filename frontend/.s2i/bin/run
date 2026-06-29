@@ -4,22 +4,4 @@ set -euo pipefail
 export PORT="${PORT:-3000}"
 export NEXT_TELEMETRY_DISABLED=1
 
-if [[ -f .next/standalone/server.js ]]; then
-	cd .next/standalone
-
-	# Next standalone expects assets relative to this directory.
-	mkdir -p .next
-
-	if [[ ! -e .next/static && -d ../static ]]; then
-		ln -s ../static .next/static
-	fi
-
-	if [[ ! -e public && -d ../../public ]]; then
-		ln -s ../../public public
-	fi
-
-	exec node server.js
-fi
-
-echo "[frontend s2i] Missing standalone server at .next/standalone/server.js"
-exit 1
+exec npm start
