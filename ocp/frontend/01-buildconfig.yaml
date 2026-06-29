@@ -5,6 +5,8 @@ metadata:
   labels:
     app: pulse-frontend
 spec:
+  runPolicy: SerialLatestOnly
+  completionDeadlineSeconds: 2400
   source:
     type: Git
     git:
@@ -19,7 +21,14 @@ spec:
         name: registry.access.redhat.com/ubi9/nodejs-22:latest
       env:
         - name: NEXT_PUBLIC_API_URL
-          value: https://pulse-backend.apps.cluster.example.com
+          value: https://pulse-backend-naghegde13-dev.apps.rm3.7wse.p1.openshiftapps.com
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
   output:
     to:
       kind: ImageStreamTag

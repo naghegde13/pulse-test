@@ -6,4 +6,4 @@ metadata:
     app: pulse-frontend
 data:
   PORT: "3000"
-  NEXT_PUBLIC_API_URL: "https://pulse-backend.apps.cluster.example.com"
+  NEXT_PUBLIC_API_URL: "https://pulse-backend-naghegde13-dev.apps.rm3.7wse.p1.openshiftapps.com"
