@@ -5,6 +5,11 @@ export HOME="${HOME:-/tmp}"
 export npm_config_cache="${npm_config_cache:-/tmp/npm-cache}"
 export NEXT_TELEMETRY_DISABLED=1
 
+# Custom assemble overrides the image default, so we must stage source first.
+mkdir -p /opt/app-root/src
+cp -a /tmp/src/. /opt/app-root/src/
+cd /opt/app-root/src
+
 echo "[frontend s2i] Working directory: $(pwd)"
 ls -la
 
