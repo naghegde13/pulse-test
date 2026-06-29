@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-jar_path="$(find build/libs -maxdepth 1 -type f -name '*.jar' | head -n 1)"
-if [ -z "${jar_path}" ]; then
-  echo "No runnable jar found under build/libs" >&2
+# Runtime image should use the jar staged by assemble.
+jar_path="/deployments/app.jar"
+if [ ! -f "${jar_path}" ]; then
+  # Fallback for local/dev invocations where /deployments is not present.
+  jar_path="$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | head -n 1 || true)"
+fi
+if [ -z "${jar_path}" ] || [ ! -f "${jar_path}" ]; then
+  echo "No runnable jar found (/deployments/app.jar or build/libs/*.jar)" >&2
   exit 1
 fi
 
