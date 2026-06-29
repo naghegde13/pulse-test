@@ -5,6 +5,16 @@ export HOME="${HOME:-/tmp}"
 export npm_config_cache="${npm_config_cache:-/tmp/npm-cache}"
 export NEXT_TELEMETRY_DISABLED=1
 
-npm ci
+echo "[frontend s2i] Working directory: $(pwd)"
+ls -la
+
+if [[ -f package-lock.json ]]; then
+	echo "[frontend s2i] Detected package-lock.json; using npm ci"
+	npm ci
+else
+	echo "[frontend s2i] package-lock.json not found; falling back to npm install"
+	npm install
+fi
+
 npm run build
 npm prune --omit=dev
