@@ -60,4 +60,22 @@ set +e
 wait "${gradle_pid}"
 rc=$?
 set -e
+
+if [ "${rc}" -ne 0 ]; then
+	exit "${rc}"
+fi
+
+# Custom assemble overrides the image default behavior, so explicitly stage
+# the runnable jar where run-java.sh expects it.
+boot_jar="$(find build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-plain.jar' | head -n 1 || true)"
+if [ -z "${boot_jar}" ]; then
+	echo "No boot jar found under build/libs after successful Gradle run."
+	exit 1
+fi
+
+mkdir -p /deployments
+cp "${boot_jar}" /deployments/app.jar
+chmod g+rwX /deployments /deployments/app.jar || true
+echo "Staged runnable jar: ${boot_jar} -> /deployments/app.jar"
+
 exit "${rc}"
