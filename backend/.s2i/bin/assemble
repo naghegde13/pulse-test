@@ -1,33 +1,63 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-export HOME="${HOME:-/tmp}"
-export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/tmp/gradle}"
+export HOME="${HOME:-/home/default}"
+export GRADLE_USER_HOME="${GRADLE_USER_HOME:-${HOME}/.gradle}"
 
 # Custom S2I scripts are not guaranteed to start in the source tree.
 cd "${S2I_SOURCE_DIR:-/tmp/src}"
 
 chmod +x ./gradlew
 
-if command -v timeout >/dev/null 2>&1; then
-	set +e
-	timeout --signal=TERM 20m ./gradlew --no-daemon --info --stacktrace bootJar -x test
-	rc=$?
-	set -e
+mkdir -p "${GRADLE_USER_HOME}" "${GRADLE_USER_HOME}/project-cache"
 
-	if [ "$rc" -eq 124 ] || [ "$rc" -eq 137 ]; then
+# This dependency graph is large (Spark + cloud SDK). Allocate more heap and
+# avoid project cache churn in /tmp/src/.gradle to reduce post-compile stalls.
+GRADLE_JVM_ARGS="-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=512m -Dfile.encoding=UTF-8"
+GRADLE_ARGS=(
+	--no-daemon
+	--info
+	--stacktrace
+	-Dorg.gradle.jvmargs="${GRADLE_JVM_ARGS}"
+	-Dorg.gradle.projectcachedir="${GRADLE_USER_HOME}/project-cache"
+	-Dorg.gradle.vfs.watch=false
+	-Dorg.gradle.workers.max=1
+	bootJar
+	-x
+	test
+)
+
+./gradlew "${GRADLE_ARGS[@]}" &
+gradle_pid=$!
+timeout_seconds=1200
+deadline=$((SECONDS + timeout_seconds))
+
+while kill -0 "${gradle_pid}" 2>/dev/null; do
+	if (( SECONDS >= deadline )); then
 		echo "Gradle bootJar timed out after 20m; collecting JVM diagnostics..."
 		if command -v jps >/dev/null 2>&1; then
 			jps -l || true
-			gradle_pid="$(jps -l | awk '/GradleDaemon|org\.gradle|GradleMain/ {print $1; exit}')"
-			if [ -n "$gradle_pid" ] && command -v jcmd >/dev/null 2>&1; then
-				jcmd "$gradle_pid" Thread.print || true
+			jcmd_pid="$(jps -l | awk '/GradleDaemon|org\.gradle|GradleMain/ {print $1; exit}')"
+			if [ -n "${jcmd_pid}" ] && command -v jcmd >/dev/null 2>&1; then
+				jcmd "${jcmd_pid}" Thread.print || true
 			fi
 		fi
+
+		kill -TERM "${gradle_pid}" 2>/dev/null || true
+		sleep 5
+		kill -KILL "${gradle_pid}" 2>/dev/null || true
+
+		set +e
+		wait "${gradle_pid}" 2>/dev/null
+		set -e
 		exit 124
 	fi
 
-	exit "$rc"
-else
-	./gradlew --no-daemon --info --stacktrace bootJar -x test
-fi
+	sleep 5
+done
+
+set +e
+wait "${gradle_pid}"
+rc=$?
+set -e
+exit "${rc}"
